@@ -1,0 +1,6162 @@
+{
+  "fileName": "Planilha Plantio cana.xlsm",
+  "fullPath": "/home/emanoel/Documentos/COA-BOT/planilhas/Planilha Plantio cana.xlsm",
+  "extension": ".xlsm",
+  "sizeBytes": 1556609,
+  "workbookProtection": false,
+  "sheets": [
+    {
+      "name": "COLHEITA E TRANSPORTE DE MUDA",
+      "sheetId": "26",
+      "relationshipId": "rId1",
+      "state": "visible",
+      "order": 1,
+      "path": "xl/worksheets/sheet1.xml",
+      "dimension": "A1:AJ25",
+      "usedRows": 25,
+      "usedColumns": 36,
+      "mergedCells": [
+        "M8:N8",
+        "D16:E16",
+        "D8:E8",
+        "D13:E13",
+        "D14:E14",
+        "D9:E9",
+        "D11:E11",
+        "D10:E10",
+        "D12:E12",
+        "S5:S6",
+        "D7:E7",
+        "D19:E19",
+        "G22:G24",
+        "D2:S4",
+        "J5:J6",
+        "K5:L5",
+        "M5:N5",
+        "K6:L6",
+        "M6:N6",
+        "D18:G18",
+        "J18:L18",
+        "J19:L19",
+        "D17:E17",
+        "F5:H6",
+        "D15:E15"
+      ],
+      "formulas": [
+        {
+          "cell": "D6",
+          "formula": "TEXT(NOW(),\"hh\")&\"H\"",
+          "array": false
+        },
+        {
+          "cell": "E6",
+          "formula": "\"Data: \"&TEXT(TODAY(),\"dd/mm\")&\" - \"&IF(AND(NOW()-TODAY()>=TIME(3,0,0),NOW()-TODAY()<TIME(11,0,0)),\"Turno A\",IF(AND(NOW()-TODAY()>=TIME(11,0,0),NOW()-TODAY()<TIME(19,0,0)),\"Turno B\",\"Turno C\"))",
+          "array": false
+        },
+        {
+          "cell": "J8",
+          "formula": "IF(K8=\"\",\"\",IF(OR(H8=\"P\",H8=\"D\"),INT(NOW()-(K8+L8))&\"d \"&TEXT(NOW()-(K8+L8),\"hh:mm\"),\"\"))",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "AH8",
+          "formula": "IF(M8=\"\",\"\",IF(N8=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M8+N8,\"🔴 VENCIDA\",IF((M8+N8)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J9",
+          "formula": "IF(K9=\"\",\"\",IF(OR(H9=\"P\",H9=\"D\"),INT(NOW()-(K9+L9))&\"d \"&TEXT(NOW()-(K9+L9),\"hh:mm\"),\"\"))",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH9",
+          "formula": "IF(M9=\"\",\"\",IF(N9=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M9+N9,\"🔴 VENCIDA\",IF((M9+N9)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "array": false
+        },
+        {
+          "cell": "J10",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "J11",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH11",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J12",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH12",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J13",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH13",
+          "formula": "IF(M13=\"\",\"\",IF(N13=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M13+N13,\"🔴 VENCIDA\",IF((M13+N13)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "array": false
+        },
+        {
+          "cell": "J14",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "J15",
+          "formula": "IF(K15=\"\",\"\",IF(OR(H15=\"P\",H15=\"D\"),INT(NOW()-(K15+L15))&\"d \"&TEXT(NOW()-(K15+L15),\"hh:mm\"),\"\"))",
+          "shared": "3",
+          "array": false
+        },
+        {
+          "cell": "AH15",
+          "formula": "IF(M15=\"\",\"\",IF(N15=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M15+N15,\"🔴 VENCIDA\",IF((M15+N15)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "J16",
+          "formula": "IF(K16=\"\",\"\",IF(OR(H16=\"P\",H16=\"D\"),INT(NOW()-(K16+L16))&\"d \"&TEXT(NOW()-(K16+L16),\"hh:mm\"),\"\"))",
+          "array": false
+        },
+        {
+          "cell": "AH16",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "J17",
+          "formula": "",
+          "shared": "3",
+          "array": false
+        },
+        {
+          "cell": "AH17",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "D18",
+          "formula": "\"LÍDER DO TURNO: \"&IF(AND(HOUR(NOW())>=3,HOUR(NOW())<11),\"WEBERT REIS\",\nIF(AND(HOUR(NOW())>=11,HOUR(NOW())<19),\"LEONARDO\",\n\"JHONATAN\"))",
+          "array": false
+        },
+        {
+          "cell": "I18",
+          "formula": "SUMIFS(#REF!,#REF!,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "M18",
+          "formula": "COUNTIFS(H8:I17,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "F19",
+          "formula": "COUNTA(F8:F17)+COUNTA(G11:G13)",
+          "array": false
+        },
+        {
+          "cell": "G19",
+          "formula": "\"EFICIÊNCIA DA FRENTE: \"&TEXT(COUNTIF(H8:H17,\"R\")/COUNT(F8:F17),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "I19",
+          "formula": "I18",
+          "array": false
+        },
+        {
+          "cell": "M19",
+          "formula": "COUNTIFS(H8:H17,\"p\")",
+          "array": false
+        },
+        {
+          "cell": "S19",
+          "formula": "\"DISPONIBILIDADE MECÂNICA: \"&TEXT((COUNTIF(H8:H17,\"D\")+COUNTIF(H8:H17,\"R\"))/COUNTA(H8:H17),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G20",
+          "formula": "\"EFICIÊNCIA PREVISTA: \"&TEXT((COUNTIF(H8:H17,\"R\")+COUNT(N8:N17))/(COUNT(F8:F17)),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G22",
+          "formula": "IF(SUM(--(COUNTIF(F8:F17,F8:F17)>1))>0,\"⚠ EXISTEM FROTAS DUPLICADAS\",\"✓ SEM DUPLICIDADES\")",
+          "array": true
+        }
+      ],
+      "conditionalFormattingCount": 55,
+      "dataValidationsCount": 1,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [],
+      "shapesOrButtons": [
+        "xl/drawings/drawing1.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [
+        "REF"
+      ],
+      "protected": false,
+      "lockedCellCountEstimate": 535,
+      "unlockedCellCountEstimate": 112,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 1
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "scale": "39",
+        "orientation": "landscape",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [],
+      "hiddenColumns": [
+        "1:1",
+        "9:9",
+        "15:15",
+        "16:16",
+        "17:17",
+        "18:18",
+        "23:23",
+        "24:25",
+        "26:26",
+        "27:27",
+        "28:28",
+        "29:29",
+        "30:30",
+        "31:32",
+        "33:33"
+      ],
+      "rowSamples": [
+        {
+          "row": 2,
+          "cells": [
+            {
+              "ref": "D2",
+              "column": "D",
+              "value": "COLHEITA E TRANSPORTE DE MUDA"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "E5",
+              "column": "E",
+              "value": "DATA"
+            },
+            {
+              "ref": "F5",
+              "column": "F",
+              "value": "TRATORES / IMPLEMENTOS"
+            },
+            {
+              "ref": "J5",
+              "column": "J",
+              "value": "TEMPO PARADO"
+            },
+            {
+              "ref": "K5",
+              "column": "K",
+              "value": "INICIO PARADA"
+            },
+            {
+              "ref": "M5",
+              "column": "M",
+              "value": "PREVISÃO"
+            },
+            {
+              "ref": "O5",
+              "column": "O",
+              "value": "PROGRAMAÇÃO DE PARADA"
+            },
+            {
+              "ref": "S5",
+              "column": "S",
+              "value": "DESCRIÇÃO"
+            },
+            {
+              "ref": "AH5",
+              "column": "AH",
+              "value": "Isto e um aviso da previsão"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "23H"
+            },
+            {
+              "ref": "E6",
+              "column": "E",
+              "value": "Data: 10/07 - Turno C"
+            },
+            {
+              "ref": "K6",
+              "column": "K",
+              "value": "INICIO DA QUEBRA"
+            },
+            {
+              "ref": "M6",
+              "column": "M",
+              "value": "PREVISÃO DE RETORNO"
+            },
+            {
+              "ref": "O6",
+              "column": "O",
+              "value": "INÍCIO"
+            },
+            {
+              "ref": "Q6",
+              "column": "Q",
+              "value": "FIM"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "SETOR"
+            },
+            {
+              "ref": "F7",
+              "column": "F",
+              "value": "FROTA"
+            },
+            {
+              "ref": "G7",
+              "column": "G",
+              "value": "IMPLEMENTO"
+            },
+            {
+              "ref": "H7",
+              "column": "H",
+              "value": "STATUS"
+            },
+            {
+              "ref": "I7",
+              "column": "I",
+              "value": "RENDIMENTO ATUAL"
+            },
+            {
+              "ref": "J7",
+              "column": "J",
+              "value": "HORAS"
+            },
+            {
+              "ref": "K7",
+              "column": "K",
+              "value": "DATA"
+            },
+            {
+              "ref": "L7",
+              "column": "L",
+              "value": "HORA"
+            },
+            {
+              "ref": "M7",
+              "column": "M",
+              "value": "DATA"
+            },
+            {
+              "ref": "N7",
+              "column": "N",
+              "value": "HORA"
+            },
+            {
+              "ref": "O7",
+              "column": "O",
+              "value": "DATA"
+            },
+            {
+              "ref": "P7",
+              "column": "P",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q7",
+              "column": "Q",
+              "value": "DATA"
+            },
+            {
+              "ref": "R7",
+              "column": "R",
+              "value": "HORA"
+            },
+            {
+              "ref": "S7",
+              "column": "S",
+              "value": "OS FROTA / SERVIÇO / OPERACÃO"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F8",
+              "column": "F",
+              "value": "626"
+            },
+            {
+              "ref": "G8",
+              "column": "G",
+              "value": "COLHEDORA"
+            },
+            {
+              "ref": "H8",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J8",
+              "column": "J",
+              "value": "1d 23:18"
+            },
+            {
+              "ref": "K8",
+              "column": "K",
+              "value": "46212"
+            },
+            {
+              "ref": "L8",
+              "column": "L",
+              "value": "9.7222222222222224E-3"
+            },
+            {
+              "ref": "M8",
+              "column": "M",
+              "value": "SEM PREVISÃO"
+            },
+            {
+              "ref": "S8",
+              "column": "S",
+              "value": "CILINDRO DE INCLINAÇÃO E PINO DE SUSPENSÃO DO DIVISOR DE LINHA QUEBRADOS /O.S - 21829610 / 21829611"
+            },
+            {
+              "ref": "AH8",
+              "column": "AH",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F9",
+              "column": "F",
+              "value": "625"
+            },
+            {
+              "ref": "G9",
+              "column": "G",
+              "value": "COLHEDORA"
+            },
+            {
+              "ref": "H9",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F10",
+              "column": "F",
+              "value": "1506"
+            },
+            {
+              "ref": "G10",
+              "column": "G",
+              "value": "12016/12017"
+            },
+            {
+              "ref": "H10",
+              "column": "H",
+              "value": "R"
+            },
+            {
+              "ref": "S10",
+              "column": "S",
+              "value": "DESLOCAMENTO PARA CHAPADINHA"
+            }
+          ]
+        },
+        {
+          "row": 11,
+          "cells": [
+            {
+              "ref": "D11",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F11",
+              "column": "F",
+              "value": "1509"
+            },
+            {
+              "ref": "G11",
+              "column": "G",
+              "value": "12010/12011"
+            },
+            {
+              "ref": "H11",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 12,
+          "cells": [
+            {
+              "ref": "D12",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F12",
+              "column": "F",
+              "value": "1510"
+            },
+            {
+              "ref": "G12",
+              "column": "G",
+              "value": "12038/12039"
+            },
+            {
+              "ref": "H12",
+              "column": "H",
+              "value": "R"
+            },
+            {
+              "ref": "S12",
+              "column": "S",
+              "value": "DESLOCAMENTO PARA CHAPADINHA"
+            }
+          ]
+        },
+        {
+          "row": 13,
+          "cells": [
+            {
+              "ref": "D13",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F13",
+              "column": "F",
+              "value": "1511"
+            },
+            {
+              "ref": "G13",
+              "column": "G",
+              "value": "12020/12021"
+            },
+            {
+              "ref": "H13",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 14,
+          "cells": [
+            {
+              "ref": "D14",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F14",
+              "column": "F",
+              "value": "914"
+            },
+            {
+              "ref": "G14",
+              "column": "G",
+              "value": "CAMINHÃO PIPA"
+            },
+            {
+              "ref": "H14",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 15,
+          "cells": [
+            {
+              "ref": "D15",
+              "column": "D",
+              "value": "LIDER TURNO A:WELLINGTON"
+            }
+          ]
+        },
+        {
+          "row": 16,
+          "cells": [
+            {
+              "ref": "D16",
+              "column": "D",
+              "value": "LIDER TURNO B:WANDERSON"
+            }
+          ]
+        },
+        {
+          "row": 17,
+          "cells": [
+            {
+              "ref": "D17",
+              "column": "D",
+              "value": "LIDER TURNO C:JHONATAN"
+            }
+          ]
+        },
+        {
+          "row": 18,
+          "cells": [
+            {
+              "ref": "D18",
+              "column": "D",
+              "value": "LÍDER DO TURNO: JHONATAN"
+            },
+            {
+              "ref": "I18",
+              "column": "I",
+              "value": "#REF!"
+            },
+            {
+              "ref": "J18",
+              "column": "J",
+              "value": "TOTAL DE MAQUINAS RODANDO"
+            },
+            {
+              "ref": "M18",
+              "column": "M",
+              "value": "6"
+            }
+          ]
+        },
+        {
+          "row": 19,
+          "cells": [
+            {
+              "ref": "D19",
+              "column": "D",
+              "value": "TOTAL DE EQUIPAMENTO"
+            },
+            {
+              "ref": "F19",
+              "column": "F",
+              "value": "10"
+            },
+            {
+              "ref": "G19",
+              "column": "G",
+              "value": "EFICIÊNCIA DA FRENTE: 86%"
+            },
+            {
+              "ref": "I19",
+              "column": "I",
+              "value": "#REF!"
+            },
+            {
+              "ref": "J19",
+              "column": "J",
+              "value": "TOTAL DE MAQUINAS PARADAS"
+            },
+            {
+              "ref": "M19",
+              "column": "M",
+              "value": "1"
+            },
+            {
+              "ref": "S19",
+              "column": "S",
+              "value": "DISPONIBILIDADE MECÂNICA: 86%"
+            }
+          ]
+        },
+        {
+          "row": 20,
+          "cells": [
+            {
+              "ref": "G20",
+              "column": "G",
+              "value": "EFICIÊNCIA PREVISTA: 86%"
+            }
+          ]
+        },
+        {
+          "row": 22,
+          "cells": [
+            {
+              "ref": "G22",
+              "column": "G",
+              "value": "✓ SEM DUPLICIDADES"
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "F",
+            "header": "FROTA",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "OS FROTA / SERVIÇO / OPERACÃO",
+            "row": 7
+          },
+          {
+            "column": "G",
+            "header": "CAMINHÃO PIPA",
+            "row": 14
+          },
+          {
+            "column": "J",
+            "header": "TOTAL DE MAQUINAS RODANDO",
+            "row": 18
+          },
+          {
+            "column": "D",
+            "header": "TOTAL DE EQUIPAMENTO",
+            "row": 19
+          },
+          {
+            "column": "J",
+            "header": "TOTAL DE MAQUINAS PARADAS",
+            "row": 19
+          }
+        ],
+        "status": [
+          {
+            "column": "H",
+            "header": "STATUS",
+            "row": 7
+          }
+        ],
+        "descricao": [
+          {
+            "column": "S",
+            "header": "DESCRIÇÃO",
+            "row": 5
+          }
+        ],
+        "setor": [
+          {
+            "column": "D",
+            "header": "SETOR",
+            "row": 7
+          }
+        ],
+        "horario": [
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO PARADA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO DA QUEBRA",
+            "row": 6
+          },
+          {
+            "column": "O",
+            "header": "INÍCIO",
+            "row": 6
+          },
+          {
+            "column": "Q",
+            "header": "FIM",
+            "row": 6
+          },
+          {
+            "column": "J",
+            "header": "HORAS",
+            "row": 7
+          },
+          {
+            "column": "L",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "N",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "P",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "R",
+            "header": "HORA",
+            "row": 7
+          }
+        ],
+        "operador": [
+          {
+            "column": "D",
+            "header": "LIDER TURNO A:WELLINGTON",
+            "row": 15
+          },
+          {
+            "column": "D",
+            "header": "LIDER TURNO B:WANDERSON",
+            "row": 16
+          },
+          {
+            "column": "D",
+            "header": "LIDER TURNO C:JHONATAN",
+            "row": 17
+          },
+          {
+            "column": "D",
+            "header": "LÍDER DO TURNO: JHONATAN",
+            "row": 18
+          }
+        ],
+        "implemento": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "G",
+            "header": "IMPLEMENTO",
+            "row": 7
+          }
+        ],
+        "observacoes": []
+      }
+    },
+    {
+      "name": "PREPARO DE SOLO (2)",
+      "sheetId": "23",
+      "relationshipId": "rId2",
+      "state": "hidden",
+      "order": 2,
+      "path": "xl/worksheets/sheet2.xml",
+      "dimension": "A1:AJ35",
+      "usedRows": 35,
+      "usedColumns": 36,
+      "mergedCells": [
+        "G33:G35",
+        "J29:L29",
+        "M29:N29",
+        "D30:E30",
+        "J30:L30",
+        "M30:N30",
+        "D32:M32",
+        "D29:G29",
+        "D24:E24",
+        "D25:E25",
+        "D26:E26",
+        "D27:E27",
+        "D28:E28",
+        "D23:E23",
+        "D13:E13",
+        "D14:E14",
+        "D15:E15",
+        "D16:E16",
+        "D17:E17",
+        "D18:E18",
+        "D19:E19",
+        "D20:E20",
+        "D21:E21",
+        "D22:E22",
+        "M17:N17",
+        "D7:E7",
+        "D8:E8",
+        "D9:E9",
+        "D10:E10",
+        "D11:E11",
+        "D12:E12",
+        "D2:S4",
+        "F5:I6",
+        "J5:J6",
+        "K5:L5",
+        "M5:N5",
+        "S5:S6",
+        "K6:L6",
+        "M6:N6"
+      ],
+      "formulas": [
+        {
+          "cell": "D6",
+          "formula": "ROUNDDOWN((NOW()-TODAY())*24,0)",
+          "array": false
+        },
+        {
+          "cell": "E6",
+          "formula": "TODAY()",
+          "array": false
+        },
+        {
+          "cell": "J8",
+          "formula": "IF(K8=\"\",\"\",IF(OR(H8=\"P\",H8=\"D\"),INT(NOW()-(K8+L8))&\"d \"&TEXT(NOW()-(K8+L8),\"hh:mm\"),\"\"))",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "AH8",
+          "formula": "IF(M8=\"\",\"\",IF(NOW()>M8+N8,\"🔴 VENCIDA\",IF((M8+N8)-NOW()<1,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\")))",
+          "array": false
+        },
+        {
+          "cell": "J9",
+          "formula": "IF(K9=\"\",\"\",IF(OR(H9=\"P\",H9=\"D\"),INT(NOW()-(K9+L9))&\"d \"&TEXT(NOW()-(K9+L9),\"hh:mm\"),\"\"))",
+          "array": false
+        },
+        {
+          "cell": "AH9",
+          "formula": "IF(M9=\"\",\"\",IF(NOW()>M9+N9,\"🔴 VENCIDA\",IF((M9+N9)-NOW()<1,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\")))",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J10",
+          "formula": "IF(K10=\"\",\"\",IF(OR(H10=\"P\",H10=\"D\"),INT(NOW()-(K10+L10))&\"d \"&TEXT(NOW()-(K10+L10),\"hh:mm\"),\"\"))",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH10",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J11",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH11",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J12",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH12",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J13",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH13",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J14",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH14",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J15",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH15",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J16",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH16",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J17",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH17",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J18",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH18",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J19",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH19",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J20",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH20",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J21",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH21",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J22",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH22",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J23",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH23",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J24",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH24",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J25",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH25",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J26",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH26",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J27",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH27",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J28",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AH28",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "D29",
+          "formula": "\"LÍDER DO TURNO: \"&IF(AND(HOUR(NOW())>=3,HOUR(NOW())<11),\"WEBERT REIS\",\nIF(AND(HOUR(NOW())>=11,HOUR(NOW())<19),\"WANDERSON\",\n\"DIACKSON\"))",
+          "array": false
+        },
+        {
+          "cell": "I29",
+          "formula": "SUMIFS(#REF!,#REF!,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "M29",
+          "formula": "COUNTIFS(H8:I28,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "F30",
+          "formula": "COUNTA(F8:F28)+COUNTA(G8:G28)",
+          "array": false
+        },
+        {
+          "cell": "G30",
+          "formula": "\"EFICIÊNCIA DA FRENTE: \"&TEXT(COUNTIF(H8:H28,\"R\")/COUNT(F8:F28),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "I30",
+          "formula": "I29",
+          "array": false
+        },
+        {
+          "cell": "M30",
+          "formula": "COUNTIFS(H8:H28,\"p\")",
+          "array": false
+        },
+        {
+          "cell": "D32",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!T11",
+          "array": false
+        },
+        {
+          "cell": "G33",
+          "formula": "IF(SUM(--(COUNTIF(F8:F28,F8:F28)>1))>0,\"⚠ EXISTEM FROTAS DUPLICADAS\",\"✓ SEM DUPLICIDADES\")",
+          "array": true
+        }
+      ],
+      "conditionalFormattingCount": 56,
+      "dataValidationsCount": 1,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [],
+      "shapesOrButtons": [
+        "xl/drawings/drawing2.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [
+        "REF",
+        "'PRODUCÃO DAS OPERAÇÕES'"
+      ],
+      "protected": false,
+      "lockedCellCountEstimate": 874,
+      "unlockedCellCountEstimate": 112,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 1
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "scale": "46",
+        "orientation": "landscape",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [],
+      "hiddenColumns": [
+        "1:1",
+        "9:9",
+        "15:15",
+        "16:16",
+        "17:17",
+        "18:18",
+        "23:23",
+        "24:25",
+        "26:26",
+        "27:27",
+        "28:28",
+        "29:29",
+        "30:30",
+        "31:32",
+        "33:33"
+      ],
+      "rowSamples": [
+        {
+          "row": 2,
+          "cells": [
+            {
+              "ref": "D2",
+              "column": "D",
+              "value": "PREPARO DE SOLO"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "E5",
+              "column": "E",
+              "value": "DATA"
+            },
+            {
+              "ref": "F5",
+              "column": "F",
+              "value": "TRATORES / IMPLEMENTOS"
+            },
+            {
+              "ref": "J5",
+              "column": "J",
+              "value": "TEMPO PARADO"
+            },
+            {
+              "ref": "K5",
+              "column": "K",
+              "value": "INICIO PARADA"
+            },
+            {
+              "ref": "M5",
+              "column": "M",
+              "value": "PREVISÃO"
+            },
+            {
+              "ref": "O5",
+              "column": "O",
+              "value": "PROGRAMAÇÃO DE PARADA"
+            },
+            {
+              "ref": "S5",
+              "column": "S",
+              "value": "DESCRIÇÃO"
+            },
+            {
+              "ref": "AH5",
+              "column": "AH",
+              "value": "isto e um aviso da previsão"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "23"
+            },
+            {
+              "ref": "E6",
+              "column": "E",
+              "value": "46213"
+            },
+            {
+              "ref": "K6",
+              "column": "K",
+              "value": "INICIO DA QUEBRA"
+            },
+            {
+              "ref": "M6",
+              "column": "M",
+              "value": "PREVISÃO DE RETORNO"
+            },
+            {
+              "ref": "O6",
+              "column": "O",
+              "value": "INÍCIO"
+            },
+            {
+              "ref": "Q6",
+              "column": "Q",
+              "value": "FIM"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "SETOR"
+            },
+            {
+              "ref": "F7",
+              "column": "F",
+              "value": "FROTA"
+            },
+            {
+              "ref": "G7",
+              "column": "G",
+              "value": "IMPLEMENTO"
+            },
+            {
+              "ref": "H7",
+              "column": "H",
+              "value": "STATUS"
+            },
+            {
+              "ref": "I7",
+              "column": "I",
+              "value": "RENDIMENTO ATUAL"
+            },
+            {
+              "ref": "J7",
+              "column": "J",
+              "value": "HORAS"
+            },
+            {
+              "ref": "K7",
+              "column": "K",
+              "value": "DATA"
+            },
+            {
+              "ref": "L7",
+              "column": "L",
+              "value": "HORA"
+            },
+            {
+              "ref": "M7",
+              "column": "M",
+              "value": "DATA"
+            },
+            {
+              "ref": "N7",
+              "column": "N",
+              "value": "HORA"
+            },
+            {
+              "ref": "O7",
+              "column": "O",
+              "value": "DATA"
+            },
+            {
+              "ref": "P7",
+              "column": "P",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q7",
+              "column": "Q",
+              "value": "DATA"
+            },
+            {
+              "ref": "R7",
+              "column": "R",
+              "value": "HORA"
+            },
+            {
+              "ref": "S7",
+              "column": "S",
+              "value": "OS FROTA / SERVIÇO / OPERACÃO"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F8",
+              "column": "F",
+              "value": "1605"
+            },
+            {
+              "ref": "G8",
+              "column": "G",
+              "value": "643 - SUBSOLADOR"
+            },
+            {
+              "ref": "H8",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F9",
+              "column": "F",
+              "value": "1604"
+            },
+            {
+              "ref": "G9",
+              "column": "G",
+              "value": "100072 - GRADE CIVEMASA"
+            },
+            {
+              "ref": "H9",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F10",
+              "column": "F",
+              "value": "1602"
+            },
+            {
+              "ref": "G10",
+              "column": "G",
+              "value": "1094 - PLANTADEIRA DE TORTA"
+            },
+            {
+              "ref": "H10",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 11,
+          "cells": [
+            {
+              "ref": "D11",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F11",
+              "column": "F",
+              "value": "1532"
+            },
+            {
+              "ref": "G11",
+              "column": "G",
+              "value": "601 - PLAINA"
+            },
+            {
+              "ref": "H11",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 12,
+          "cells": [
+            {
+              "ref": "D12",
+              "column": "D",
+              "value": "SETOR E3"
+            },
+            {
+              "ref": "F12",
+              "column": "F",
+              "value": "864"
+            },
+            {
+              "ref": "G12",
+              "column": "G",
+              "value": "300 - NIVELADORA"
+            },
+            {
+              "ref": "H12",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J12",
+              "column": "J",
+              "value": "39d 12:32"
+            },
+            {
+              "ref": "K12",
+              "column": "K",
+              "value": "46174"
+            },
+            {
+              "ref": "L12",
+              "column": "L",
+              "value": "0.45833333333333331"
+            },
+            {
+              "ref": "S12",
+              "column": "S",
+              "value": "AGUARDANDO APLICAÇÃO DE PPI"
+            }
+          ]
+        },
+        {
+          "row": 13,
+          "cells": [
+            {
+              "ref": "D13",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F13",
+              "column": "F",
+              "value": "774"
+            },
+            {
+              "ref": "G13",
+              "column": "G",
+              "value": "775 - CONJ. DE TRIBUIDOR DE CALCA."
+            },
+            {
+              "ref": "H13",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 14,
+          "cells": [
+            {
+              "ref": "D14",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F14",
+              "column": "F",
+              "value": "1405"
+            },
+            {
+              "ref": "G14",
+              "column": "G",
+              "value": "MOTONIVELADORA"
+            },
+            {
+              "ref": "H14",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 15,
+          "cells": [
+            {
+              "ref": "D15",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F15",
+              "column": "F",
+              "value": "870392"
+            },
+            {
+              "ref": "G15",
+              "column": "G",
+              "value": "PÁ CARREGADEIRA"
+            },
+            {
+              "ref": "H15",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 16,
+          "cells": [
+            {
+              "ref": "D16",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F16",
+              "column": "F",
+              "value": "746"
+            },
+            {
+              "ref": "G16",
+              "column": "G",
+              "value": "837 - SUBSOLADOR"
+            },
+            {
+              "ref": "H16",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 17,
+          "cells": [
+            {
+              "ref": "D17",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F17",
+              "column": "F",
+              "value": "1603"
+            },
+            {
+              "ref": "H17",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J17",
+              "column": "J",
+              "value": "34d 07:52"
+            },
+            {
+              "ref": "K17",
+              "column": "K",
+              "value": "46179"
+            },
+            {
+              "ref": "L17",
+              "column": "L",
+              "value": "0.65277777777777779"
+            },
+            {
+              "ref": "M17",
+              "column": "M",
+              "value": "AG. PREVISÃO"
+            },
+            {
+              "ref": "S17",
+              "column": "S",
+              "value": "FROTA-RETIRARA PNEUS, MEXER NO AR CONDICIONADO"
+            },
+            {
+              "ref": "AH17",
+              "column": "AH",
+              "value": "#VALUE!"
+            }
+          ]
+        },
+        {
+          "row": 18,
+          "cells": [
+            {
+              "ref": "D18",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F18",
+              "column": "F",
+              "value": "1601"
+            },
+            {
+              "ref": "H18",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J18",
+              "column": "J",
+              "value": "44d 13:05"
+            },
+            {
+              "ref": "K18",
+              "column": "K",
+              "value": "46169"
+            },
+            {
+              "ref": "L18",
+              "column": "L",
+              "value": "0.43541666666666667"
+            },
+            {
+              "ref": "M18",
+              "column": "M",
+              "value": "46181"
+            },
+            {
+              "ref": "N18",
+              "column": "N",
+              "value": "0.70833333333333337"
+            },
+            {
+              "ref": "S18",
+              "column": "S",
+              "value": "REFORMA: REVISÃO DE MOTOR, SISTEMA ELÉTRICO /O.S - 21805530"
+            },
+            {
+              "ref": "AH18",
+              "column": "AH",
+              "value": "🔴 VENCIDA"
+            }
+          ]
+        },
+        {
+          "row": 19,
+          "cells": [
+            {
+              "ref": "D19",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "G19",
+              "column": "G",
+              "value": "100074 - TERRACEADOR"
+            },
+            {
+              "ref": "H19",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J19",
+              "column": "J",
+              "value": "35d 04:32"
+            },
+            {
+              "ref": "K19",
+              "column": "K",
+              "value": "46178"
+            },
+            {
+              "ref": "L19",
+              "column": "L",
+              "value": "0.79166666666666663"
+            },
+            {
+              "ref": "M19",
+              "column": "M",
+              "value": "46181"
+            },
+            {
+              "ref": "N19",
+              "column": "N",
+              "value": "0.75"
+            },
+            {
+              "ref": "S19",
+              "column": "S",
+              "value": "ROLAMENTO DA RODA LADO ESQUERDO ESTOURADO /O.S 21809587"
+            },
+            {
+              "ref": "AH19",
+              "column": "AH",
+              "value": "🔴 VENCIDA"
+            }
+          ]
+        },
+        {
+          "row": 20,
+          "cells": [
+            {
+              "ref": "D20",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "G20",
+              "column": "G",
+              "value": "100071 - GRADE CIVEMASA"
+            },
+            {
+              "ref": "H20",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J20",
+              "column": "J",
+              "value": "34d 02:42"
+            },
+            {
+              "ref": "K20",
+              "column": "K",
+              "value": "46179"
+            },
+            {
+              "ref": "L20",
+              "column": "L",
+              "value": "0.86805555555555558"
+            },
+            {
+              "ref": "M20",
+              "column": "M",
+              "value": "46179"
+            },
+            {
+              "ref": "N20",
+              "column": "N",
+              "value": "0.97916666666666663"
+            },
+            {
+              "ref": "S20",
+              "column": "S",
+              "value": "PNEU DO LADO ESQUERDO FURADO /O.S 21809973"
+            },
+            {
+              "ref": "AH20",
+              "column": "AH",
+              "value": "🔴 VENCIDA"
+            }
+          ]
+        },
+        {
+          "row": 21,
+          "cells": [
+            {
+              "ref": "D21",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "G21",
+              "column": "G",
+              "value": "600 - SUBSOLADOR DE ARRASTO"
+            },
+            {
+              "ref": "H21",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J21",
+              "column": "J",
+              "value": "34d 03:32"
+            },
+            {
+              "ref": "K21",
+              "column": "K",
+              "value": "46179"
+            },
+            {
+              "ref": "L21",
+              "column": "L",
+              "value": "0.83333333333333337"
+            },
+            {
+              "ref": "S21",
+              "column": "S",
+              "value": "DISPONIVEL"
+            }
+          ]
+        },
+        {
+          "row": 22,
+          "cells": [
+            {
+              "ref": "D22",
+              "column": "D",
+              "value": "SETOR E3"
+            },
+            {
+              "ref": "G22",
+              "column": "G",
+              "value": "1095 - PLANTADEIRA DE TORTA"
+            },
+            {
+              "ref": "H22",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J22",
+              "column": "J",
+              "value": "38d 06:32"
+            },
+            {
+              "ref": "K22",
+              "column": "K",
+              "value": "46175"
+            },
+            {
+              "ref": "L22",
+              "column": "L",
+              "value": "0.70833333333333337"
+            },
+            {
+              "ref": "S22",
+              "column": "S",
+              "value": "DISPONIVEL"
+            }
+          ]
+        },
+        {
+          "row": 23,
+          "cells": [
+            {
+              "ref": "D23",
+              "column": "D",
+              "value": "ARTUR REIS"
+            },
+            {
+              "ref": "F23",
+              "column": "F",
+              "value": "964"
+            },
+            {
+              "ref": "H23",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J23",
+              "column": "J",
+              "value": "41d 08:56"
+            },
+            {
+              "ref": "K23",
+              "column": "K",
+              "value": "46172"
+            },
+            {
+              "ref": "L23",
+              "column": "L",
+              "value": "0.60833333333333328"
+            },
+            {
+              "ref": "S23",
+              "column": "S",
+              "value": "NÃO TÁ PASSANDO MACHA FICA SÓ NA 7 MACHA LOC: FAZ. ARTUR REIS /O.S - 21806861"
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "F",
+            "header": "FROTA",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "OS FROTA / SERVIÇO / OPERACÃO",
+            "row": 7
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 10
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 17
+          },
+          {
+            "column": "S",
+            "header": "FROTA-RETIRARA PNEUS, MEXER NO AR CONDICIONADO",
+            "row": 17
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 18
+          }
+        ],
+        "status": [
+          {
+            "column": "H",
+            "header": "STATUS",
+            "row": 7
+          }
+        ],
+        "descricao": [
+          {
+            "column": "S",
+            "header": "DESCRIÇÃO",
+            "row": 5
+          }
+        ],
+        "setor": [
+          {
+            "column": "D",
+            "header": "SETOR",
+            "row": 7
+          },
+          {
+            "column": "D",
+            "header": "SETOR E3",
+            "row": 12
+          },
+          {
+            "column": "D",
+            "header": "SETOR E3",
+            "row": 22
+          }
+        ],
+        "horario": [
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO PARADA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO DA QUEBRA",
+            "row": 6
+          },
+          {
+            "column": "O",
+            "header": "INÍCIO",
+            "row": 6
+          },
+          {
+            "column": "Q",
+            "header": "FIM",
+            "row": 6
+          },
+          {
+            "column": "J",
+            "header": "HORAS",
+            "row": 7
+          },
+          {
+            "column": "L",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "N",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "P",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "R",
+            "header": "HORA",
+            "row": 7
+          }
+        ],
+        "operador": [],
+        "implemento": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "G",
+            "header": "IMPLEMENTO",
+            "row": 7
+          }
+        ],
+        "observacoes": []
+      }
+    },
+    {
+      "name": "PREPARO DE SOLO",
+      "sheetId": "18",
+      "relationshipId": "rId3",
+      "state": "visible",
+      "order": 3,
+      "path": "xl/worksheets/sheet3.xml",
+      "dimension": "A1:AL37",
+      "usedRows": 37,
+      "usedColumns": 38,
+      "mergedCells": [
+        "D16:E16",
+        "D15:E15",
+        "D14:E14",
+        "M31:N31",
+        "D29:E29",
+        "D31:E31",
+        "D22:E22",
+        "D19:E19",
+        "D21:E21",
+        "D23:E23",
+        "D20:E20",
+        "J31:L31",
+        "M30:N30",
+        "J30:L30",
+        "M19:N19",
+        "D24:E24",
+        "D18:E18",
+        "D17:E17",
+        "G34:G36",
+        "D27:E27",
+        "D28:E28",
+        "D30:G30",
+        "D26:E26",
+        "D2:S4",
+        "F5:I6",
+        "J5:J6",
+        "K5:L5",
+        "M5:N5",
+        "S5:S6",
+        "K6:L6",
+        "M6:N6",
+        "M14:N14",
+        "D7:E7",
+        "D12:E12",
+        "D8:E8",
+        "D9:E9",
+        "D13:E13",
+        "D10:E10",
+        "D11:E11"
+      ],
+      "formulas": [
+        {
+          "cell": "D6",
+          "formula": "TEXT(NOW(),\"hh\")&\"H\"",
+          "array": false
+        },
+        {
+          "cell": "E6",
+          "formula": "\"Data: \"&TEXT(TODAY(),\"dd/mm\")&\" - \"&IF(AND(NOW()-TODAY()>=TIME(3,0,0),NOW()-TODAY()<TIME(11,0,0)),\"Turno A\",IF(AND(NOW()-TODAY()>=TIME(11,0,0),NOW()-TODAY()<TIME(19,0,0)),\"Turno B\",\"Turno C\"))",
+          "array": false
+        },
+        {
+          "cell": "J8",
+          "formula": "IF(K8=\"\",\"\",IF(OR(H8=\"P\",H8=\"D\"),INT(NOW()-(K8+L8))&\"d \"&TEXT(NOW()-(K8+L8),\"hh:mm\"),\"\"))",
+          "array": false
+        },
+        {
+          "cell": "AG8",
+          "formula": "IF(M8=\"\",\"\",IF(N8=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M8+N8,\"🔴 VENCIDA\",IF((M8+N8)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J9",
+          "formula": "IF(K9=\"\",\"\",IF(OR(H9=\"P\",H9=\"D\"),INT(NOW()-(K9+L9))&\"d \"&TEXT(NOW()-(K9+L9),\"hh:mm\"),\"\"))",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "AG9",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J10",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "AG10",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J11",
+          "formula": "IF(K11=\"\",\"\",IF(OR(H11=\"P\",H11=\"D\"),INT(NOW()-(K11+L11))&\"d \"&TEXT(NOW()-(K11+L11),\"hh:mm\"),\"\"))",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG11",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J12",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG12",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J13",
+          "formula": "IF(K13=\"\",\"\",IF(OR(H13=\"P\",H13=\"D\"),INT(NOW()-(K13+L13))&\"d \"&TEXT(NOW()-(K13+L13),\"hh:mm\"),\"\"))",
+          "shared": "3",
+          "array": false
+        },
+        {
+          "cell": "AG13",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J14",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG14",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J15",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG15",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J16",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG16",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J17",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG17",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J18",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG18",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J19",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG19",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J20",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG20",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J21",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG21",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J22",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG22",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J23",
+          "formula": "IF(K23=\"\",\"\",IF(OR(H23=\"P\",H23=\"D\"),INT(NOW()-(K23+L23))&\"d \"&TEXT(NOW()-(K23+L23),\"hh:mm\"),\"\"))",
+          "array": false
+        },
+        {
+          "cell": "AG23",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J24",
+          "formula": "IF(K24=\"\",\"\",IF(OR(H24=\"P\",H24=\"D\"),INT(NOW()-(K24+L24))&\"d \"&TEXT(NOW()-(K24+L24),\"hh:mm\"),\"\"))",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG24",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "AG25",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J26",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG26",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J27",
+          "formula": "IF(K27=\"\",\"\",IF(OR(H27=\"P\",H27=\"D\"),INT(NOW()-(K27+L27))&\"d \"&TEXT(NOW()-(K27+L27),\"hh:mm\"),\"\"))",
+          "array": false
+        },
+        {
+          "cell": "AG27",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J28",
+          "formula": "IF(K28=\"\",\"\",IF(OR(H28=\"P\",H28=\"D\"),INT(NOW()-(K28+L28))&\"d \"&TEXT(NOW()-(K28+L28),\"hh:mm\"),\"\"))",
+          "shared": "5",
+          "array": false
+        },
+        {
+          "cell": "AG28",
+          "formula": "",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "J29",
+          "formula": "IF(K29=\"\",\"\",IF(OR(H29=\"P\",H29=\"D\"),INT(NOW()-(K29+L29))&\"d \"&TEXT(NOW()-(K29+L29),\"hh:mm\"),\"\"))",
+          "shared": "6",
+          "array": false
+        },
+        {
+          "cell": "AG29",
+          "formula": "IF(M29=\"\",\"\",IF(N29=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M29+N29,\"🔴 VENCIDA\",IF((M29+N29)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "shared": "7",
+          "array": false
+        },
+        {
+          "cell": "D30",
+          "formula": "\"LÍDER DO TURNO: \"&IF(AND(HOUR(NOW())>=3,HOUR(NOW())<11),\"WEBERT REIS\",\nIF(AND(HOUR(NOW())>=11,HOUR(NOW())<19),\"WANDERSON\",\n\"DIACKSON\"))",
+          "array": false
+        },
+        {
+          "cell": "I30",
+          "formula": "SUMIFS(#REF!,#REF!,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "M30",
+          "formula": "COUNTIFS(H8:I29,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "F31",
+          "formula": "COUNTA(F8:F29)+COUNTA(G8:G29)",
+          "array": false
+        },
+        {
+          "cell": "G31",
+          "formula": "\"EFICIÊNCIA DA FRENTE: \"&TEXT(COUNTIF(H8:H29,\"R\")/COUNT(F8:F29),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "I31",
+          "formula": "I30",
+          "array": false
+        },
+        {
+          "cell": "M31",
+          "formula": "COUNTIFS(H8:H28,\"p\")",
+          "array": false
+        },
+        {
+          "cell": "S31",
+          "formula": "\"DISPONIBILIDADE MECÂNICA: \"&TEXT((COUNTIF(H8:H29,\"D\")+COUNTIF(H8:H29,\"R\"))/COUNTA(H8:H29),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G32",
+          "formula": "\"EFICIÊNCIA PREVISTA: \"&TEXT((COUNTIF(H8:H17,\"R\")+COUNT(N9:N17))/(COUNT(F8:F17)),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G34",
+          "formula": "IF(SUM(--(COUNTIF(F8:F29,F8:F29)>1))>0,\"⚠ EXISTEM FROTAS DUPLICADAS\",\"✓ SEM DUPLICIDADES\")",
+          "array": true
+        }
+      ],
+      "conditionalFormattingCount": 99,
+      "dataValidationsCount": 1,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [],
+      "shapesOrButtons": [
+        "xl/drawings/drawing3.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [
+        "REF"
+      ],
+      "protected": false,
+      "lockedCellCountEstimate": 884,
+      "unlockedCellCountEstimate": 107,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 1
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "scale": "43",
+        "orientation": "landscape",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "hiddenColumns": [
+        "1:1",
+        "9:9",
+        "15:15",
+        "16:16",
+        "17:17",
+        "18:18",
+        "22:22",
+        "23:24",
+        "25:25",
+        "26:26",
+        "27:27",
+        "28:28",
+        "29:29",
+        "30:31",
+        "32:32"
+      ],
+      "rowSamples": [
+        {
+          "row": 2,
+          "cells": [
+            {
+              "ref": "D2",
+              "column": "D",
+              "value": "PREPARO DE SOLO"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "E5",
+              "column": "E",
+              "value": "DATA"
+            },
+            {
+              "ref": "F5",
+              "column": "F",
+              "value": "TRATORES / IMPLEMENTOS"
+            },
+            {
+              "ref": "J5",
+              "column": "J",
+              "value": "TEMPO PARADO"
+            },
+            {
+              "ref": "K5",
+              "column": "K",
+              "value": "INÍCIO PARADA"
+            },
+            {
+              "ref": "M5",
+              "column": "M",
+              "value": "PREVISÃO"
+            },
+            {
+              "ref": "O5",
+              "column": "O",
+              "value": "PROGRAMAÇÃO DE PARADA"
+            },
+            {
+              "ref": "S5",
+              "column": "S",
+              "value": "DESCRIÇÃO"
+            },
+            {
+              "ref": "AG5",
+              "column": "AG",
+              "value": "Isto e um aviso da previsão"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "23H"
+            },
+            {
+              "ref": "E6",
+              "column": "E",
+              "value": "Data: 10/07 - Turno C"
+            },
+            {
+              "ref": "K6",
+              "column": "K",
+              "value": "INICIO DA QUEBRA"
+            },
+            {
+              "ref": "M6",
+              "column": "M",
+              "value": "PREVISÃO DE RETORNO"
+            },
+            {
+              "ref": "O6",
+              "column": "O",
+              "value": "INÍCIO"
+            },
+            {
+              "ref": "Q6",
+              "column": "Q",
+              "value": "FIM"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "SETOR"
+            },
+            {
+              "ref": "F7",
+              "column": "F",
+              "value": "FROTA"
+            },
+            {
+              "ref": "G7",
+              "column": "G",
+              "value": "IMPLEMENTO"
+            },
+            {
+              "ref": "H7",
+              "column": "H",
+              "value": "STATUS"
+            },
+            {
+              "ref": "I7",
+              "column": "I",
+              "value": "RENDIMENTO ATUAL"
+            },
+            {
+              "ref": "J7",
+              "column": "J",
+              "value": "HORAS"
+            },
+            {
+              "ref": "K7",
+              "column": "K",
+              "value": "DATA"
+            },
+            {
+              "ref": "L7",
+              "column": "L",
+              "value": "HORA"
+            },
+            {
+              "ref": "M7",
+              "column": "M",
+              "value": "DATA"
+            },
+            {
+              "ref": "N7",
+              "column": "N",
+              "value": "HORA"
+            },
+            {
+              "ref": "O7",
+              "column": "O",
+              "value": "DATA"
+            },
+            {
+              "ref": "P7",
+              "column": "P",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q7",
+              "column": "Q",
+              "value": "DATA"
+            },
+            {
+              "ref": "R7",
+              "column": "R",
+              "value": "HORA"
+            },
+            {
+              "ref": "S7",
+              "column": "S",
+              "value": "OS FROTA / SERVIÇO / OPERAÇÃO"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F8",
+              "column": "F",
+              "value": "1605"
+            },
+            {
+              "ref": "G8",
+              "column": "G",
+              "value": "-"
+            },
+            {
+              "ref": "H8",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J8",
+              "column": "J",
+              "value": "8d 07:30"
+            },
+            {
+              "ref": "K8",
+              "column": "K",
+              "value": "46205"
+            },
+            {
+              "ref": "L8",
+              "column": "L",
+              "value": "0.66805555555555551"
+            },
+            {
+              "ref": "M8",
+              "column": "M",
+              "value": "46218"
+            },
+            {
+              "ref": "N8",
+              "column": "N",
+              "value": "0.70833333333333337"
+            },
+            {
+              "ref": "S8",
+              "column": "S",
+              "value": "1605- RETENTOR DO VOLANTE DO MOTOR ESTOURADO /O.S - 21826756"
+            },
+            {
+              "ref": "AG8",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F9",
+              "column": "F",
+              "value": "1604"
+            },
+            {
+              "ref": "G9",
+              "column": "G",
+              "value": "100071 - GRADE CIVEMASA"
+            },
+            {
+              "ref": "H9",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J9",
+              "column": "J",
+              "value": "3d 21:32"
+            },
+            {
+              "ref": "K9",
+              "column": "K",
+              "value": "46210"
+            },
+            {
+              "ref": "L9",
+              "column": "L",
+              "value": "8.3333333333333329E-2"
+            },
+            {
+              "ref": "M9",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N9",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S9",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG9",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F10",
+              "column": "F",
+              "value": "1602"
+            },
+            {
+              "ref": "G10",
+              "column": "G",
+              "value": "1063 - PLANTADORA DE COMPOSTO"
+            },
+            {
+              "ref": "H10",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J10",
+              "column": "J",
+              "value": "3d 07:56"
+            },
+            {
+              "ref": "K10",
+              "column": "K",
+              "value": "46210"
+            },
+            {
+              "ref": "L10",
+              "column": "L",
+              "value": "0.65"
+            },
+            {
+              "ref": "M10",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N10",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S10",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG10",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 11,
+          "cells": [
+            {
+              "ref": "D11",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F11",
+              "column": "F",
+              "value": "1601"
+            },
+            {
+              "ref": "G11",
+              "column": "G",
+              "value": "-"
+            },
+            {
+              "ref": "H11",
+              "column": "H",
+              "value": "D"
+            }
+          ]
+        },
+        {
+          "row": 12,
+          "cells": [
+            {
+              "ref": "D12",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F12",
+              "column": "F",
+              "value": "1532"
+            },
+            {
+              "ref": "G12",
+              "column": "G",
+              "value": "643 - SUBSOLADOR PESADO"
+            },
+            {
+              "ref": "H12",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "S12",
+              "column": "S",
+              "value": "DANDO APOIO PARA A  IRRIGAÇÃO"
+            }
+          ]
+        },
+        {
+          "row": 13,
+          "cells": [
+            {
+              "ref": "D13",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F13",
+              "column": "F",
+              "value": "864"
+            },
+            {
+              "ref": "G13",
+              "column": "G",
+              "value": "300 - GRADE NIVELADORA"
+            },
+            {
+              "ref": "H13",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "M13",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N13",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S13",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG13",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 14,
+          "cells": [
+            {
+              "ref": "D14",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F14",
+              "column": "F",
+              "value": "1405"
+            },
+            {
+              "ref": "G14",
+              "column": "G",
+              "value": "MOTONIVELADORA"
+            },
+            {
+              "ref": "H14",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J14",
+              "column": "J",
+              "value": "16d 02:33"
+            },
+            {
+              "ref": "K14",
+              "column": "K",
+              "value": "46197"
+            },
+            {
+              "ref": "L14",
+              "column": "L",
+              "value": "0.87430555555555556"
+            },
+            {
+              "ref": "M14",
+              "column": "M",
+              "value": "SEM PREVISÃO"
+            },
+            {
+              "ref": "S14",
+              "column": "S",
+              "value": "1405  -CORTANDO DIESEL - NORTE DIESEL  /O.S - 21818142"
+            },
+            {
+              "ref": "AG14",
+              "column": "AG",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 15,
+          "cells": [
+            {
+              "ref": "D15",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F15",
+              "column": "F",
+              "value": "870392"
+            },
+            {
+              "ref": "G15",
+              "column": "G",
+              "value": "PÁ CARREGADEIRA"
+            },
+            {
+              "ref": "H15",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J15",
+              "column": "J",
+              "value": "2d 18:28"
+            },
+            {
+              "ref": "K15",
+              "column": "K",
+              "value": "46211"
+            },
+            {
+              "ref": "L15",
+              "column": "L",
+              "value": "0.21111111111111111"
+            },
+            {
+              "ref": "M15",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N15",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S15",
+              "column": "S",
+              "value": "DISPONIVEL"
+            },
+            {
+              "ref": "AG15",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 16,
+          "cells": [
+            {
+              "ref": "D16",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F16",
+              "column": "F",
+              "value": "746"
+            },
+            {
+              "ref": "G16",
+              "column": "G",
+              "value": "837 - SUBSOLADOR"
+            },
+            {
+              "ref": "H16",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J16",
+              "column": "J",
+              "value": "2d 01:05"
+            },
+            {
+              "ref": "K16",
+              "column": "K",
+              "value": "46211"
+            },
+            {
+              "ref": "L16",
+              "column": "L",
+              "value": "0.93541666666666667"
+            },
+            {
+              "ref": "M16",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N16",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S16",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG16",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 17,
+          "cells": [
+            {
+              "ref": "D17",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F17",
+              "column": "F",
+              "value": "1603"
+            },
+            {
+              "ref": "G17",
+              "column": "G",
+              "value": "1095 - PLANTADEIRA DE TORTA"
+            },
+            {
+              "ref": "H17",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J17",
+              "column": "J",
+              "value": "2d 20:09"
+            },
+            {
+              "ref": "K17",
+              "column": "K",
+              "value": "46211"
+            },
+            {
+              "ref": "L17",
+              "column": "L",
+              "value": "0.14097222222222222"
+            },
+            {
+              "ref": "M17",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N17",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S17",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG17",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 18,
+          "cells": [
+            {
+              "ref": "D18",
+              "column": "D",
+              "value": "CHAPADINHA"
+            },
+            {
+              "ref": "F18",
+              "column": "F",
+              "value": "964"
+            },
+            {
+              "ref": "G18",
+              "column": "G",
+              "value": "800 - PLAINA"
+            },
+            {
+              "ref": "H18",
+              "column": "H",
+              "value": "D"
+            },
+            {
+              "ref": "J18",
+              "column": "J",
+              "value": "2d 07:50"
+            },
+            {
+              "ref": "K18",
+              "column": "K",
+              "value": "46211"
+            },
+            {
+              "ref": "L18",
+              "column": "L",
+              "value": "0.65416666666666667"
+            },
+            {
+              "ref": "M18",
+              "column": "M",
+              "value": "46214"
+            },
+            {
+              "ref": "N18",
+              "column": "N",
+              "value": "0.29166666666666669"
+            },
+            {
+              "ref": "S18",
+              "column": "S",
+              "value": "AG. ÁREA"
+            },
+            {
+              "ref": "AG18",
+              "column": "AG",
+              "value": "🟢 NO PRAZO"
+            }
+          ]
+        },
+        {
+          "row": 19,
+          "cells": [
+            {
+              "ref": "G19",
+              "column": "G",
+              "value": "1094 - PLANTADEIRA DE TORTA"
+            },
+            {
+              "ref": "H19",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J19",
+              "column": "J",
+              "value": "18d 23:42"
+            },
+            {
+              "ref": "K19",
+              "column": "K",
+              "value": "46194"
+            },
+            {
+              "ref": "L19",
+              "column": "L",
+              "value": "0.99305555555555558"
+            },
+            {
+              "ref": "M19",
+              "column": "M",
+              "value": "AG. MATERIAL"
+            },
+            {
+              "ref": "S19",
+              "column": "S",
+              "value": "1094- TROCAR OS MANCAL DAS ESTEIRAS /O.S - 21816646"
+            },
+            {
+              "ref": "AG19",
+              "column": "AG",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 20,
+          "cells": [
+            {
+              "ref": "G20",
+              "column": "G",
+              "value": "100072 - GRADE CIVEMASA"
+            },
+            {
+              "ref": "H20",
+              "column": "H",
+              "value": "D"
+            }
+          ]
+        },
+        {
+          "row": 21,
+          "cells": [
+            {
+              "ref": "G21",
+              "column": "G",
+              "value": "426 - GRADE PESADA TATU"
+            },
+            {
+              "ref": "H21",
+              "column": "H",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "row": 22,
+          "cells": [
+            {
+              "ref": "D22",
+              "column": "D",
+              "value": "ARTUR REIS"
+            },
+            {
+              "ref": "G22",
+              "column": "G",
+              "value": "ONIBUS OFICINA"
+            },
+            {
+              "ref": "H22",
+              "column": "H",
+              "value": "E"
+            },
+            {
+              "ref": "S22",
+              "column": "S",
+              "value": "EMPRESTADA - FAZ. ARTHUR REIS"
+            }
+          ]
+        },
+        {
+          "row": 23,
+          "cells": [
+            {
+              "ref": "F23",
+              "column": "F",
+              "value": "535"
+            },
+            {
+              "ref": "G23",
+              "column": "G",
+              "value": "261 - GRADE NÍVEL"
+            },
+            {
+              "ref": "H23",
+              "column": "H",
+              "value": "E"
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "F",
+            "header": "FROTA",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+            "row": 7
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 8
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 14
+          }
+        ],
+        "status": [
+          {
+            "column": "H",
+            "header": "STATUS",
+            "row": 7
+          }
+        ],
+        "descricao": [
+          {
+            "column": "S",
+            "header": "DESCRIÇÃO",
+            "row": 5
+          }
+        ],
+        "setor": [
+          {
+            "column": "D",
+            "header": "SETOR",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 9
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 10
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 13
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 16
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 17
+          },
+          {
+            "column": "S",
+            "header": "AG. ÁREA",
+            "row": 18
+          }
+        ],
+        "horario": [
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INÍCIO PARADA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO DA QUEBRA",
+            "row": 6
+          },
+          {
+            "column": "O",
+            "header": "INÍCIO",
+            "row": 6
+          },
+          {
+            "column": "Q",
+            "header": "FIM",
+            "row": 6
+          },
+          {
+            "column": "J",
+            "header": "HORAS",
+            "row": 7
+          },
+          {
+            "column": "L",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "N",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "P",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "R",
+            "header": "HORA",
+            "row": 7
+          }
+        ],
+        "operador": [],
+        "implemento": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "G",
+            "header": "IMPLEMENTO",
+            "row": 7
+          }
+        ],
+        "observacoes": []
+      }
+    },
+    {
+      "name": "PLANTIO",
+      "sheetId": "25",
+      "relationshipId": "rId4",
+      "state": "visible",
+      "order": 4,
+      "path": "xl/worksheets/sheet4.xml",
+      "dimension": "A1:AI26",
+      "usedRows": 26,
+      "usedColumns": 35,
+      "mergedCells": [
+        "M9:N9",
+        "M19:N19",
+        "M20:N20",
+        "D20:E20",
+        "G23:G25",
+        "D10:E10",
+        "D11:E11",
+        "D12:E12",
+        "J19:L19",
+        "J20:L20",
+        "M10:N10",
+        "M11:N11",
+        "D7:E7",
+        "D9:E9",
+        "D19:E19",
+        "D16:E16",
+        "D17:E17",
+        "D18:E18",
+        "D13:E13",
+        "D15:E15",
+        "K6:L6",
+        "M6:N6",
+        "J5:J6",
+        "S5:S6",
+        "D2:S4",
+        "F5:H6",
+        "K5:L5",
+        "M5:N5"
+      ],
+      "formulas": [
+        {
+          "cell": "D6",
+          "formula": "TEXT(NOW(),\"hh\")&\"H\"",
+          "array": false
+        },
+        {
+          "cell": "E6",
+          "formula": "\"Data: \"&TEXT(TODAY(),\"dd/mm\")&\" - \"&IF(AND(NOW()-TODAY()>=TIME(3,0,0),NOW()-TODAY()<TIME(11,0,0)),\"Turno A\",IF(AND(NOW()-TODAY()>=TIME(11,0,0),NOW()-TODAY()<TIME(19,0,0)),\"Turno B\",\"Turno C\"))",
+          "array": false
+        },
+        {
+          "cell": "J8",
+          "formula": "IF(K8=\"\",\"\",IF(OR(H8=\"P\",H8=\"D\"),INT(NOW()-(K8+L8))&\"d \"&TEXT(NOW()-(K8+L8),\"hh:mm\"),\"\"))",
+          "shared": "0",
+          "array": false
+        },
+        {
+          "cell": "AG8",
+          "formula": "IF(M8=\"\",\"\",IF(N8=\"\",\"⚠️ FALTA PREVISÃO\",IF(NOW()>M8+N8,\"🔴 VENCIDA\",IF((M8+N8)-NOW()<1/24,\"🟡 VENCE EM MENOS DE 1H\",\"🟢 NO PRAZO\"))))",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J9",
+          "formula": "IF(K9=\"\",\"\",IF(OR(H9=\"P\",H9=\"D\"),INT(NOW()-(K9+L9))&\"d \"&TEXT(NOW()-(K9+L9),\"hh:mm\"),\"\"))",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG9",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J10",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG10",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J11",
+          "formula": "",
+          "shared": "2",
+          "array": false
+        },
+        {
+          "cell": "AG11",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J12",
+          "formula": "IF(K12=\"\",\"\",IF(OR(H12=\"P\",H12=\"D\"),INT(NOW()-(K12+L12))&\"d \"&TEXT(NOW()-(K12+L12),\"hh:mm\"),\"\"))",
+          "shared": "3",
+          "array": false
+        },
+        {
+          "cell": "AG12",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J13",
+          "formula": "IF(K13=\"\",\"\",IF(OR(H13=\"P\",H13=\"D\"),INT(NOW()-(K13+L13))&\"d \"&TEXT(NOW()-(K13+L13),\"hh:mm\"),\"\"))",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG13",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J14",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG14",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J15",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG15",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J16",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG16",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J17",
+          "formula": "",
+          "shared": "4",
+          "array": false
+        },
+        {
+          "cell": "AG17",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "J18",
+          "formula": "IF(K18=\"\",\"\",IF(OR(H18=\"P\",H18=\"D\"),INT(NOW()-(K18+L18))&\"d \"&TEXT(NOW()-(K18+L18),\"hh:mm\"),\"\"))",
+          "shared": "5",
+          "array": false
+        },
+        {
+          "cell": "AG18",
+          "formula": "",
+          "shared": "1",
+          "array": false
+        },
+        {
+          "cell": "D19",
+          "formula": "\"LÍDER DO TURNO: \"&IF(AND(HOUR(NOW())>=3,HOUR(NOW())<11),\"WEBERT REIS\",\nIF(AND(HOUR(NOW())>=11,HOUR(NOW())<19),\"LEONARDO\",\n\"JHONATAN\"))",
+          "array": false
+        },
+        {
+          "cell": "I19",
+          "formula": "SUMIFS(#REF!,#REF!,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "M19",
+          "formula": "COUNTIFS(H8:I18,\"R\")",
+          "array": false
+        },
+        {
+          "cell": "F20",
+          "formula": "COUNTA(F8:F18)+COUNTA(G8:G18)",
+          "array": false
+        },
+        {
+          "cell": "G20",
+          "formula": "\"EFICIÊNCIA DA FRENTE: \"&TEXT(COUNTIF(H8:H18,\"R\")/COUNT(F8:F18),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "I20",
+          "formula": "I19",
+          "array": false
+        },
+        {
+          "cell": "M20",
+          "formula": "COUNTIFS(H8:H18,\"p\")",
+          "array": false
+        },
+        {
+          "cell": "S20",
+          "formula": "\"DISPONIBILIDADE MECÂNICA: \"&TEXT((COUNTIF(H8:H18,\"D\")+COUNTIF(H8:H18,\"R\"))/COUNTA(H8:H18),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G21",
+          "formula": "\"EFICIÊNCIA PREVISTA: \"&TEXT((COUNTIF(H8:H14,\"R\")+COUNT(N8:N18))/(COUNT(F8:F14)),\"0%\")",
+          "array": false
+        },
+        {
+          "cell": "G23",
+          "formula": "IF(SUM(--(COUNTIF(F8:F18,F8:F18)>1))>0,\"⚠ EXISTEM FROTAS DUPLICADAS\",\"✓ SEM DUPLICIDADES\")",
+          "array": true
+        }
+      ],
+      "conditionalFormattingCount": 62,
+      "dataValidationsCount": 1,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [],
+      "shapesOrButtons": [
+        "xl/drawings/drawing4.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [
+        "REF"
+      ],
+      "protected": false,
+      "lockedCellCountEstimate": 547,
+      "unlockedCellCountEstimate": 106,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 1
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "scale": "43",
+        "orientation": "landscape",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [
+        8,
+        14
+      ],
+      "hiddenColumns": [
+        "1:1",
+        "9:9",
+        "15:15",
+        "16:16",
+        "17:17",
+        "18:18",
+        "22:22",
+        "23:24",
+        "25:25",
+        "26:26",
+        "27:27",
+        "28:28",
+        "29:29",
+        "30:31",
+        "32:32"
+      ],
+      "rowSamples": [
+        {
+          "row": 2,
+          "cells": [
+            {
+              "ref": "D2",
+              "column": "D",
+              "value": "PLANTIO DE CANA"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "E5",
+              "column": "E",
+              "value": "DATA"
+            },
+            {
+              "ref": "F5",
+              "column": "F",
+              "value": "TRATORES / IMPLEMENTOS"
+            },
+            {
+              "ref": "J5",
+              "column": "J",
+              "value": "TEMPO PARADO"
+            },
+            {
+              "ref": "K5",
+              "column": "K",
+              "value": "INICIO PARADA"
+            },
+            {
+              "ref": "M5",
+              "column": "M",
+              "value": "PREVISÃO"
+            },
+            {
+              "ref": "O5",
+              "column": "O",
+              "value": "PROGRAMAÇÃO DE PARADA"
+            },
+            {
+              "ref": "S5",
+              "column": "S",
+              "value": "DESCRIÇÃO"
+            },
+            {
+              "ref": "AG5",
+              "column": "AG",
+              "value": "Isto e um aviso da previsão"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "23H"
+            },
+            {
+              "ref": "E6",
+              "column": "E",
+              "value": "Data: 10/07 - Turno C"
+            },
+            {
+              "ref": "K6",
+              "column": "K",
+              "value": "INICIO DA QUEBRA"
+            },
+            {
+              "ref": "M6",
+              "column": "M",
+              "value": "PREVISÃO DE RETORNO"
+            },
+            {
+              "ref": "O6",
+              "column": "O",
+              "value": "INÍCIO"
+            },
+            {
+              "ref": "Q6",
+              "column": "Q",
+              "value": "FIM"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "SETOR"
+            },
+            {
+              "ref": "F7",
+              "column": "F",
+              "value": "FROTA"
+            },
+            {
+              "ref": "G7",
+              "column": "G",
+              "value": "IMPLEMENTO"
+            },
+            {
+              "ref": "H7",
+              "column": "H",
+              "value": "STATUS"
+            },
+            {
+              "ref": "I7",
+              "column": "I",
+              "value": "RENDIMENTO ATUAL"
+            },
+            {
+              "ref": "J7",
+              "column": "J",
+              "value": "HORAS"
+            },
+            {
+              "ref": "K7",
+              "column": "K",
+              "value": "DATA"
+            },
+            {
+              "ref": "L7",
+              "column": "L",
+              "value": "HORA"
+            },
+            {
+              "ref": "M7",
+              "column": "M",
+              "value": "DATA"
+            },
+            {
+              "ref": "N7",
+              "column": "N",
+              "value": "HORA"
+            },
+            {
+              "ref": "O7",
+              "column": "O",
+              "value": "DATA"
+            },
+            {
+              "ref": "P7",
+              "column": "P",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q7",
+              "column": "Q",
+              "value": "DATA"
+            },
+            {
+              "ref": "R7",
+              "column": "R",
+              "value": "HORA"
+            },
+            {
+              "ref": "S7",
+              "column": "S",
+              "value": "OS FROTA / SERVIÇO / OPERACÃO"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "SIMONE"
+            },
+            {
+              "ref": "F8",
+              "column": "F",
+              "value": "1527"
+            },
+            {
+              "ref": "H8",
+              "column": "H",
+              "value": "E"
+            },
+            {
+              "ref": "S8",
+              "column": "S",
+              "value": "EMPRESTADA - FAZENDA SIMONE"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "FROTA"
+            },
+            {
+              "ref": "F9",
+              "column": "F",
+              "value": "1528"
+            },
+            {
+              "ref": "G9",
+              "column": "G",
+              "value": "2000 - PLANTADORA -  PROJETO"
+            },
+            {
+              "ref": "H9",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J9",
+              "column": "J",
+              "value": "31d 12:33"
+            },
+            {
+              "ref": "K9",
+              "column": "K",
+              "value": "46182"
+            },
+            {
+              "ref": "L9",
+              "column": "L",
+              "value": "0.45763888888888887"
+            },
+            {
+              "ref": "M9",
+              "column": "M",
+              "value": "SEM PREVISÃO"
+            },
+            {
+              "ref": "S9",
+              "column": "S",
+              "value": "FROTA - ESTÁ ACOPLADA DO PROJETO - AGUARDANDO FINALIZAÇÃO DO PROJETO"
+            },
+            {
+              "ref": "AG9",
+              "column": "AG",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F10",
+              "column": "F",
+              "value": "1529"
+            },
+            {
+              "ref": "G10",
+              "column": "G",
+              "value": "2003 - PLANTADORA - PROJETO"
+            },
+            {
+              "ref": "H10",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J10",
+              "column": "J",
+              "value": "0d 06:53"
+            },
+            {
+              "ref": "K10",
+              "column": "K",
+              "value": "46213"
+            },
+            {
+              "ref": "L10",
+              "column": "L",
+              "value": "0.69374999999999998"
+            },
+            {
+              "ref": "M10",
+              "column": "M",
+              "value": "SEM PREVISÃO"
+            },
+            {
+              "ref": "S10",
+              "column": "S",
+              "value": "ATOLADA"
+            },
+            {
+              "ref": "AG10",
+              "column": "AG",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 11,
+          "cells": [
+            {
+              "ref": "D11",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F11",
+              "column": "F",
+              "value": "1530"
+            },
+            {
+              "ref": "G11",
+              "column": "G",
+              "value": "2006 - PLANTADORA"
+            },
+            {
+              "ref": "H11",
+              "column": "H",
+              "value": "P"
+            },
+            {
+              "ref": "J11",
+              "column": "J",
+              "value": "0d 01:28"
+            },
+            {
+              "ref": "K11",
+              "column": "K",
+              "value": "46213"
+            },
+            {
+              "ref": "L11",
+              "column": "L",
+              "value": "0.9194444444444444"
+            },
+            {
+              "ref": "M11",
+              "column": "M",
+              "value": "SEM PREVISÃO"
+            },
+            {
+              "ref": "S11",
+              "column": "S",
+              "value": "ATOLADA"
+            },
+            {
+              "ref": "X11",
+              "column": "X",
+              "value": "/ /"
+            },
+            {
+              "ref": "Y11",
+              "column": "Y",
+              "value": "0"
+            },
+            {
+              "ref": "AA11",
+              "column": "AA",
+              "value": "/ /"
+            },
+            {
+              "ref": "AB11",
+              "column": "AB",
+              "value": "0"
+            },
+            {
+              "ref": "AC11",
+              "column": "AC",
+              "value": "14"
+            },
+            {
+              "ref": "AD11",
+              "column": "AD",
+              "value": "1"
+            },
+            {
+              "ref": "AE11",
+              "column": "AE",
+              "value": "CUPUAÇU"
+            },
+            {
+              "ref": "AF11",
+              "column": "AF",
+              "value": "0"
+            },
+            {
+              "ref": "AG11",
+              "column": "AG",
+              "value": "⚠️ FALTA PREVISÃO"
+            }
+          ]
+        },
+        {
+          "row": 12,
+          "cells": [
+            {
+              "ref": "D12",
+              "column": "D",
+              "value": "RAFAEL PANDOLFI"
+            },
+            {
+              "ref": "F12",
+              "column": "F",
+              "value": "1531"
+            },
+            {
+              "ref": "G12",
+              "column": "G",
+              "value": "830 - PLANTADORA"
+            },
+            {
+              "ref": "H12",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 13,
+          "cells": [
+            {
+              "ref": "F13",
+              "column": "F",
+              "value": "164"
+            },
+            {
+              "ref": "G13",
+              "column": "G",
+              "value": "ONIBUS OFICINA"
+            },
+            {
+              "ref": "H13",
+              "column": "H",
+              "value": "R"
+            }
+          ]
+        },
+        {
+          "row": 14,
+          "cells": [
+            {
+              "ref": "D14",
+              "column": "D",
+              "value": "CUPUAÇU 5"
+            },
+            {
+              "ref": "F14",
+              "column": "F",
+              "value": "1532"
+            },
+            {
+              "ref": "H14",
+              "column": "H",
+              "value": "D"
+            }
+          ]
+        },
+        {
+          "row": 16,
+          "cells": [
+            {
+              "ref": "D16",
+              "column": "D",
+              "value": "LIDER TURNO A:WELLINGTON"
+            }
+          ]
+        },
+        {
+          "row": 17,
+          "cells": [
+            {
+              "ref": "D17",
+              "column": "D",
+              "value": "LIDER TURNO B:WANDERSON"
+            }
+          ]
+        },
+        {
+          "row": 18,
+          "cells": [
+            {
+              "ref": "D18",
+              "column": "D",
+              "value": "LIDER TURNO C:JHONATAN"
+            }
+          ]
+        },
+        {
+          "row": 19,
+          "cells": [
+            {
+              "ref": "D19",
+              "column": "D",
+              "value": "LÍDER DO TURNO: JHONATAN"
+            },
+            {
+              "ref": "I19",
+              "column": "I",
+              "value": "#REF!"
+            },
+            {
+              "ref": "J19",
+              "column": "J",
+              "value": "TOTAL DE MAQUINAS RODANDO"
+            },
+            {
+              "ref": "M19",
+              "column": "M",
+              "value": "2"
+            }
+          ]
+        },
+        {
+          "row": 20,
+          "cells": [
+            {
+              "ref": "D20",
+              "column": "D",
+              "value": "TOTAL DE EQUIPAMENTO"
+            },
+            {
+              "ref": "F20",
+              "column": "F",
+              "value": "12"
+            },
+            {
+              "ref": "G20",
+              "column": "G",
+              "value": "EFICIÊNCIA DA FRENTE: 29%"
+            },
+            {
+              "ref": "I20",
+              "column": "I",
+              "value": "#REF!"
+            },
+            {
+              "ref": "J20",
+              "column": "J",
+              "value": "TOTAL DE MAQUINAS PARADAS"
+            },
+            {
+              "ref": "M20",
+              "column": "M",
+              "value": "3"
+            },
+            {
+              "ref": "S20",
+              "column": "S",
+              "value": "DISPONIBILIDADE MECÂNICA: 43%"
+            }
+          ]
+        },
+        {
+          "row": 21,
+          "cells": [
+            {
+              "ref": "G21",
+              "column": "G",
+              "value": "EFICIÊNCIA PREVISTA: 29%"
+            }
+          ]
+        },
+        {
+          "row": 23,
+          "cells": [
+            {
+              "ref": "G23",
+              "column": "G",
+              "value": "✓ SEM DUPLICIDADES"
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "F",
+            "header": "FROTA",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "OS FROTA / SERVIÇO / OPERACÃO",
+            "row": 7
+          },
+          {
+            "column": "D",
+            "header": "FROTA",
+            "row": 9
+          },
+          {
+            "column": "S",
+            "header": "FROTA - ESTÁ ACOPLADA DO PROJETO - AGUARDANDO FINALIZAÇÃO DO PROJETO",
+            "row": 9
+          },
+          {
+            "column": "J",
+            "header": "TOTAL DE MAQUINAS RODANDO",
+            "row": 19
+          },
+          {
+            "column": "D",
+            "header": "TOTAL DE EQUIPAMENTO",
+            "row": 20
+          },
+          {
+            "column": "J",
+            "header": "TOTAL DE MAQUINAS PARADAS",
+            "row": 20
+          }
+        ],
+        "status": [
+          {
+            "column": "H",
+            "header": "STATUS",
+            "row": 7
+          }
+        ],
+        "descricao": [
+          {
+            "column": "S",
+            "header": "DESCRIÇÃO",
+            "row": 5
+          }
+        ],
+        "setor": [
+          {
+            "column": "D",
+            "header": "SETOR",
+            "row": 7
+          },
+          {
+            "column": "S",
+            "header": "EMPRESTADA - FAZENDA SIMONE",
+            "row": 8
+          }
+        ],
+        "horario": [
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO PARADA",
+            "row": 5
+          },
+          {
+            "column": "K",
+            "header": "INICIO DA QUEBRA",
+            "row": 6
+          },
+          {
+            "column": "O",
+            "header": "INÍCIO",
+            "row": 6
+          },
+          {
+            "column": "Q",
+            "header": "FIM",
+            "row": 6
+          },
+          {
+            "column": "J",
+            "header": "HORAS",
+            "row": 7
+          },
+          {
+            "column": "L",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "N",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "P",
+            "header": "HORA",
+            "row": 7
+          },
+          {
+            "column": "R",
+            "header": "HORA",
+            "row": 7
+          }
+        ],
+        "operador": [
+          {
+            "column": "D",
+            "header": "LIDER TURNO A:WELLINGTON",
+            "row": 16
+          },
+          {
+            "column": "D",
+            "header": "LIDER TURNO B:WANDERSON",
+            "row": 17
+          },
+          {
+            "column": "D",
+            "header": "LIDER TURNO C:JHONATAN",
+            "row": 18
+          },
+          {
+            "column": "D",
+            "header": "LÍDER DO TURNO: JHONATAN",
+            "row": 19
+          }
+        ],
+        "implemento": [
+          {
+            "column": "F",
+            "header": "TRATORES / IMPLEMENTOS",
+            "row": 5
+          },
+          {
+            "column": "G",
+            "header": "IMPLEMENTO",
+            "row": 7
+          }
+        ],
+        "observacoes": []
+      }
+    },
+    {
+      "name": "PRODUCÃO DAS OPERAÇÕES",
+      "sheetId": "21",
+      "relationshipId": "rId5",
+      "state": "visible",
+      "order": 5,
+      "path": "xl/worksheets/sheet5.xml",
+      "dimension": "A1:X28",
+      "usedRows": 28,
+      "usedColumns": 24,
+      "mergedCells": [
+        "O26:P26",
+        "J20:M21",
+        "J27:K27",
+        "J28:K28",
+        "O27:P27",
+        "O20:R21",
+        "Q23:R23",
+        "J24:K24",
+        "L24:M24",
+        "O24:P24",
+        "Q24:R24",
+        "J25:K25",
+        "O25:P25",
+        "D27:E27",
+        "D28:E28",
+        "O15:P15",
+        "O16:P16",
+        "D20:G21",
+        "F23:G23",
+        "D24:E24",
+        "F24:G24",
+        "J23:K23",
+        "L23:M23",
+        "O23:P23",
+        "D26:E26",
+        "D23:E23",
+        "D25:E25",
+        "O28:P28",
+        "J26:K26",
+        "O9:P9",
+        "O10:P10",
+        "O11:P11",
+        "O12:P12",
+        "O13:P13",
+        "O14:P14",
+        "J14:K14",
+        "J15:K15",
+        "J16:K16",
+        "O2:R3",
+        "O5:P5",
+        "Q5:R5",
+        "O6:P6",
+        "Q6:R6",
+        "O7:P7",
+        "O8:P8",
+        "J8:K8",
+        "J9:K9",
+        "J10:K10",
+        "J11:K11",
+        "J12:K12",
+        "J13:K13",
+        "J7:K7",
+        "J2:M3",
+        "J5:K5",
+        "L5:M5",
+        "J6:K6",
+        "L6:M6",
+        "J4:M4",
+        "D11:E11",
+        "D9:E9",
+        "D10:E10",
+        "D7:E7",
+        "D4:G4",
+        "T3:U3",
+        "O4:R4",
+        "D22:G22",
+        "J22:M22",
+        "O22:R22",
+        "D2:G3",
+        "D14:E14",
+        "D16:E16",
+        "D8:E8",
+        "D12:E12",
+        "D13:E13",
+        "D15:E15",
+        "F5:G5",
+        "F6:G6",
+        "D5:E5",
+        "D6:E6"
+      ],
+      "formulas": [
+        {
+          "cell": "F6",
+          "formula": "U4",
+          "array": false
+        },
+        {
+          "cell": "L6",
+          "formula": "U4",
+          "array": false
+        },
+        {
+          "cell": "Q6",
+          "formula": "U4",
+          "array": false
+        },
+        {
+          "cell": "T11",
+          "formula": "\"No dia \"&TEXT(TODAY()*1,\"dd/mm\")&\n\", o Turno A produziu \"&TEXT(F15,\"0,00\")&\" ha, o Turno B produziu \"&TEXT(L15,\"0,00\")&\n\" ha e o Turno C produziu \"&TEXT(Q15,\"0,00\")&\n\" ha, totalizando \"&TEXT(SUM(F15,L15,Q15),\"0,00\")&\" ha.\"",
+          "array": false
+        },
+        {
+          "cell": "F15",
+          "formula": "SUM(F8:F14)",
+          "array": false
+        },
+        {
+          "cell": "L15",
+          "formula": "SUM(L8:L14)",
+          "array": false
+        },
+        {
+          "cell": "Q15",
+          "formula": "SUM(Q8:Q14)",
+          "array": false
+        },
+        {
+          "cell": "L24",
+          "formula": "U4",
+          "array": false
+        },
+        {
+          "cell": "Q24",
+          "formula": "U4",
+          "array": false
+        },
+        {
+          "cell": "F27",
+          "formula": "SUM(F26:F26)",
+          "array": false
+        },
+        {
+          "cell": "L27",
+          "formula": "SUM(L26:L26)",
+          "array": false
+        },
+        {
+          "cell": "Q27",
+          "formula": "SUM(Q26:Q26)",
+          "array": false
+        }
+      ],
+      "conditionalFormattingCount": 0,
+      "dataValidationsCount": 0,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [],
+      "shapesOrButtons": [
+        "xl/drawings/drawing5.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [],
+      "protected": false,
+      "lockedCellCountEstimate": 557,
+      "unlockedCellCountEstimate": 0,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 1
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "scale": "35",
+        "orientation": "landscape",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [
+        9
+      ],
+      "hiddenColumns": [
+        "1:1"
+      ],
+      "rowSamples": [
+        {
+          "row": 2,
+          "cells": [
+            {
+              "ref": "D2",
+              "column": "D",
+              "value": "PREPARO DE SOLO"
+            },
+            {
+              "ref": "J2",
+              "column": "J",
+              "value": "PREPARO DE SOLO"
+            },
+            {
+              "ref": "O2",
+              "column": "O",
+              "value": "PREPARO DE SOLO"
+            }
+          ]
+        },
+        {
+          "row": 3,
+          "cells": [
+            {
+              "ref": "A3",
+              "column": "A",
+              "value": "DATA"
+            },
+            {
+              "ref": "T3",
+              "column": "T",
+              "value": "PREENCHER"
+            }
+          ]
+        },
+        {
+          "row": 4,
+          "cells": [
+            {
+              "ref": "D4",
+              "column": "D",
+              "value": "TURNO A"
+            },
+            {
+              "ref": "J4",
+              "column": "J",
+              "value": "TURNO B"
+            },
+            {
+              "ref": "O4",
+              "column": "O",
+              "value": "TURNO C"
+            },
+            {
+              "ref": "T4",
+              "column": "T",
+              "value": "DATA"
+            },
+            {
+              "ref": "U4",
+              "column": "U",
+              "value": "46213"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "F5",
+              "column": "F",
+              "value": "DATA"
+            },
+            {
+              "ref": "J5",
+              "column": "J",
+              "value": "HORA"
+            },
+            {
+              "ref": "L5",
+              "column": "L",
+              "value": "DATA"
+            },
+            {
+              "ref": "O5",
+              "column": "O",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q5",
+              "column": "Q",
+              "value": "DATA"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "03H - 11h"
+            },
+            {
+              "ref": "F6",
+              "column": "F",
+              "value": "46213"
+            },
+            {
+              "ref": "J6",
+              "column": "J",
+              "value": "11H - 19H"
+            },
+            {
+              "ref": "L6",
+              "column": "L",
+              "value": "46213"
+            },
+            {
+              "ref": "O6",
+              "column": "O",
+              "value": "19H - 03H"
+            },
+            {
+              "ref": "Q6",
+              "column": "Q",
+              "value": "46213"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "TURNO A"
+            },
+            {
+              "ref": "F7",
+              "column": "F",
+              "value": "HA"
+            },
+            {
+              "ref": "G7",
+              "column": "G",
+              "value": "LÍDER"
+            },
+            {
+              "ref": "J7",
+              "column": "J",
+              "value": "TURNO B"
+            },
+            {
+              "ref": "L7",
+              "column": "L",
+              "value": "HA"
+            },
+            {
+              "ref": "M7",
+              "column": "M",
+              "value": "LÍDER"
+            },
+            {
+              "ref": "O7",
+              "column": "O",
+              "value": "TURNO C"
+            },
+            {
+              "ref": "Q7",
+              "column": "Q",
+              "value": "HA"
+            },
+            {
+              "ref": "R7",
+              "column": "R",
+              "value": "LÍDER"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "F8",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G8",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J8",
+              "column": "J",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "L8",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M8",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O8",
+              "column": "O",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "Q8",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R8",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "G9",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J9",
+              "column": "J",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "O9",
+              "column": "O",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "R9",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "PLAINAGEM"
+            },
+            {
+              "ref": "F10",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G10",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J10",
+              "column": "J",
+              "value": "PLAINAGEM"
+            },
+            {
+              "ref": "L10",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M10",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O10",
+              "column": "O",
+              "value": "PLAINAGEM"
+            },
+            {
+              "ref": "Q10",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R10",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 11,
+          "cells": [
+            {
+              "ref": "D11",
+              "column": "D",
+              "value": "SUBSOLAGEM"
+            },
+            {
+              "ref": "F11",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G11",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J11",
+              "column": "J",
+              "value": "SUBSOLAGEM"
+            },
+            {
+              "ref": "L11",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M11",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O11",
+              "column": "O",
+              "value": "SUBSOLAGEM"
+            },
+            {
+              "ref": "Q11",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R11",
+              "column": "R",
+              "value": "ORLANDINHO"
+            },
+            {
+              "ref": "T11",
+              "column": "T",
+              "value": "No dia 10/07, o Turno A produziu 0,00 ha, o Turno B produziu 0,00 ha e o Turno C produziu 0,00 ha, totalizando 0,00 ha."
+            }
+          ]
+        },
+        {
+          "row": 12,
+          "cells": [
+            {
+              "ref": "D12",
+              "column": "D",
+              "value": "PLANTIO DE TORTA"
+            },
+            {
+              "ref": "F12",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G12",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J12",
+              "column": "J",
+              "value": "PLANTIO DE TORTA"
+            },
+            {
+              "ref": "L12",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M12",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O12",
+              "column": "O",
+              "value": "PLANTIO DE TORTA"
+            },
+            {
+              "ref": "Q12",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R12",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 13,
+          "cells": [
+            {
+              "ref": "D13",
+              "column": "D",
+              "value": "APLICAÇÃO DE FOSTATO"
+            },
+            {
+              "ref": "F13",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G13",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J13",
+              "column": "J",
+              "value": "APLICAÇÃO DE FOSTATO"
+            },
+            {
+              "ref": "L13",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M13",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O13",
+              "column": "O",
+              "value": "APLICAÇÃO DE FOSTATO"
+            },
+            {
+              "ref": "Q13",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R13",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 14,
+          "cells": [
+            {
+              "ref": "D14",
+              "column": "D",
+              "value": "GRADAGEM NIVELADORA"
+            },
+            {
+              "ref": "F14",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "G14",
+              "column": "G",
+              "value": "WERBETE REIS"
+            },
+            {
+              "ref": "J14",
+              "column": "J",
+              "value": "GRADAGEM NIVELADORA"
+            },
+            {
+              "ref": "L14",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "M14",
+              "column": "M",
+              "value": "WANDERSON"
+            },
+            {
+              "ref": "O14",
+              "column": "O",
+              "value": "GRADAGEM NIVELADORA"
+            },
+            {
+              "ref": "Q14",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R14",
+              "column": "R",
+              "value": "ORLANDINHO"
+            }
+          ]
+        },
+        {
+          "row": 15,
+          "cells": [
+            {
+              "ref": "D15",
+              "column": "D",
+              "value": "TOTAL:"
+            },
+            {
+              "ref": "F15",
+              "column": "F",
+              "value": "0"
+            },
+            {
+              "ref": "J15",
+              "column": "J",
+              "value": "TOTAL:"
+            },
+            {
+              "ref": "L15",
+              "column": "L",
+              "value": "0"
+            },
+            {
+              "ref": "O15",
+              "column": "O",
+              "value": "TOTAL:"
+            },
+            {
+              "ref": "Q15",
+              "column": "Q",
+              "value": "0"
+            }
+          ]
+        },
+        {
+          "row": 20,
+          "cells": [
+            {
+              "ref": "D20",
+              "column": "D",
+              "value": "PLANTIO"
+            },
+            {
+              "ref": "J20",
+              "column": "J",
+              "value": "PLANTIO"
+            },
+            {
+              "ref": "O20",
+              "column": "O",
+              "value": "PLANTIO"
+            }
+          ]
+        },
+        {
+          "row": 22,
+          "cells": [
+            {
+              "ref": "D22",
+              "column": "D",
+              "value": "TURNO A"
+            },
+            {
+              "ref": "J22",
+              "column": "J",
+              "value": "TURNO B"
+            },
+            {
+              "ref": "O22",
+              "column": "O",
+              "value": "TURNO C"
+            }
+          ]
+        },
+        {
+          "row": 23,
+          "cells": [
+            {
+              "ref": "D23",
+              "column": "D",
+              "value": "HORA"
+            },
+            {
+              "ref": "F23",
+              "column": "F",
+              "value": "DATA"
+            },
+            {
+              "ref": "J23",
+              "column": "J",
+              "value": "HORA"
+            },
+            {
+              "ref": "L23",
+              "column": "L",
+              "value": "DATA"
+            },
+            {
+              "ref": "O23",
+              "column": "O",
+              "value": "HORA"
+            },
+            {
+              "ref": "Q23",
+              "column": "Q",
+              "value": "DATA"
+            }
+          ]
+        },
+        {
+          "row": 24,
+          "cells": [
+            {
+              "ref": "D24",
+              "column": "D",
+              "value": "03H - 11h"
+            },
+            {
+              "ref": "F24",
+              "column": "F",
+              "value": "46213"
+            },
+            {
+              "ref": "J24",
+              "column": "J",
+              "value": "11H - 19H"
+            },
+            {
+              "ref": "L24",
+              "column": "L",
+              "value": "46213"
+            },
+            {
+              "ref": "O24",
+              "column": "O",
+              "value": "19H - 03H"
+            },
+            {
+              "ref": "Q24",
+              "column": "Q",
+              "value": "46213"
+            }
+          ]
+        },
+        {
+          "row": 25,
+          "cells": [
+            {
+              "ref": "D25",
+              "column": "D",
+              "value": "TURNO A"
+            },
+            {
+              "ref": "F25",
+              "column": "F",
+              "value": "HA"
+            },
+            {
+              "ref": "G25",
+              "column": "G",
+              "value": "LÍDER"
+            },
+            {
+              "ref": "J25",
+              "column": "J",
+              "value": "TURNO B"
+            },
+            {
+              "ref": "L25",
+              "column": "L",
+              "value": "HA"
+            },
+            {
+              "ref": "M25",
+              "column": "M",
+              "value": "LÍDER"
+            },
+            {
+              "ref": "O25",
+              "column": "O",
+              "value": "TURNO C"
+            },
+            {
+              "ref": "Q25",
+              "column": "Q",
+              "value": "HA"
+            },
+            {
+              "ref": "R25",
+              "column": "R",
+              "value": "LÍDER"
+            }
+          ]
+        },
+        {
+          "row": 26,
+          "cells": [
+            {
+              "ref": "D26",
+              "column": "D",
+              "value": "PLANTIO"
+            },
+            {
+              "ref": "F26",
+              "column": "F",
+              "value": "2.16"
+            },
+            {
+              "ref": "G26",
+              "column": "G",
+              "value": "WELLINGTON"
+            },
+            {
+              "ref": "J26",
+              "column": "J",
+              "value": "PLANTIO"
+            },
+            {
+              "ref": "L26",
+              "column": "L",
+              "value": "3.28"
+            },
+            {
+              "ref": "M26",
+              "column": "M",
+              "value": "LEO"
+            },
+            {
+              "ref": "O26",
+              "column": "O",
+              "value": "PLANTIO"
+            },
+            {
+              "ref": "Q26",
+              "column": "Q",
+              "value": "0"
+            },
+            {
+              "ref": "R26",
+              "column": "R",
+              "value": "JHONATAN"
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [],
+        "status": [],
+        "descricao": [],
+        "setor": [],
+        "horario": [
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "J",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "O",
+            "header": "HORA",
+            "row": 5
+          },
+          {
+            "column": "D",
+            "header": "HORA",
+            "row": 23
+          },
+          {
+            "column": "J",
+            "header": "HORA",
+            "row": 23
+          },
+          {
+            "column": "O",
+            "header": "HORA",
+            "row": 23
+          }
+        ],
+        "operador": [
+          {
+            "column": "G",
+            "header": "LÍDER",
+            "row": 7
+          },
+          {
+            "column": "M",
+            "header": "LÍDER",
+            "row": 7
+          },
+          {
+            "column": "R",
+            "header": "LÍDER",
+            "row": 7
+          },
+          {
+            "column": "G",
+            "header": "LÍDER",
+            "row": 25
+          },
+          {
+            "column": "M",
+            "header": "LÍDER",
+            "row": 25
+          },
+          {
+            "column": "R",
+            "header": "LÍDER",
+            "row": 25
+          }
+        ],
+        "implemento": [],
+        "observacoes": []
+      }
+    },
+    {
+      "name": "Controle de Dados",
+      "sheetId": "24",
+      "relationshipId": "rId6",
+      "state": "visible",
+      "order": 6,
+      "path": "xl/worksheets/sheet6.xml",
+      "dimension": "A1:S22",
+      "usedRows": 22,
+      "usedColumns": 19,
+      "mergedCells": [
+        "F22:S22"
+      ],
+      "formulas": [
+        {
+          "cell": "A4",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C4",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F8+'PRODUCÃO DAS OPERAÇÕES'!L8+'PRODUCÃO DAS OPERAÇÕES'!Q13",
+          "array": false
+        },
+        {
+          "cell": "A5",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C5",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F10+'PRODUCÃO DAS OPERAÇÕES'!L10+'PRODUCÃO DAS OPERAÇÕES'!Q10",
+          "array": false
+        },
+        {
+          "cell": "A6",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C6",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F11+'PRODUCÃO DAS OPERAÇÕES'!L12+'PRODUCÃO DAS OPERAÇÕES'!Q11",
+          "array": false
+        },
+        {
+          "cell": "A7",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C7",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F12+'PRODUCÃO DAS OPERAÇÕES'!L13+'PRODUCÃO DAS OPERAÇÕES'!Q12",
+          "array": false
+        },
+        {
+          "cell": "A8",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C8",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F13+'PRODUCÃO DAS OPERAÇÕES'!L14+'PRODUCÃO DAS OPERAÇÕES'!Q13",
+          "array": false
+        },
+        {
+          "cell": "A9",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C9",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F14+'PRODUCÃO DAS OPERAÇÕES'!L14+'PRODUCÃO DAS OPERAÇÕES'!Q14",
+          "array": false
+        },
+        {
+          "cell": "A10",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!U4",
+          "array": false
+        },
+        {
+          "cell": "C10",
+          "formula": "'PRODUCÃO DAS OPERAÇÕES'!F27+'PRODUCÃO DAS OPERAÇÕES'!L27+'PRODUCÃO DAS OPERAÇÕES'!Q27",
+          "array": false
+        },
+        {
+          "cell": "F22",
+          "formula": "IFERROR('PRODUCÃO DAS OPERAÇÕES'!T11,\"\")",
+          "array": false
+        }
+      ],
+      "conditionalFormattingCount": 0,
+      "dataValidationsCount": 1,
+      "tables": [],
+      "drawingRelationshipId": "rId2",
+      "images": [],
+      "charts": [
+        "xl/drawings/drawing6.xml"
+      ],
+      "shapesOrButtons": [
+        "xl/drawings/drawing6.xml"
+      ],
+      "pivotTables": [],
+      "hyperlinks": [],
+      "externalFormulaReferences": [],
+      "crossSheetFormulaReferences": [
+        "'PRODUCÃO DAS OPERAÇÕES'"
+      ],
+      "protected": false,
+      "lockedCellCountEstimate": 56,
+      "unlockedCellCountEstimate": 0,
+      "pageBreaks": {
+        "rows": 0,
+        "columns": 0
+      },
+      "pageSetup": {
+        "paperSize": "9",
+        "orientation": "portrait",
+        "verticalDpi": "0",
+        "r:id": "rId1"
+      },
+      "hiddenRows": [],
+      "hiddenColumns": [],
+      "rowSamples": [
+        {
+          "row": 3,
+          "cells": [
+            {
+              "ref": "A3",
+              "column": "A",
+              "value": "DATA"
+            },
+            {
+              "ref": "C3",
+              "column": "C",
+              "value": "PRODUÇÃO"
+            },
+            {
+              "ref": "D3",
+              "column": "D",
+              "value": "META"
+            }
+          ]
+        },
+        {
+          "row": 4,
+          "cells": [
+            {
+              "ref": "A4",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B4",
+              "column": "B",
+              "value": "GRADAGEM"
+            },
+            {
+              "ref": "C4",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D4",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 5,
+          "cells": [
+            {
+              "ref": "A5",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B5",
+              "column": "B",
+              "value": "PLAINAGEM"
+            },
+            {
+              "ref": "C5",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D5",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 6,
+          "cells": [
+            {
+              "ref": "A6",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B6",
+              "column": "B",
+              "value": "SUBSOLAGEM"
+            },
+            {
+              "ref": "C6",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D6",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 7,
+          "cells": [
+            {
+              "ref": "A7",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B7",
+              "column": "B",
+              "value": "PLANTIO DE TORTA"
+            },
+            {
+              "ref": "C7",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D7",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 8,
+          "cells": [
+            {
+              "ref": "A8",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B8",
+              "column": "B",
+              "value": "APLICAÇÃO DE FOSTATO"
+            },
+            {
+              "ref": "C8",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D8",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 9,
+          "cells": [
+            {
+              "ref": "A9",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B9",
+              "column": "B",
+              "value": "GRADAGEM NIVELADORA"
+            },
+            {
+              "ref": "C9",
+              "column": "C",
+              "value": "0"
+            },
+            {
+              "ref": "D9",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 10,
+          "cells": [
+            {
+              "ref": "A10",
+              "column": "A",
+              "value": "46213"
+            },
+            {
+              "ref": "B10",
+              "column": "B",
+              "value": "PLANTIO DE CANA"
+            },
+            {
+              "ref": "C10",
+              "column": "C",
+              "value": "5.4399999999999995"
+            },
+            {
+              "ref": "D10",
+              "column": "D",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "row": 22,
+          "cells": [
+            {
+              "ref": "F22",
+              "column": "F",
+              "value": "No dia 10/07, o Turno A produziu 0,00 ha, o Turno B produziu 0,00 ha e o Turno C produziu 0,00 ha, totalizando 0,00 ha."
+            }
+          ]
+        }
+      ],
+      "candidateColumns": {
+        "frota": [],
+        "status": [],
+        "descricao": [],
+        "setor": [],
+        "horario": [],
+        "operador": [],
+        "implemento": [],
+        "observacoes": []
+      }
+    }
+  ],
+  "namedRanges": [
+    {
+      "name": "_xlnm._FilterDatabase",
+      "localSheetId": "0",
+      "refersTo": "'COLHEITA E TRANSPORTE DE MUDA'!#REF!"
+    },
+    {
+      "name": "_xlnm._FilterDatabase",
+      "localSheetId": "3",
+      "refersTo": "PLANTIO!#REF!"
+    },
+    {
+      "name": "_xlnm._FilterDatabase",
+      "localSheetId": "2",
+      "refersTo": "'PREPARO DE SOLO'!#REF!"
+    },
+    {
+      "name": "_xlnm._FilterDatabase",
+      "localSheetId": "1",
+      "refersTo": "'PREPARO DE SOLO (2)'!#REF!"
+    },
+    {
+      "name": "_xlnm._FilterDatabase",
+      "localSheetId": "4",
+      "refersTo": "'PRODUCÃO DAS OPERAÇÕES'!$T$1:$T$1"
+    },
+    {
+      "name": "Categoria_Lista",
+      "refersTo": "[1]Configuração!$A$5:$A$68"
+    },
+    {
+      "name": "ColumnTitle1",
+      "refersTo": "#REF!"
+    },
+    {
+      "name": "ColumnTitle2",
+      "refersTo": "[1]!Tabela_de_categorias_e_funcionários[[#Headers],[Nome da Categoria]]"
+    },
+    {
+      "name": "Sinalizador_Porcentagem",
+      "refersTo": "#REF!"
+    },
+    {
+      "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+      "localSheetId": "0",
+      "refersTo": "'COLHEITA E TRANSPORTE DE MUDA'!#REF!"
+    },
+    {
+      "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+      "localSheetId": "3",
+      "refersTo": "PLANTIO!#REF!"
+    },
+    {
+      "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+      "localSheetId": "2",
+      "refersTo": "'PREPARO DE SOLO'!#REF!"
+    },
+    {
+      "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+      "localSheetId": "1",
+      "refersTo": "'PREPARO DE SOLO (2)'!#REF!"
+    },
+    {
+      "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+      "localSheetId": "4",
+      "refersTo": "'PRODUCÃO DAS OPERAÇÕES'!#REF!"
+    }
+  ],
+  "externalLinks": [
+    "xl/externalLinks/externalLink1.xml",
+    "xl/externalLinks/_rels/externalLink1.xml.rels"
+  ],
+  "externalConnections": [],
+  "vba": {
+    "hasVbaProject": true,
+    "files": [
+      "xl/vbaProject.bin"
+    ],
+    "possibleModules": [
+      "xl/vbaProject.bin"
+    ],
+    "possibleEvents": []
+  },
+  "mediaFiles": [
+    "xl/media/image1.png",
+    "xl/media/image2.png",
+    "xl/media/image3.png",
+    "xl/media/image4.png",
+    "xl/media/image5.png",
+    "xl/media/image6.png",
+    "xl/media/image7.png",
+    "xl/media/image8.png",
+    "xl/media/image9.png",
+    "xl/media/image10.png",
+    "xl/media/image11.png",
+    "xl/media/image12.png",
+    "xl/media/image13.png"
+  ],
+  "drawingFiles": [
+    "xl/drawings/_rels/drawing5.xml.rels",
+    "xl/drawings/_rels/drawing6.xml.rels",
+    "xl/drawings/drawing1.xml",
+    "xl/drawings/_rels/drawing1.xml.rels",
+    "xl/drawings/drawing2.xml",
+    "xl/drawings/drawing3.xml",
+    "xl/drawings/drawing4.xml",
+    "xl/drawings/drawing5.xml",
+    "xl/drawings/drawing6.xml",
+    "xl/drawings/_rels/drawing2.xml.rels",
+    "xl/drawings/_rels/drawing3.xml.rels",
+    "xl/drawings/_rels/drawing4.xml.rels"
+  ],
+  "pivotCacheFiles": [],
+  "risks": [
+    "Arquivo contem projeto VBA/macros; preservar estrutura .xlsm e nao executar macros.",
+    "Arquivo contem links externos que podem impactar calculos e atualizacoes.",
+    "Ha celulas mescladas; mapeamento por coluna pode exigir cuidado."
+  ]
+}

@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: coa-bot-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-coa_bot}
+      POSTGRES_USER: ${POSTGRES_USER:-coa_bot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coa_bot_dev}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - coa_bot_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-coa_bot} -d ${POSTGRES_DB:-coa_bot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  coa_bot_postgres_data:

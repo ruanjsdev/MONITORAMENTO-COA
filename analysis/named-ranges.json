@@ -1,0 +1,141 @@
+{
+  "generatedAt": "2026-07-11T14:14:03.583Z",
+  "workbooks": [
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "namedRanges": [
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "0",
+          "refersTo": "'COLHEITA E TRANSPORTE DE MUDA'!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "3",
+          "refersTo": "PLANTIO!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "2",
+          "refersTo": "'PREPARO DE SOLO'!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "1",
+          "refersTo": "'PREPARO DE SOLO (2)'!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "4",
+          "refersTo": "'PRODUCÃO DAS OPERAÇÕES'!$T$1:$T$1"
+        },
+        {
+          "name": "Categoria_Lista",
+          "refersTo": "[1]Configuração!$A$5:$A$68"
+        },
+        {
+          "name": "ColumnTitle1",
+          "refersTo": "#REF!"
+        },
+        {
+          "name": "ColumnTitle2",
+          "refersTo": "[1]!Tabela_de_categorias_e_funcionários[[#Headers],[Nome da Categoria]]"
+        },
+        {
+          "name": "Sinalizador_Porcentagem",
+          "refersTo": "#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "0",
+          "refersTo": "'COLHEITA E TRANSPORTE DE MUDA'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "3",
+          "refersTo": "PLANTIO!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "2",
+          "refersTo": "'PREPARO DE SOLO'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "1",
+          "refersTo": "'PREPARO DE SOLO (2)'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "4",
+          "refersTo": "'PRODUCÃO DAS OPERAÇÕES'!#REF!"
+        }
+      ]
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "namedRanges": [
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "3",
+          "refersTo": "'COMPOSTAGEM '!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "5",
+          "refersTo": "'CORREÇÃO DE SOLO'!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "2",
+          "refersTo": "CPD!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "4",
+          "refersTo": "CULTIVO!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "10",
+          "refersTo": "'PAINEL (6)'!#REF!"
+        },
+        {
+          "name": "_xlnm._FilterDatabase",
+          "localSheetId": "6",
+          "refersTo": "'QUEBRA LOMBO'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "3",
+          "refersTo": "'COMPOSTAGEM '!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "5",
+          "refersTo": "'CORREÇÃO DE SOLO'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "2",
+          "refersTo": "CPD!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "4",
+          "refersTo": "CULTIVO!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "10",
+          "refersTo": "'PAINEL (6)'!#REF!"
+        },
+        {
+          "name": "Z_73BDBA9F_427C_4205_9AFF_9ECCBA4D8A4B_.wvu.Rows",
+          "localSheetId": "6",
+          "refersTo": "'QUEBRA LOMBO'!#REF!"
+        }
+      ]
+    }
+  ]
+}

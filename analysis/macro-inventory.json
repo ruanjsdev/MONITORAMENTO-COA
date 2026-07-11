@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-07-11T14:14:03.583Z",
+  "workbooks": [
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "hasVbaProject": true,
+      "files": [
+        "xl/vbaProject.bin"
+      ],
+      "possibleEvents": [],
+      "note": "Projeto VBA detectado como binário. Inventário textual de módulos exige ferramenta especializada sem execução de macros."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "hasVbaProject": false,
+      "files": [],
+      "possibleEvents": [],
+      "note": "Nenhum projeto VBA detectado."
+    }
+  ]
+}

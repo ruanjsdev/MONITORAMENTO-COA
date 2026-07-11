@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@coa-bot/shared": ["packages/shared/src/index.ts"],
+      "@coa-bot/validation": ["packages/validation/src/index.ts"],
+      "@coa-bot/whatsapp": ["packages/whatsapp/src/index.ts"],
+      "@coa-bot/excel-contracts": ["packages/excel-contracts/src/index.ts"],
+      "@coa-bot/database": ["packages/database/src/index.ts"],
+      "@coa-bot/ui": ["packages/ui/src/index.ts"]
+    }
+  }
+}

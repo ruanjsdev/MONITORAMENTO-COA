@@ -1,0 +1,2090 @@
+{
+  "generatedAt": "2026-07-11T14:14:03.539Z",
+  "note": "Mapeamento inferido por nomes de abas e metadados. Colunas ambiguas foram marcadas para confirmação humana.",
+  "operations": [
+    {
+      "operation": "Plantio Mecanizado",
+      "candidates": [
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "PLANTIO",
+          "confidence": "necessita confirmacao",
+          "headerRow": 5,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "D",
+          "timeColumn": "D",
+          "operatorColumn": "D",
+          "implementColumn": "F",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERACÃO",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 9
+              },
+              {
+                "column": "S",
+                "header": "FROTA - ESTÁ ACOPLADA DO PROJETO - AGUARDANDO FINALIZAÇÃO DO PROJETO",
+                "row": 9
+              },
+              {
+                "column": "J",
+                "header": "TOTAL DE MAQUINAS RODANDO",
+                "row": 19
+              },
+              {
+                "column": "D",
+                "header": "TOTAL DE EQUIPAMENTO",
+                "row": 20
+              },
+              {
+                "column": "J",
+                "header": "TOTAL DE MAQUINAS PARADAS",
+                "row": 20
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "EMPRESTADA - FAZENDA SIMONE",
+                "row": 8
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [
+              {
+                "column": "D",
+                "header": "LIDER TURNO A:WELLINGTON",
+                "row": 16
+              },
+              {
+                "column": "D",
+                "header": "LIDER TURNO B:WANDERSON",
+                "row": 17
+              },
+              {
+                "column": "D",
+                "header": "LIDER TURNO C:JHONATAN",
+                "row": 18
+              },
+              {
+                "column": "D",
+                "header": "LÍDER DO TURNO: JHONATAN",
+                "row": 19
+              }
+            ],
+            "implemento": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Colheita e Transporte de Muda",
+      "candidates": [
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "COLHEITA E TRANSPORTE DE MUDA",
+          "confidence": "alta",
+          "headerRow": 5,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "D",
+          "timeColumn": "D",
+          "operatorColumn": "D",
+          "implementColumn": "F",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERACÃO",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO PIPA",
+                "row": 14
+              },
+              {
+                "column": "J",
+                "header": "TOTAL DE MAQUINAS RODANDO",
+                "row": 18
+              },
+              {
+                "column": "D",
+                "header": "TOTAL DE EQUIPAMENTO",
+                "row": 19
+              },
+              {
+                "column": "J",
+                "header": "TOTAL DE MAQUINAS PARADAS",
+                "row": 19
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 7
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [
+              {
+                "column": "D",
+                "header": "LIDER TURNO A:WELLINGTON",
+                "row": 15
+              },
+              {
+                "column": "D",
+                "header": "LIDER TURNO B:WANDERSON",
+                "row": 16
+              },
+              {
+                "column": "D",
+                "header": "LIDER TURNO C:JHONATAN",
+                "row": 17
+              },
+              {
+                "column": "D",
+                "header": "LÍDER DO TURNO: JHONATAN",
+                "row": 18
+              }
+            ],
+            "implemento": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Preparo de Solo",
+      "candidates": [
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "PREPARO DE SOLO (2)",
+          "confidence": "necessita confirmacao",
+          "headerRow": 5,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "D",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "F",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERACÃO",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 10
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 17
+              },
+              {
+                "column": "S",
+                "header": "FROTA-RETIRARA PNEUS, MEXER NO AR CONDICIONADO",
+                "row": 17
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 18
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "SETOR E3",
+                "row": 12
+              },
+              {
+                "column": "D",
+                "header": "SETOR E3",
+                "row": 22
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        },
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "PREPARO DE SOLO",
+          "confidence": "alta",
+          "headerRow": 5,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "D",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "F",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 8
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 14
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 9
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 10
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 13
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 16
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 17
+              },
+              {
+                "column": "S",
+                "header": "AG. ÁREA",
+                "row": 18
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INÍCIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "F",
+                "header": "TRATORES / IMPLEMENTOS",
+                "row": 5
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Producao das Operacoes",
+      "candidates": [
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "PRODUCÃO DAS OPERAÇÕES",
+          "confidence": "necessita confirmacao",
+          "headerRow": 5,
+          "fleetColumn": "necessita confirmação",
+          "statusColumn": "necessita confirmação",
+          "descriptionColumn": "necessita confirmação",
+          "sectorColumn": "necessita confirmação",
+          "timeColumn": "D",
+          "operatorColumn": "G",
+          "implementColumn": "necessita confirmação",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [],
+            "status": [],
+            "descricao": [],
+            "setor": [],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "J",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "O",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 23
+              },
+              {
+                "column": "J",
+                "header": "HORA",
+                "row": 23
+              },
+              {
+                "column": "O",
+                "header": "HORA",
+                "row": 23
+              }
+            ],
+            "operador": [
+              {
+                "column": "G",
+                "header": "LÍDER",
+                "row": 7
+              },
+              {
+                "column": "M",
+                "header": "LÍDER",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "LÍDER",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "LÍDER",
+                "row": 25
+              },
+              {
+                "column": "M",
+                "header": "LÍDER",
+                "row": 25
+              },
+              {
+                "column": "R",
+                "header": "LÍDER",
+                "row": 25
+              }
+            ],
+            "implemento": [],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Controle de Dados",
+      "candidates": [
+        {
+          "file": "Planilha Plantio cana.xlsm",
+          "sheet": "Controle de Dados",
+          "confidence": "alta",
+          "headerRow": "necessita confirmação",
+          "fleetColumn": "necessita confirmação",
+          "statusColumn": "necessita confirmação",
+          "descriptionColumn": "necessita confirmação",
+          "sectorColumn": "necessita confirmação",
+          "timeColumn": "necessita confirmação",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "necessita confirmação",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [],
+            "status": [],
+            "descricao": [],
+            "setor": [],
+            "horario": [],
+            "operador": [],
+            "implemento": [],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "CPD",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "CPD",
+          "confidence": "alta",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "necessita confirmação",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "G",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "O",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "CAMINHAO PIPA",
+                "row": 11
+              },
+              {
+                "column": "G",
+                "header": "CAMINHAO PIPA",
+                "row": 12
+              },
+              {
+                "column": "D",
+                "header": "FROTA",
+                "row": 14
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Compostagem",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "COMPOSTAGEM",
+          "confidence": "alta",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "E",
+          "timeColumn": "D",
+          "operatorColumn": "E",
+          "implementColumn": "necessita confirmação",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "EQUIPAMENTO",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 11
+              },
+              {
+                "column": "S",
+                "header": "NO FROTA PARA ARRUMAR O RETENTOR DO CUBO E COLOCAR O CARDAN E A CRUZETA DA TRAÇÃO TRASEIRA /O.S - 21814704",
+                "row": 11
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO CAÇAMBA",
+                "row": 12
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO CAÇAMBA",
+                "row": 13
+              },
+              {
+                "column": "G",
+                "header": "TRATOR - 1065 IMPLE/1065D",
+                "row": 14
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO CAÇAMBA",
+                "row": 15
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 17
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO CAÇAMBA",
+                "row": 17
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "E",
+                "header": "SETOR",
+                "row": 7
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [
+              {
+                "column": "E",
+                "header": "LIDERANÇA",
+                "row": 18
+              }
+            ],
+            "implemento": [],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Cultivo",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "CULTIVO",
+          "confidence": "alta",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "E",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "G",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "O",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 9
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO MUNCK MM",
+                "row": 16
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 27
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              },
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 27
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              },
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 26
+              }
+            ],
+            "setor": [
+              {
+                "column": "E",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 27
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 26
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 27
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 27
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 27
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Correcao de Solo",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "CORREÇÃO DE SOLO",
+          "confidence": "necessita confirmacao",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "E",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "G",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 10
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 12
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "E",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "AE",
+                "header": "INAJA: SETOR J",
+                "row": 10
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Quebra Lombo",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "QUEBRA LOMBO",
+          "confidence": "alta",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "O",
+          "sectorColumn": "E",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "G",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 8
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 9
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 10
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 11
+              },
+              {
+                "column": "G",
+                "header": "TRATOR CASE",
+                "row": 11
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 13
+              },
+              {
+                "column": "G",
+                "header": "CAMINHÃO MUNCK MM",
+                "row": 13
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 14
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 15
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 17
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 18
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 19
+              },
+              {
+                "column": "O",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 19
+              },
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 21
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              },
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 19
+              }
+            ],
+            "descricao": [
+              {
+                "column": "O",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              }
+            ],
+            "setor": [
+              {
+                "column": "E",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "E",
+                "header": "SETOR",
+                "row": 19
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 19
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 19
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 19
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 7
+              },
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 19
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Numero de Viagens",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "NÚMERO DE VIAGENS",
+          "confidence": "necessita confirmacao",
+          "headerRow": 5,
+          "fleetColumn": "E",
+          "statusColumn": "necessita confirmação",
+          "descriptionColumn": "necessita confirmação",
+          "sectorColumn": "D",
+          "timeColumn": "necessita confirmação",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "necessita confirmação",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "E",
+                "header": "FROTA",
+                "row": 5
+              }
+            ],
+            "status": [],
+            "descricao": [],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 5
+              }
+            ],
+            "horario": [],
+            "operador": [],
+            "implemento": [],
+            "observacoes": []
+          }
+        }
+      ]
+    },
+    {
+      "operation": "Painel",
+      "candidates": [
+        {
+          "file": "Acompanhamento Tratos Culturais.xlsm",
+          "sheet": "PAINEL (6)",
+          "confidence": "necessita confirmacao",
+          "headerRow": 7,
+          "fleetColumn": "F",
+          "statusColumn": "H",
+          "descriptionColumn": "S",
+          "sectorColumn": "D",
+          "timeColumn": "D",
+          "operatorColumn": "necessita confirmação",
+          "implementColumn": "G",
+          "observationsColumn": "necessita confirmação",
+          "candidateColumns": {
+            "frota": [
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 7
+              },
+              {
+                "column": "S",
+                "header": "FROTA",
+                "row": 8
+              },
+              {
+                "column": "F",
+                "header": "TRATORES",
+                "row": 16
+              },
+              {
+                "column": "F",
+                "header": "FROTA",
+                "row": 18
+              },
+              {
+                "column": "S",
+                "header": "OS FROTA / SERVIÇO / OPERAÇÃO",
+                "row": 18
+              },
+              {
+                "column": "S",
+                "header": "FROTA -",
+                "row": 21
+              },
+              {
+                "column": "S",
+                "header": "FROTA -LUBRIFICAÇÃO DE REMONTA",
+                "row": 24
+              }
+            ],
+            "status": [
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 7
+              },
+              {
+                "column": "H",
+                "header": "STATUS",
+                "row": 18
+              }
+            ],
+            "descricao": [
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 5
+              },
+              {
+                "column": "S",
+                "header": "DESCRIÇÃO",
+                "row": 16
+              }
+            ],
+            "setor": [
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "SETOR",
+                "row": 18
+              },
+              {
+                "column": "S",
+                "header": "FAZENDA OASIS",
+                "row": 23
+              }
+            ],
+            "horario": [
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 5
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 6
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 6
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 6
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 7
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 7
+              },
+              {
+                "column": "D",
+                "header": "HORA",
+                "row": 16
+              },
+              {
+                "column": "K",
+                "header": "INICIO PARADA",
+                "row": 16
+              },
+              {
+                "column": "K",
+                "header": "INICIO DA QUEBRA",
+                "row": 17
+              },
+              {
+                "column": "O",
+                "header": "INÍCIO",
+                "row": 17
+              },
+              {
+                "column": "Q",
+                "header": "FIM",
+                "row": 17
+              },
+              {
+                "column": "J",
+                "header": "HORAS",
+                "row": 18
+              },
+              {
+                "column": "L",
+                "header": "HORA",
+                "row": 18
+              },
+              {
+                "column": "N",
+                "header": "HORA",
+                "row": 18
+              },
+              {
+                "column": "P",
+                "header": "HORA",
+                "row": 18
+              },
+              {
+                "column": "R",
+                "header": "HORA",
+                "row": 18
+              }
+            ],
+            "operador": [],
+            "implemento": [
+              {
+                "column": "G",
+                "header": "IMPLEMENTO",
+                "row": 18
+              }
+            ],
+            "observacoes": []
+          }
+        }
+      ]
+    }
+  ],
+  "candidateImageAreas": [
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "COLHEITA E TRANSPORTE DE MUDA",
+      "interval": "A1:AJ25",
+      "dimensions": {
+        "rows": 25,
+        "columns": 36
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "PREPARO DE SOLO (2)",
+      "interval": "A1:AJ35",
+      "dimensions": {
+        "rows": 35,
+        "columns": 36
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "PREPARO DE SOLO",
+      "interval": "A1:AL37",
+      "dimensions": {
+        "rows": 37,
+        "columns": 38
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "PLANTIO",
+      "interval": "A1:AI26",
+      "dimensions": {
+        "rows": 26,
+        "columns": 35
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "PRODUCÃO DAS OPERAÇÕES",
+      "interval": "A1:X28",
+      "dimensions": {
+        "rows": 28,
+        "columns": 24
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "sheet": "Controle de Dados",
+      "interval": "A1:S22",
+      "dimensions": {
+        "rows": 22,
+        "columns": 19
+      },
+      "orientation": "portrait",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha5",
+      "interval": "A1",
+      "dimensions": {
+        "rows": 1,
+        "columns": 1
+      },
+      "orientation": "necessita confirmação",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": false,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha7",
+      "interval": "A1",
+      "dimensions": {
+        "rows": 1,
+        "columns": 1
+      },
+      "orientation": "necessita confirmação",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": false,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "CPD",
+      "interval": "A1:AH51",
+      "dimensions": {
+        "rows": 51,
+        "columns": 34
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "COMPOSTAGEM",
+      "interval": "A1:AH29",
+      "dimensions": {
+        "rows": 29,
+        "columns": 34
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "CULTIVO",
+      "interval": "A1:AH50",
+      "dimensions": {
+        "rows": 50,
+        "columns": 34
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "CORREÇÃO DE SOLO",
+      "interval": "A1:AH36",
+      "dimensions": {
+        "rows": 36,
+        "columns": 34
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "QUEBRA LOMBO",
+      "interval": "A1:AD31",
+      "dimensions": {
+        "rows": 31,
+        "columns": 30
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "NÚMERO DE VIAGENS",
+      "interval": "B1:N22",
+      "dimensions": {
+        "rows": 22,
+        "columns": 14
+      },
+      "orientation": "portrait",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha6",
+      "interval": "A1",
+      "dimensions": {
+        "rows": 1,
+        "columns": 1
+      },
+      "orientation": "necessita confirmação",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": false,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha4",
+      "interval": "B1:R61",
+      "dimensions": {
+        "rows": 61,
+        "columns": 18
+      },
+      "orientation": "necessita confirmação",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "PAINEL (6)",
+      "interval": "A1:AQ67",
+      "dimensions": {
+        "rows": 67,
+        "columns": 43
+      },
+      "orientation": "landscape",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha3",
+      "interval": "D3:I23",
+      "dimensions": {
+        "rows": 23,
+        "columns": 9
+      },
+      "orientation": "portrait",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": false,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha2",
+      "interval": "A1",
+      "dimensions": {
+        "rows": 1,
+        "columns": 1
+      },
+      "orientation": "necessita confirmação",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": false,
+      "containsFormulas": false,
+      "containsMergedCells": false,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "sheet": "Planilha1",
+      "interval": "B4:P34",
+      "dimensions": {
+        "rows": 34,
+        "columns": 16
+      },
+      "orientation": "portrait",
+      "relatedPrintArea": null,
+      "containsHiddenInformation": true,
+      "containsFormulas": true,
+      "containsMergedCells": true,
+      "copyPictureCandidate": true,
+      "note": "Área candidata; confirmar manualmente antes de usar como relatório oficial."
+    }
+  ]
+}

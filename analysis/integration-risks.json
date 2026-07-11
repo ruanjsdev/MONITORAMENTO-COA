@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-07-11T14:14:03.583Z",
+  "risks": [
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "risk": "Arquivo contem projeto VBA/macros; preservar estrutura .xlsm e nao executar macros."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "risk": "Arquivo contem links externos que podem impactar calculos e atualizacoes."
+    },
+    {
+      "file": "Planilha Plantio cana.xlsm",
+      "risk": "Ha celulas mescladas; mapeamento por coluna pode exigir cuidado."
+    },
+    {
+      "file": "Acompanhamento Tratos Culturais.xlsm",
+      "risk": "Ha celulas mescladas; mapeamento por coluna pode exigir cuidado."
+    }
+  ],
+  "restrictions": [
+    "Não alterar planilhas reais nesta etapa.",
+    "Não salvar planilhas reais nesta etapa.",
+    "Não executar macros.",
+    "Não inventar mapeamentos ambíguos."
+  ]
+}

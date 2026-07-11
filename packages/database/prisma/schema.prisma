@@ -1,0 +1,406 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ChangeStatus {
+  PENDING
+  APPROVED_SIMULATED
+  APPROVED
+  REJECTED
+  DEFERRED
+  DUPLICATE
+}
+
+enum IntegrationKind {
+  API
+  DATABASE
+  WHATSAPP
+  EXCEL_AGENT
+  SPREADSHEET
+}
+
+enum IntegrationState {
+  ONLINE
+  OFFLINE
+  SIMULATED
+  ERROR
+}
+
+model User {
+  id                  String        @id @default(cuid())
+  name                String
+  email               String        @unique
+  passwordHash        String
+  isActive            Boolean       @default(true)
+  mustChangePassword  Boolean       @default(true)
+  failedLoginAttempts Int           @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  roles               UserRole[]
+  sessions            AuthSession[]
+  logs                SystemLog[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id    String           @id @default(cuid())
+  key   String           @unique
+  roles RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model WhatsAppGroup {
+  id              String           @id @default(cuid())
+  name            String
+  externalId      String?          @unique
+  description     String?          @default("")
+  isActive        Boolean          @default(true)
+  active          Boolean          @default(true)
+  isMonitored     Boolean          @default(true)
+  receivesReports Boolean          @default(false)
+  allowTests      Boolean          @default(true)
+  allowedHours    String?          @default("")
+  notes           String?          @default("")
+  isTestGroup     Boolean          @default(false)
+  defaultMessage  String           @default("")
+  lastMessage     String?
+  lastActivity    DateTime?
+  processedMessages Int            @default(0)
+  connectionStatus String           @default("simulated")
+  version         Int              @default(1)
+  createdBy       String?
+  updatedBy       String?
+  operations      GroupOperation[]
+  messages        IncomingMessage[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Operation {
+  id              String             @id @default(cuid())
+  name            String             @unique
+  shortName       String?            @default("")
+  emoji           String
+  description     String?            @default("")
+  spreadsheetFile String?
+  sheetName       String?
+  destinationGroupId String?         @default("")
+  allowedStatuses String[]
+  synonyms        String?            @default("")
+  shifts          String[]           @default([])
+  reportTimes     String?            @default("")
+  legendTemplate  String?            @default("")
+  requiresApproval Boolean           @default(true)
+  imageRange      String?            @default("")
+  fleetColumn     String?            @default("")
+  implementColumn String?            @default("")
+  statusColumn    String?            @default("")
+  descriptionColumn String?          @default("")
+  timeColumn      String?            @default("")
+  fleetCount      Int                @default(0)
+  automaticReport Boolean            @default(false)
+  monitor         Boolean            @default(true)
+  status          String             @default("active")
+  active          Boolean            @default(true)
+  version         Int                @default(1)
+  createdBy       String?
+  updatedBy       String?
+  groups          GroupOperation[]
+  equipment       Equipment[]
+  pendingChanges  PendingChange[]
+  occurrences     Occurrence[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model GroupOperation {
+  groupId     String
+  operationId String
+  group       WhatsAppGroup @relation(fields: [groupId], references: [id])
+  operation   Operation     @relation(fields: [operationId], references: [id])
+
+  @@id([groupId, operationId])
+}
+
+model Equipment {
+  id            String                   @id @default(cuid())
+  code          String                   @unique
+  description   String?
+  operationId   String?
+  operation     Operation?               @relation(fields: [operationId], references: [id])
+  statusHistory EquipmentStatusHistory[]
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+}
+
+model Spreadsheet {
+  id        String             @id @default(cuid())
+  fileName  String
+  path      String             @unique
+  sizeBytes Int                @default(0)
+  macrosDetected Boolean       @default(false)
+  externalLinksDetected Boolean @default(false)
+  risks     Json?
+  lastAnalysisAt DateTime?
+  active    Boolean            @default(true)
+  version   Int                @default(1)
+  createdBy String?
+  updatedBy String?
+  sheets    SpreadsheetSheet[]
+  mappings  SpreadsheetMapping[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model SpreadsheetSheet {
+  id            String      @id @default(cuid())
+  spreadsheetId String
+  name          String
+  state         String
+  usedRange     String?
+  formulas      Int         @default(0)
+  mergedCells   Int         @default(0)
+  protected     Boolean     @default(false)
+  official      Boolean     @default(false)
+  candidateColumns Json?
+  candidateImageArea String?
+  humanNotes    String?     @default("")
+  confirmationStatus String @default("NEEDS_ANALYSIS")
+  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id])
+}
+
+model SpreadsheetMapping {
+  id            String      @id @default(cuid())
+  spreadsheetId String
+  operationName String
+  sheetName     String
+  headerRow     Int?
+  fleetColumn   String?
+  implementColumn String?
+  statusColumn  String?
+  descriptionColumn String?
+  timeColumn    String?
+  imageRange    String?
+  confidence    String?     @default("necessita confirmação")
+  confirmationStatus String @default("NEEDS_ANALYSIS")
+  editableFields Json?
+  protectedFields Json?
+  notes         String?
+  version       Int         @default(1)
+  active        Boolean     @default(true)
+  createdBy     String?
+  updatedBy     String?
+  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id])
+}
+
+model IncomingMessage {
+  id             String          @id @default(cuid())
+  idempotencyKey String          @unique
+  groupId        String?
+  group          WhatsAppGroup?  @relation(fields: [groupId], references: [id])
+  sender         String
+  content        String
+  receivedAt     DateTime
+  parsedMessages ParsedMessage[]
+  pendingChanges PendingChange[]
+}
+
+model ParsedMessage {
+  id                String          @id @default(cuid())
+  incomingMessageId String
+  confidence        Float
+  parsedJson        Json
+  incomingMessage   IncomingMessage @relation(fields: [incomingMessageId], references: [id])
+}
+
+model PendingChange {
+  id                String           @id @default(cuid())
+  incomingMessageId String?
+  operationId       String?
+  equipmentCode     String
+  currentStatus     String
+  newStatus         String
+  description       String
+  confidence        Float
+  status            ChangeStatus     @default(PENDING)
+  active            Boolean          @default(true)
+  version           Int              @default(1)
+  createdBy         String?
+  updatedBy         String?
+  incomingMessage   IncomingMessage? @relation(fields: [incomingMessageId], references: [id])
+  operation         Operation?       @relation(fields: [operationId], references: [id])
+  approvedChange    ApprovedChange?
+  rejectedChange    RejectedChange?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model ApprovedChange {
+  id              String        @id @default(cuid())
+  pendingChangeId String        @unique
+  simulated       Boolean       @default(true)
+  approvedAt      DateTime      @default(now())
+  pendingChange   PendingChange @relation(fields: [pendingChangeId], references: [id])
+}
+
+model RejectedChange {
+  id              String        @id @default(cuid())
+  pendingChangeId String        @unique
+  reason          String?
+  rejectedAt      DateTime      @default(now())
+  pendingChange   PendingChange @relation(fields: [pendingChangeId], references: [id])
+}
+
+model Occurrence {
+  id          String     @id @default(cuid())
+  operationId String?
+  operation   Operation? @relation(fields: [operationId], references: [id])
+  equipment   String?
+  statusFrom  String?
+  statusTo    String?
+  description String
+  occurredAt  DateTime
+  confidence  Float
+  validation  String
+  active      Boolean  @default(true)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EquipmentStatusHistory {
+  id            String    @id @default(cuid())
+  equipmentId   String
+  previousStatus String?
+  newStatus      String
+  reason         String?
+  startedAt      DateTime
+  endedAt        DateTime?
+  equipment      Equipment @relation(fields: [equipmentId], references: [id])
+}
+
+model Shift {
+  id        String        @id @default(cuid())
+  name      String
+  startsAt  String
+  endsAt    String
+  reports   ShiftReport[]
+}
+
+model ShiftReport {
+  id         String   @id @default(cuid())
+  shiftId    String
+  reportDate DateTime
+  status     String
+  draftText  String
+  finalText  String?
+  shift      Shift    @relation(fields: [shiftId], references: [id])
+}
+
+model NotificationSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  keys      Json
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SystemLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  entity      String?
+  entityId    String?
+  message     String
+  beforeValue Json?
+  afterValue  Json?
+  metadata    Json?
+  ipAddress   String?
+  result      String   @default("SUCCESS")
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+model IntegrationStatus {
+  id        String           @id @default(cuid())
+  kind      IntegrationKind  @unique
+  state     IntegrationState
+  message   String?
+  active    Boolean          @default(true)
+  version   Int              @default(1)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model AuthSession {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenId   String   @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model TestExecution {
+  id          String   @id @default(cuid())
+  type        String
+  userId      String?
+  operation   String
+  groupName   String
+  spreadsheet String?
+  sheet       String?
+  range       String?
+  legend      String?
+  result      String
+  status      String
+  error       String?
+  simulatedData Json?
+  durationMs  Int
+  active      Boolean  @default(true)
+  version     Int      @default(1)
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GeneralSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  active    Boolean  @default(true)
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
