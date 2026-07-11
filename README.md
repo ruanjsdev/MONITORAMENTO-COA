@@ -1,8 +1,8 @@
-# COA-BOT
+# COA
 
 ## Objetivo
 
-O COA-BOT e um sistema de automacao operacional para apoiar o COA no monitoramento de grupos de WhatsApp, interpretacao de relatorios enviados por operadores, comparacao com planilhas Excel oficiais, aprovacao administrativa e atualizacao controlada das informacoes da operacao agricola.
+O COA e um sistema de automacao operacional para apoiar o COA no monitoramento de grupos de WhatsApp, interpretacao de relatorios enviados por operadores, comparacao com planilhas Excel oficiais, aprovacao administrativa e atualizacao controlada das informacoes da operacao agricola.
 
 ## Problema resolvido
 
