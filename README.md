@@ -325,6 +325,7 @@ Comece por:
 3. `docs/03-Regras-de-Negocio.md`
 4. `docs/17-Relatorio-Troca-de-Turno.md`
 5. `docs/18-Mapa-de-Telas.md`
+6. `docs/27-Persistencia-Operacional-PostgreSQL.md`
 6. `docs/19-Central-de-Ocorrencias.md`
 7. `docs/20-Assistente-COA.md`
 8. `docs/21-Indicadores-e-Tempo-Parado.md`

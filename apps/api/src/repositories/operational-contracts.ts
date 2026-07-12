@@ -7,7 +7,8 @@ export interface EventRepository{list():readonly OperationalEvent[];append(event
 export interface ProjectionRepository<T=unknown>{get():T|undefined;replace(value:T):void;clear():void}
 export interface ReportRepository{getDraft():string;saveDraft(value:string):void}
 export class MemoryRepository<T extends{id:string}>{#items:T[]=[];list(){return[...this.#items]}find(id:string){return this.#items.find(x=>x.id===id)}save(value:T){this.#items.push(value)}}
-export class MemoryMessageRepository extends MemoryRepository<SimulatedMessage> implements MessageRepository{findByKey(key:string){return this.list().find(x=>x.idempotencyKey===key)}}
-export class MemoryPendingRepository extends MemoryRepository<OperationalPending> implements PendingRepository{}
+export class UpsertMemoryRepository<T extends{id:string}>{#items:T[]=[];list(){return[...this.#items]}find(id:string){return this.#items.find(x=>x.id===id)}save(value:T){const index=this.#items.findIndex(x=>x.id===value.id);if(index>=0)this.#items[index]=value;else this.#items.push(value)}}
+export class MemoryMessageRepository extends UpsertMemoryRepository<SimulatedMessage> implements MessageRepository{findByKey(key:string){return this.list().find(x=>x.idempotencyKey===key)}}
+export class MemoryPendingRepository extends UpsertMemoryRepository<OperationalPending> implements PendingRepository{}
 export class MemoryProjectionRepository<T> implements ProjectionRepository<T>{#value?:T;get(){return this.#value}replace(value:T){this.#value=value}clear(){this.#value=undefined}}
 export class MemoryReportRepository implements ReportRepository{#draft="";getDraft(){return this.#draft}saveDraft(value:string){this.#draft=value}}
