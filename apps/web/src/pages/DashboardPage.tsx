@@ -19,7 +19,8 @@ export default function DashboardPage() {
   const stale = data.fleets.filter(item => Date.now() - new Date(item.updatedAt).getTime() > 30 * 60_000).length;
   const pending = data.pendencies.filter(item => item.status === "open").length;
   const lastUpdate = latestDate([...data.fleets.map(item => item.updatedAt), ...data.timeline.map(item => item.timestamp)]);
-  const systemOnline = data.systems.every(item => item.state !== "offline");
+  const apiOnline = data.systems.find(item => item.name === "API")?.state === "online";
+  const hasServiceFailure = data.systems.some(item => ["offline", "error", "erro"].includes(item.state.toLowerCase()));
 
   return (
     <section className="shift-home">
@@ -33,7 +34,7 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="shift-status">
-          <SemanticStatusBadge status={systemOnline ? "ONLINE" : "OFFLINE"}>{systemOnline ? "Sistema online" : "Sistema em atenção"}</SemanticStatusBadge>
+          <SemanticStatusBadge status={hasServiceFailure ? "OFFLINE" : apiOnline ? "ONLINE" : "SIMULATED"}>{hasServiceFailure ? "Serviços em atenção" : apiOnline ? "Operação local ativa" : "Ambiente simulado"}</SemanticStatusBadge>
           <span><Database size={15} />Atualizado <RelativeTime value={lastUpdate} /></span>
           <button onClick={reload} aria-label="Atualizar"><RefreshCw size={18} /></button>
         </div>
