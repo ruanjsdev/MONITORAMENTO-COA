@@ -473,6 +473,7 @@ model OperationalPending {
 model OperationalProjection {
   id        String   @id
   value     Json
+  version   Int      @default(1)
   updatedAt DateTime @updatedAt
 }
 

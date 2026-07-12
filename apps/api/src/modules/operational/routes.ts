@@ -3,6 +3,7 @@ import { Router } from "express";
 import { OperationalEvent, OperationalEventType } from "@coa-bot/shared";
 import { operationalDecisionSchema, operationalParseSchema, operationalSimulateSchema } from "@coa-bot/validation";
 import { HttpError } from "../../errors/http-error.js";
+import { assertDatabaseConfiguration, resolveDatabaseMode } from "../../config/database-mode.js";
 import { OperationalPrismaContext } from "../../repositories/operational-prisma.js";
 import { OperationalEngine } from "../../services/operational-engine.js";
 import { OperationalWorkflow, WorkflowError } from "../../services/operational-workflow.js";
@@ -17,7 +18,7 @@ class MemoryOperationalContext {
     this.workflow = new OperationalWorkflow(this.engine);
   }
   async persistEvent() {}
-  async persistNewEvents() {}
+  async persistNewEvents(_beforeIds?: Set<string>) {}
   async persistMessages() {}
   async persistPendings() {}
   async persistProjection() { return this.workflow.rebuild(); }
@@ -32,7 +33,11 @@ export function operationalRoutes(prisma = new PrismaClient()) {
   let contextPromise: Promise<OperationalContext> | undefined;
 
   async function context() {
-    if (!contextPromise) contextPromise = process.env.DATABASE_URL ? OperationalPrismaContext.load(prisma, seed) : Promise.resolve(new MemoryOperationalContext(seed));
+    if (!contextPromise) {
+      const mode = resolveDatabaseMode();
+      if (mode === "prisma") assertDatabaseConfiguration();
+      contextPromise = mode === "prisma" ? OperationalPrismaContext.load(prisma, seed) : Promise.resolve(new MemoryOperationalContext(seed));
+    }
     return contextPromise;
   }
 
@@ -49,7 +54,7 @@ export function operationalRoutes(prisma = new PrismaClient()) {
       }, {}));
       const messages = ctx.workflow.messages.list().map(message => ({ id: message.id, text: message.text, sender: message.sender, group: message.group, operation: message.interpretations[0]?.operation, status: message.status === "PENDING" ? "PENDING_APPROVAL" : message.status, receivedAt: message.receivedAt }));
       const eventMessages = ctx.engine.timeline().filter(event => event.type === "MESSAGE_RECEIVED" || event.type === "ERROR").map(event => ({ id: event.id, text: event.originalMessage ?? event.observation, sender: event.user, group: event.group, operation: event.operation, status: event.type === "ERROR" ? "FAILED" : "PENDING_APPROVAL", receivedAt: event.timestamp }));
-      res.json({ simulationMode: true, shift: "C", shiftEndsAt: new Date(Date.now() + 3_600_000).toISOString(), fleets, messages: [...messages, ...eventMessages], pendencies: pendingSummary(ctx), systems: systemStatus(Boolean(process.env.DATABASE_URL)), operations: grouped.map(item => `${item.operation}: ${item.machines} máquinas · ${item.stopped} paradas`), operationSummary: grouped, timeline: ctx.engine.timeline().slice(0, 12), nextReport: "21:45 · Plantio", shiftReportStatus: "Aguardando revisão" });
+      res.json({ simulationMode: true, shift: "C", shiftEndsAt: new Date(Date.now() + 3_600_000).toISOString(), fleets, messages: [...messages, ...eventMessages], pendencies: pendingSummary(ctx), systems: systemStatus(resolveDatabaseMode(), ctx), operations: grouped.map(item => `${item.operation}: ${item.machines} máquinas · ${item.stopped} paradas`), operationSummary: grouped, timeline: ctx.engine.timeline().slice(0, 12), nextReport: "21:45 · Plantio", shiftReportStatus: "Aguardando revisão" });
     } catch (error) { next(error); }
   });
 
@@ -92,10 +97,13 @@ export function operationalRoutes(prisma = new PrismaClient()) {
       const ctx = await context();
       const input = operationalDecisionSchema.parse(req.body);
       const before = eventIds(ctx);
-      const result = ctx.workflow.approve(String(req.params.id), input.responsible);
-      await ctx.persistPendings();
-      await ctx.persistNewEvents(before);
-      await ctx.persistProjection();
+      const result = ctx instanceof OperationalPrismaContext ? await ctx.approvePending(String(req.params.id), input.responsible) : ctx.workflow.approve(String(req.params.id), input.responsible);
+      if (!(ctx instanceof OperationalPrismaContext)) {
+        const memory = ctx as MemoryOperationalContext;
+        await ctx.persistPendings();
+        await memory.persistNewEvents(before);
+        await ctx.persistProjection();
+      }
       res.json(result);
     } catch (error) { handleWorkflow(error, res, next); }
   });
@@ -104,10 +112,13 @@ export function operationalRoutes(prisma = new PrismaClient()) {
       const ctx = await context();
       const input = operationalDecisionSchema.parse(req.body);
       const before = eventIds(ctx);
-      const result = ctx.workflow.reject(String(req.params.id), input.responsible, input.reason);
-      await ctx.persistPendings();
-      await ctx.persistNewEvents(before);
-      await ctx.persistProjection();
+      const result = ctx instanceof OperationalPrismaContext ? await ctx.rejectPending(String(req.params.id), input.responsible, input.reason) : ctx.workflow.reject(String(req.params.id), input.responsible, input.reason);
+      if (!(ctx instanceof OperationalPrismaContext)) {
+        const memory = ctx as MemoryOperationalContext;
+        await ctx.persistPendings();
+        await memory.persistNewEvents(before);
+        await ctx.persistProjection();
+      }
       res.json(result);
     } catch (error) { handleWorkflow(error, res, next); }
   });
@@ -131,8 +142,8 @@ export function operationalRoutes(prisma = new PrismaClient()) {
       const item = ctx.workflow.pendings.find(String(req.params.id));
       const before = eventIds(ctx);
       let result: unknown;
-      if (item && req.body.action === "approve") result = ctx.workflow.approve(item.id, res.locals.user?.name ?? "Operador");
-      else if (item && ["reject", "resolve", "duplicate"].includes(String(req.body.action))) result = ctx.workflow.reject(item.id, res.locals.user?.name ?? "Operador", String(req.body.action));
+      if (item && req.body.action === "approve") result = ctx instanceof OperationalPrismaContext ? await ctx.approvePending(item.id, res.locals.user?.name ?? "Operador") : ctx.workflow.approve(item.id, res.locals.user?.name ?? "Operador");
+      else if (item && ["reject", "resolve", "duplicate"].includes(String(req.body.action))) result = ctx instanceof OperationalPrismaContext ? await ctx.rejectPending(item.id, res.locals.user?.name ?? "Operador", String(req.body.action)) : ctx.workflow.reject(item.id, res.locals.user?.name ?? "Operador", String(req.body.action));
       else if (String(req.params.id).startsWith("pen-")) {
         const item = pendingSummary(ctx).find(candidate => candidate.id === req.params.id) ?? { id: req.params.id, status: "open" };
         item.status = "resolved";
@@ -142,9 +153,12 @@ export function operationalRoutes(prisma = new PrismaClient()) {
         const event = ctx.engine.append({ type: req.body.action === "approve" ? "PENDING_APPROVED" : "CONFIRMED", source: "PANEL", approved: true, priority: "normal", observation: `Pendência ${req.body.action}`, responsible: res.locals.user?.name ?? "Operador", user: res.locals.user?.name ?? "Operador" });
         result = { simulated: true, externalActionExecuted: false, event, action: req.body.action };
       }
-      await ctx.persistPendings();
-      await ctx.persistNewEvents(before);
-      await ctx.persistProjection();
+      if (!(ctx instanceof OperationalPrismaContext)) {
+        const memory = ctx as MemoryOperationalContext;
+        await ctx.persistPendings();
+        await memory.persistNewEvents(before);
+        await ctx.persistProjection();
+      }
       res.json(result);
     } catch (error) { handleWorkflow(error, res, next); }
   });
@@ -162,7 +176,7 @@ function pendingSummary(ctx: OperationalContext) {
   const demo = ctx.engine.timeline().filter(event => event.type === "PENDING_CREATED").map(event => ({ id: event.fleet === "625" ? "pen-625" : `pen-${event.id}`, eventId: event.id, operation: event.operation ?? "Não informada", subject: event.fleet ? `Frota ${event.fleet}` : "Mensagem sem frota", reason: event.observation ?? "Alteração aguardando aprovação", since: event.timestamp, priority: event.priority, status: "open" }));
   return [...persisted, ...demo.filter(item => !persisted.some(existing => existing.subject === item.subject && existing.status === "open"))];
 }
-function systemStatus(databaseConfigured: boolean) { return [["API", "online", "API local respondendo"], ["Banco de dados", databaseConfigured ? "online" : "simulated", databaseConfigured ? "PostgreSQL operacional persistente" : "Fallback em memória"], ["WhatsApp", "simulated", "Comandos não executáveis"], ["Excel", "simulated", "Comandos não executáveis"], ["Agente Excel", "simulated", "Execução bloqueada"], ["Monitoramento", "online", "OperationalEngine ativo"], ["Notificações", "simulated", "Registros locais"], ["Modo de simulação", "online", "Proteção externa ativa"]].map(([name, state, message], index) => ({ id: `sys-${index}`, name, state, message, updatedAt: new Date().toISOString(), testable: true })); }
+function systemStatus(mode: "memory" | "prisma", ctx: OperationalContext) { return [["API", "online", "API local respondendo"], ["Banco de dados", mode === "prisma" ? "online" : "simulated", mode === "prisma" ? `PostgreSQL operacional persistente · mensagens ${ctx.workflow.messages.list().length} · pendências abertas ${ctx.workflow.pendings.list().filter(item => item.status === "OPEN").length} · eventos ${ctx.engine.all().length}` : "DATABASE_MODE=memory"], ["WhatsApp", "simulated", "Comandos não executáveis"], ["Excel", "simulated", "Comandos não executáveis"], ["Agente Excel", "simulated", "Execução bloqueada"], ["Monitoramento", "online", "OperationalEngine ativo"], ["Notificações", "simulated", "Registros locais"], ["Modo de simulação", "online", "Proteção externa ativa"]].map(([name, state, message], index) => ({ id: `sys-${index}`, name, state, message, updatedAt: new Date().toISOString(), testable: true })); }
 function handleWorkflow(error: unknown, res: { status: (status: number) => { json: (value: unknown) => void } }, next: (error: unknown) => void) { if (error instanceof WorkflowError) return res.status(error.status).json({ message: error.message }); next(error); }
 
 function demoSeed(): DemoEvent[] {

@@ -1,7 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import { OperationalEvent } from "@coa-bot/shared";
 import { OperationalEngine, rebuildProjections } from "../services/operational-engine.js";
-import { OperationalWorkflow } from "../services/operational-workflow.js";
+import { OperationalWorkflow, WorkflowError } from "../services/operational-workflow.js";
 import { MemoryMessageRepository, MemoryPendingRepository, MemoryProjectionRepository, MemoryReportRepository, OperationalPending, SimulatedMessage } from "./operational-contracts.js";
 
 const projectionId = "current";
@@ -76,11 +77,12 @@ export class OperationalPrismaContext {
   }
 
   async persistEvent(event: OperationalEvent) {
-    await this.prisma.operationalEvent.upsert({
-      where: { id: event.id },
-      create: toEventRow(event),
-      update: {}
-    });
+    try {
+      await this.prisma.operationalEvent.create({ data: toEventRow(event) });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") return;
+      throw error;
+    }
   }
 
   async persistNewEvents(beforeIds: Set<string>) {
@@ -116,10 +118,85 @@ export class OperationalPrismaContext {
     this.projections.replace(value);
     await this.prisma.operationalProjection.upsert({
       where: { id: projectionId },
-      create: { id: projectionId, value },
-      update: { value }
+      create: { id: projectionId, value, version: 1 },
+      update: { value, version: { increment: 1 } }
     });
     return value;
+  }
+
+  async approvePending(id: string, responsible: string, options: { failAfterEvent?: boolean } = {}) {
+    const pending = this.pendings.find(id);
+    if (!pending) throw new WorkflowError(404, "Pendência não encontrada.");
+    if (pending.status !== "OPEN") throw new WorkflowError(409, "Pendência já resolvida.");
+    const fleet = pending.interpretation.mainEquipment!;
+    const current = this.engine.currentState(fleet)[0];
+    if ((current?.status ?? null) !== pending.baselineStatus || (current?.description ?? null) !== pending.baselineDescription) throw new WorkflowError(409, "Conflito: estado atual mudou após a criação da pendência.");
+
+    const proposed = pending.interpretation.proposedStatus;
+    const event: OperationalEvent = {
+      id: randomUUID(),
+      timestamp: new Date().toISOString(),
+      type: proposed === "PARADO" ? "STOPPED" : pending.baselineStatus === "PARADO" && proposed === "RODANDO" ? "RETURNED" : "STATUS_CHANGED",
+      fleet,
+      implement: pending.interpretation.attachments.join("/"),
+      operation: pending.interpretation.operation ?? current?.operation,
+      previousStatus: pending.baselineStatus ?? undefined,
+      newStatus: proposed ?? pending.baselineStatus ?? undefined,
+      previousDescription: pending.baselineDescription ?? undefined,
+      newDescription: pending.interpretation.description ?? undefined,
+      previousSector: pending.baselineSector ?? undefined,
+      newSector: pending.interpretation.location ?? undefined,
+      source: "PANEL",
+      originalMessage: pending.interpretation.originalText,
+      shift: pending.interpretation.shift ?? "C",
+      user: responsible,
+      responsible,
+      approved: true,
+      simulated: true,
+      priority: "normal",
+      observation: `Situação: ${pending.interpretation.operationalSituation ?? "NORMAL"}`
+    };
+    const projected = rebuildProjections([...this.engine.all(), event]);
+
+    await this.prisma.$transaction(async tx => {
+      const locked = await tx.operationalPending.updateMany({ where: { id, status: "OPEN" }, data: { status: "APPROVED", resolvedAt: new Date() } });
+      if (locked.count !== 1) throw new WorkflowError(409, "Pendência já resolvida.");
+      await tx.operationalEvent.create({ data: toEventRow(event) });
+      if (options.failAfterEvent) throw new Error("Falha simulada após criação de evento.");
+      await tx.operationalProjection.upsert({ where: { id: projectionId }, create: { id: projectionId, value: projected, version: 1 }, update: { value: projected, version: { increment: 1 } } });
+      await tx.operationalMessage.update({ where: { id: pending.messageId }, data: { status: "PROCESSED" } });
+    });
+
+    pending.status = "APPROVED";
+    pending.resolvedAt = new Date().toISOString();
+    this.pendings.save(pending);
+    const message = this.messages.find(pending.messageId);
+    if (message) { message.status = "PROCESSED"; this.messages.save(message); }
+    this.engine.append(event);
+    this.projections.replace(projected);
+    return { event, excelCommands: this.engine.toExcelCommands(event), whatsAppCommands: this.engine.toWhatsAppCommands(event), externalActionExecuted: false };
+  }
+
+  async rejectPending(id: string, responsible: string, reason = "Rejeitada pelo operador") {
+    const pending = this.pendings.find(id);
+    if (!pending) throw new WorkflowError(404, "Pendência não encontrada.");
+    if (pending.status !== "OPEN") throw new WorkflowError(409, "Pendência já resolvida.");
+    const event: OperationalEvent = { id: randomUUID(), timestamp: new Date().toISOString(), type: "CONFIRMED", fleet: pending.interpretation.mainEquipment ?? undefined, operation: pending.interpretation.operation ?? undefined, source: "PANEL", originalMessage: pending.interpretation.originalText, user: responsible, responsible, approved: true, simulated: true, priority: "normal", observation: `Pendência rejeitada: ${reason}` };
+
+    await this.prisma.$transaction(async tx => {
+      const locked = await tx.operationalPending.updateMany({ where: { id, status: "OPEN" }, data: { status: "REJECTED", resolvedAt: new Date() } });
+      if (locked.count !== 1) throw new WorkflowError(409, "Pendência já resolvida.");
+      await tx.operationalEvent.create({ data: toEventRow(event) });
+      await tx.operationalMessage.update({ where: { id: pending.messageId }, data: { status: "REJECTED" } });
+    });
+
+    pending.status = "REJECTED";
+    pending.resolvedAt = new Date().toISOString();
+    this.pendings.save(pending);
+    const message = this.messages.find(pending.messageId);
+    if (message) { message.status = "REJECTED"; this.messages.save(message); }
+    this.engine.append(event);
+    return { event, externalActionExecuted: false };
   }
 
   async persistDraft(text: string) {

@@ -12,7 +12,6 @@ describe.skipIf(!enabled)("persistência operacional Prisma", () => {
   beforeAll(async () => {
     await prisma.operationalPending.deleteMany({ where: { message: { idempotencyKey: { contains: suffix } } } });
     await prisma.operationalMessage.deleteMany({ where: { idempotencyKey: { contains: suffix } } });
-    await prisma.operationalEvent.deleteMany({ where: { originalMessage: { contains: suffix } } });
     await prisma.operationalProjection.deleteMany({ where: { id: `test-${suffix}` } });
     await prisma.operationalReportDraft.deleteMany({ where: { id: "shift-report" } });
   });
@@ -54,4 +53,57 @@ describe.skipIf(!enabled)("persistência operacional Prisma", () => {
     expect(second.projections.get()).toEqual(projection);
     expect(second.workflow.reports.getDraft()).toContain(suffix);
   });
+
+  it("faz rollback completo quando a aprovação falha dentro da transação", async () => {
+    const context = await OperationalPrismaContext.load(prisma, []);
+    const pending = await createPending(context, `rollback-${suffix}`, "778");
+    await expect(context.approvePending(pending.id, "Persistência", { failAfterEvent: true })).rejects.toThrow(/Falha simulada/);
+
+    const reloaded = await OperationalPrismaContext.load(prisma, []);
+    expect(reloaded.workflow.pendings.find(pending.id)?.status).toBe("OPEN");
+    expect(reloaded.engine.timeline().filter(event => event.originalMessage?.includes(`rollback-${suffix}`) && event.approved && event.type === "STOPPED")).toHaveLength(0);
+    expect(reloaded.engine.currentState("778")[0]).toBeUndefined();
+  });
+
+  it("resolve aprovação concorrente com apenas um vencedor", async () => {
+    const setup = await OperationalPrismaContext.load(prisma, []);
+    const pending = await createPending(setup, `concurrent-${suffix}`, "779");
+    const first = await OperationalPrismaContext.load(prisma, []);
+    const second = await OperationalPrismaContext.load(prisma, []);
+    const results = await Promise.allSettled([
+      first.approvePending(pending.id, "Aprovador A"),
+      second.approvePending(pending.id, "Aprovador B")
+    ]);
+
+    expect(results.filter(result => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter(result => result.status === "rejected")).toHaveLength(1);
+    const reloaded = await OperationalPrismaContext.load(prisma, []);
+    expect(reloaded.workflow.pendings.find(pending.id)?.status).toBe("APPROVED");
+    expect(reloaded.engine.timeline().filter(event => event.originalMessage?.includes(`concurrent-${suffix}`) && event.approved && event.type === "STOPPED")).toHaveLength(1);
+    expect(reloaded.engine.currentState("779")[0]?.status).toBe("PARADO");
+  });
+
+  it("bloqueia update e delete de OperationalEvent no PostgreSQL", async () => {
+    const context = await OperationalPrismaContext.load(prisma, []);
+    const before = new Set(context.engine.all().map(event => event.id));
+    const message = context.workflow.simulate({ idempotencyKey: `append-${suffix}`, group: "Persistência", sender: "Teste", shift: "C", text: `780 = parado, append ${suffix}` });
+    await context.persistMessages();
+    await context.persistNewEvents(before);
+    const event = context.engine.all().find(item => !before.has(item.id));
+    expect(event).toBeDefined();
+
+    await expect(prisma.operationalEvent.update({ where: { id: event!.id }, data: { observation: "mutado" } })).rejects.toThrow();
+    await expect(prisma.operationalEvent.delete({ where: { id: event!.id } })).rejects.toThrow();
+  });
 });
+
+async function createPending(context: OperationalPrismaContext, key: string, fleet: string) {
+  const before = new Set(context.engine.all().map(event => event.id));
+  const message = context.workflow.simulate({ idempotencyKey: key, group: "Persistência", sender: "Teste", shift: "C", text: `${fleet} = parado, teste ${key}` });
+  const pending = context.workflow.createPendings(message.id)[0];
+  await context.persistMessages();
+  await context.persistPendings();
+  await context.persistNewEvents(before);
+  await context.persistProjection();
+  return pending;
+}

@@ -18,12 +18,31 @@ Quando `DATABASE_URL` não existe, a API mantém fallback em memória para teste
 4. Cada nova mensagem, pendência, aprovação, rejeição, evento, projeção ou rascunho é persistido após a operação.
 5. O seed visual de demonstração usa IDs fixos para ser idempotente.
 
+`DATABASE_MODE` define a fonte de dados:
+
+- `prisma`: exige `DATABASE_URL` e usa PostgreSQL.
+- `memory`: permitido para testes unitários e execução isolada.
+- em produção, `prisma` é obrigatório.
+
 ## Responsabilidades
 
 - `OperationalPrismaContext`: carregar e persistir o estado operacional.
 - `OperationalWorkflow`: preservar regras de interpretação, pendência, aprovação e conflito.
 - `OperationalEngine`: continuar append-only e determinístico.
 - Prisma: manter durabilidade e unicidade de mensagens por `idempotencyKey`.
+
+## Transações e concorrência
+
+A aprovação e a rejeição persistentes são executadas em transação Prisma. A aprovação bloqueia a pendência aberta via `updateMany`, cria o evento confirmado, atualiza projeção, mensagem e pendência na mesma transação. Em concorrência, uma aprovação vence e a segunda recebe conflito.
+
+`OperationalEvent` possui proteção append-only no PostgreSQL por triggers que bloqueiam `UPDATE` e `DELETE`.
+
+## Scripts
+
+- `npm run test`: suíte unitária e API simulada, sem exigir Docker.
+- `npm run test:integration`: exige `DATABASE_URL` e valida persistência real.
+- `npm run db:rebuild-operational-projections`: dry-run por padrão.
+- `npm run db:rebuild-operational-projections -- --write`: grava projeção reconstruída sem excluir eventos.
 
 ## Futuras expansões
 
