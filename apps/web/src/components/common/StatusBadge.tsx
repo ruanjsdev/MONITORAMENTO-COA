@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { SemanticStatusBadge } from "./SemanticStatusBadge";
 
 type StatusBadgeProps = {
   active?: boolean;
@@ -8,8 +9,6 @@ type StatusBadgeProps = {
 
 export function StatusBadge({ active, status, children }: StatusBadgeProps) {
   const label = children ?? status ?? (active ? "ativo" : "inativo");
-  const normalized = String(status ?? label).toLowerCase();
-  const tone = active === false ? "muted" : normalized.includes("parado") || normalized.includes("falha") || normalized.includes("offline") ? "danger" : normalized.includes("sim") || normalized.includes("pend") || normalized.includes("aten") ? "warning" : normalized.includes("online") || normalized.includes("ativo") || normalized.includes("rodando") ? "success" : "info";
-
-  return <span className={`badge badge-${tone}`}>{label}</span>;
+  if (active === false) return <span className="semantic-badge semantic-neutral semantic-sm">{label}</span>;
+  return <SemanticStatusBadge status={status ?? String(label)}>{label}</SemanticStatusBadge>;
 }

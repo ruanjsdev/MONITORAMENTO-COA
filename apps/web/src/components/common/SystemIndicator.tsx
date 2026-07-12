@@ -7,8 +7,7 @@ type SystemIndicatorProps = {
 };
 
 export function SystemIndicator({ name, state = "sem dados", message }: SystemIndicatorProps) {
-  const normalized = state.toLowerCase();
-  const tone = normalized.includes("online") ? "online" : normalized.includes("sim") ? "simulation" : normalized.includes("offline") || normalized.includes("erro") ? "offline" : "waiting";
+  const tone = indicatorTone(state);
 
   return (
     <span className={`system-indicator indicator-${tone}`} title={message ?? `${name}: ${state}`}>
@@ -17,4 +16,21 @@ export function SystemIndicator({ name, state = "sem dados", message }: SystemIn
       <strong>{state}</strong>
     </span>
   );
+}
+
+function indicatorTone(state: string) {
+  const normalized = state.trim().toLowerCase();
+  const tones: Record<string, "online" | "simulation" | "offline" | "waiting"> = {
+    online: "online",
+    simulated: "simulation",
+    simulando: "simulation",
+    offline: "offline",
+    error: "offline",
+    erro: "offline",
+    iniciando: "waiting",
+    "não configurado": "waiting",
+    "nao configurado": "waiting",
+    "sem dados": "waiting"
+  };
+  return tones[normalized] ?? "waiting";
 }

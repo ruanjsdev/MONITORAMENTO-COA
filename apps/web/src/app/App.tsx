@@ -14,6 +14,7 @@ function normalize(path: string) {
   if (path === "/spreadsheets") return "/planilhas";
   if (path === "/tests") return "/testes";
   if (path === "/excel") return "/planilhas";
+  if (path === "/more") return "/mais";
   return path;
 }
 

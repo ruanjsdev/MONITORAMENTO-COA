@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { OperationalPrismaContext } from "../apps/api/src/repositories/operational-prisma";
 
 const prisma = new PrismaClient();
-const enabled = Boolean(process.env.DATABASE_URL);
+const enabled = process.env.DATABASE_MODE === "prisma" && Boolean(process.env.DATABASE_URL);
 
 describe.skipIf(!enabled)("persistência operacional Prisma", () => {
   const suffix = randomUUID();

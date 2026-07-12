@@ -3,7 +3,9 @@ import express from "express";
 import { SIMULATION_BANNER, canSendReaction } from "@coa-bot/shared";
 import { authMiddleware } from "./middleware/auth.js";
 import { errorHandler } from "./middleware/error-handler.js";
-import { createPrismaDataSource, DataSource } from "./repositories/data-source.js";
+import { createMemoryDataSource, createPrismaDataSource, DataSource } from "./repositories/data-source.js";
+import { resolveDatabaseMode } from "./config/database-mode.js";
+import { createStore } from "./store.js";
 import { authRoutes } from "./modules/auth/routes.js";
 import { groupRoutes } from "./modules/groups/routes.js";
 import { operationRoutes } from "./modules/operations/routes.js";
@@ -15,7 +17,7 @@ import { integrationRoutes } from "./modules/integrations/routes.js";
 import { operationalRoutes } from "./modules/operational/routes.js";
 import { excelAgentPublicRoutes, excelHomologationRoutes } from "./modules/excel-homologation/routes.js";
 
-export function createApp(source: DataSource = createPrismaDataSource()) {
+export function createApp(source: DataSource = createDefaultDataSource()) {
   const app = express();
   const jwtSecret = process.env.JWT_SECRET ?? "dev-secret";
   const auth = authMiddleware(jwtSecret);
@@ -68,4 +70,8 @@ export function createApp(source: DataSource = createPrismaDataSource()) {
   });
   app.use(errorHandler);
   return app;
+}
+
+function createDefaultDataSource() {
+  return resolveDatabaseMode() === "memory" ? createMemoryDataSource(createStore()) : createPrismaDataSource();
 }
