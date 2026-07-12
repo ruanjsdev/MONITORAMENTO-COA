@@ -14,3 +14,7 @@ coverage/
 
 .DS_Store
 Thumbs.db
+
+# Cópias locais de homologação e artefatos temporários do Excel
+planilhas-homologacao/*
+!planilhas-homologacao/mappings.json

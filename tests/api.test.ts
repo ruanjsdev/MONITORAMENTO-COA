@@ -10,6 +10,9 @@ let server: Server;
 let baseUrl: string;
 
 async function start() {
+  process.env.SIMULATION_MODE = "true";
+  process.env.ADMIN_EMAIL = "admin@coa.local";
+  process.env.ADMIN_PASSWORD = "change-me";
   const app = createApp(createMemoryDataSource(createStore()));
   server = app.listen(0);
   await new Promise<void>((resolve) => server.once("listening", resolve));
@@ -244,4 +247,62 @@ describe("COA-BOT API em simulacao", () => {
     expect(result.executed).toBe(false);
     expect(result.simulated).toBe(true);
   });
+
+  it("entrega Meu Turno, estados de mensagens e status detalhado em simulacao", async () => {
+    const token = await login();
+    const response = await request("/operational/snapshot", { headers: auth(token) });
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.simulationMode).toBe(true);
+    expect(body.messages.map((item: any) => item.status)).toContain("PENDING_APPROVAL");
+    expect(body.messages.map((item: any) => item.status)).toContain("FAILED");
+    expect(body.systems).toHaveLength(8);
+    expect(body.fleets.find((item: any) => item.fleet === "625").description).toContain("fumaça preta");
+  });
+
+  it("pesquisa por frota e descricao nos dados de demonstracao", async () => {
+    const token = await login();
+    const fleet = await request("/operational/search?q=625", { headers: auth(token) });
+    expect((await fleet.json()).currentState[0].fleet).toBe("625");
+    const description = await request("/operational/search?q=cilindro", { headers: auth(token) });
+    expect((await description.json()).currentState[0].fleet).toBe("626");
+  });
+
+  it("resolve pendencia somente em memoria", async () => {
+    const token = await login();
+    const response = await request("/operational/pendencies/pen-625/action", { method: "POST", headers: auth(token), body: JSON.stringify({ action: "resolve" }) });
+    const body = await response.json();
+    expect(body.simulated).toBe(true);
+    expect(body.externalActionExecuted).toBe(false);
+    expect(body.item.status).toBe("resolved");
+  });
+
+  it("gera previa e troca de turno sem enviar mensagem real", async () => {
+    const token = await login();
+    const preview = await request("/operational/send-preview", { headers: auth(token) });
+    expect((await preview.json()).range).toBe("A1:AI26");
+    const sent = await request("/operational/send-preview/confirm", { method: "POST", headers: auth(token), body: JSON.stringify({ destination: "group", legend: "Teste" }) });
+    expect((await sent.json()).externalActionExecuted).toBe(false);
+    const report = await request("/operational/shift-report", { headers: auth(token) });
+    expect((await report.json()).text).toContain("RELATÓRIO DE TROCA DE TURNO");
+  });
+
+  it("executa mensagem simulada do parser ate aprovacao sem acao externa", async () => {
+    const token=await login();
+    const parsed=await request("/operational/messages/parse",{method:"POST",headers:auth(token),body:JSON.stringify({text:"1602/1063 = aguardando área",operation:"Cultivo",shift:"C"})});
+    const parsedBody=await parsed.json();expect(parsedBody.mainEquipment).toBe("1602");expect(parsedBody.proposedStatus).toBeNull();
+    const simulated=await request("/operational/messages/simulate",{method:"POST",headers:auth(token),body:JSON.stringify({idempotencyKey:"api-flow-1602",group:"Cultivo",sender:"Teste",shift:"C",text:"1602/1063 = aguardando área"})});
+    const message=await simulated.json();
+    const created=await request(`/operational/messages/${message.id}/create-pending-change`,{method:"POST",headers:auth(token),body:"{}"});
+    const [pending]=await created.json();expect(pending.reason).toBe("DOUBT");
+    const approved=await request(`/operational/pending/${pending.id}/approve`,{method:"POST",headers:auth(token),body:JSON.stringify({responsible:"Admin"})});
+    const result=await approved.json();expect(result.externalActionExecuted).toBe(false);expect(result.excelCommands[0].execute).toBe(false);expect(result.whatsAppCommands[0].reaction).toBeNull();
+  });
+
+  it("reconstroi projecoes e gera rascunho apenas com confirmado e pendente separado",async()=>{
+    const token=await login();const rebuilt=await request("/operational/projections/rebuild",{method:"POST",headers:auth(token),body:"{}"});expect(rebuilt.status).toBe(200);
+    const draft=await request("/operational/shift-report/draft",{headers:auth(token)});const body=await draft.json();expect(body.simulated).toBe(true);expect(body.text).toContain("PENDÊNCIAS NÃO CONFIRMADAS");
+  });
+
+  it("enfileira e cancela comando Excel de homologacao",async()=>{const token=await login();const queued=await request("/excel-homologation/commands",{method:"POST",headers:auth(token),body:JSON.stringify({type:"READ_CELL",workbook:"planilhas-homologacao/Planilha Plantio cana.dev.xlsm",worksheet:"PLANTIO",payload:{cell:"F8"},simulation:true})});expect(queued.status).toBe(201);const command=await queued.json();const cancelled=await request(`/excel-homologation/commands/${command.commandId}/cancel`,{method:"POST",headers:auth(token),body:"{}"});expect((await cancelled.json()).status).toBe("CANCELLED")});
 });

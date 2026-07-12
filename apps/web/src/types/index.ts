@@ -79,3 +79,10 @@ export type TestResult = {
   range: string;
   logs: string[];
 };
+
+export type StopMetrics={todayMinutes:number;shiftMinutes:number;weekMinutes:number;stopCount:number;longestMinutes:number;lastStopAt?:string;runningSince?:string};
+export type FleetState={fleet:string;status:string;description:string;operation:string;sector:string;updatedAt:string;stoppedMinutes:number;stopMetrics:StopMetrics};
+export type OperationalEventView={id:string;timestamp:string;type:string;operation?:string;fleet?:string;implement?:string;group?:string;shift?:string;user?:string;newStatus?:string;newDescription?:string;source:string;originalMessage?:string;observation?:string;approved:boolean;responsible?:string;priority:string};
+export type FleetHistory={state:FleetState;events:OperationalEventView[];today:OperationalEventView[];week:OperationalEventView[];month:OperationalEventView[];messages:OperationalEventView[];pendencies:OperationalEventView[]};
+export type OperationalSearchResult={currentState:FleetState[];events:OperationalEventView[];histories:FleetHistory[]};
+export type OperationalSnapshot={simulationMode:boolean;shift:string;shiftEndsAt:string;fleets:FleetState[];messages:Array<{id:string;text:string;status:string;receivedAt:string}>;pendencies:Array<{id:string;operation:string;subject:string;reason:string;since:string;priority:string;status:string}>;systems:Array<{id:string;name:string;state:string;message:string}>;operations:string[];operationSummary:Array<{operation:string;machines:number;stopped:number;updatedAt:string}>;timeline:OperationalEventView[];nextReport:string;shiftReportStatus:string};

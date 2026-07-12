@@ -148,3 +148,59 @@ Itens iniciais para planejamento futuro:
 - Substituir dados simulados por persistencia controlada.
 - Criar homologacao com copias das planilhas.
 - Validar fluxo completo antes de qualquer escrita real.
+
+## Entrega em simulacao — 2026-07-11
+
+- [x] Criar tela mobile `Meu Turno` e visão de mudanças recentes.
+- [x] Exibir status detalhado dos subsistemas sem tratar integrações simuladas como falha.
+- [x] Criar pesquisa global sobre dados operacionais de demonstração.
+- [x] Criar Central de Pendências com ações exclusivamente simuladas.
+- [x] Mostrar comparação antes/depois no fluxo de aprovação.
+- [x] Criar prévia e histórico de resultado para envio simulado.
+- [x] Criar rascunho editável do Relatório de Troca de Turno.
+- [x] Cobrir contratos principais com testes de API e interface.
+- [ ] Persistir os novos domínios no Prisma após disponibilidade do PostgreSQL.
+- [ ] Homologar conteúdo, horários, grupos e mapeamentos com o operador.
+
+## Etapa 8 — Motor Operacional
+
+- [x] Criar domínio append-only `OperationalEvent`.
+- [x] Calcular estado atual somente por eventos confirmados.
+- [x] Calcular intervalos e indicadores de tempo parado.
+- [x] Criar timeline reutilizável e filtros na API.
+- [x] Criar histórico consolidado por frota.
+- [x] Criar diário automático do turno.
+- [x] Transformar Meu Turno em Central de Operações com quatro áreas.
+- [x] Derivar pesquisa operacional de eventos e projeções.
+- [x] Preparar comandos não executáveis para Excel e WhatsApp.
+- [x] Preparar schema e migration Prisma sem executar PostgreSQL.
+- [ ] Implementar repositório Prisma append-only após disponibilidade do banco.
+
+## Etapa 9 — Fluxo operacional completo
+
+- [x] Parser determinístico modular, sem IA.
+- [x] Separar status principal de situação operacional.
+- [x] Preservar conjuntos de frota e implementos.
+- [x] Interpretar relatórios multilinha por operação.
+- [x] Comparar interpretação com projeção confirmada.
+- [x] Bloquear mensagens duplicadas e ignorar repetições sem mudança.
+- [x] Aprovar com revalidação e detecção de conflito.
+- [x] Rejeitar sem alterar o estado operacional.
+- [x] Reconstruir projeções integralmente pelos eventos.
+- [x] Integrar pendências não confirmadas ao rascunho de troca de turno.
+- [x] Criar caixa de entrada visual para mensagens simuladas.
+- [x] Expor endpoints operacionais validados com Zod.
+- [ ] Implementar os contratos operacionais no repositório Prisma.
+
+## Etapa 10 — Excel em homologação
+
+- [x] Criar cópias `.dev.xlsm` com manifesto e hashes SHA-256.
+- [x] Implementar allowlist de caminhos e bloqueio dos arquivos oficiais.
+- [x] Implementar ponte PowerShell COM sem teclado ou mouse.
+- [x] Detectar Excel, abrir cópia, ler células e localizar frota.
+- [x] Preparar prévia, conflito, escrita autorizada e releitura.
+- [x] Preparar `CopyPicture` com PNG temporário autorizado.
+- [x] Criar fila, heartbeat, resultado, backoff e cancelamento local.
+- [x] Adicionar Central de Testes do Excel.
+- [ ] Confirmar mapeamentos e campos editáveis com o operador.
+- [ ] Executar teste de escrita e CopyPicture somente após confirmação.

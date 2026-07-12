@@ -113,6 +113,10 @@ O projeto entrou na primeira fase de implementacao em modo seguro de simulacao. 
 
 Ainda nao existe conexao real com WhatsApp, automacao real do Excel, envio real de mensagens, reacao real em mensagens ou atualizacao real de celulas.
 
+O painel em modo de simulacao inclui agora `Meu Turno`, Central de Pendencias, aprovacoes com comparacao antes/depois, pesquisa global, status detalhado do sistema, previa de envio e Relatorio de Troca de Turno editavel. Os dados desta camada sao demonstrativos e todas as rotas de acao informam que nenhuma acao externa foi executada.
+
+O fluxo operacional possui parser deterministico sem IA, caixa de entrada simulada, comparacao com estado confirmado, controle de duplicidade, aprovacao com deteccao de conflito e reconstrução de projecoes a partir do log de eventos.
+
 ## Requisitos
 
 - Node.js 20 ou superior recomendado.

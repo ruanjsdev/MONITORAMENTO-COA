@@ -1,0 +1,5 @@
+export type MainStatus="RODANDO"|"PARADO"|"DISPONIVEL"|"MANUTENCAO"|"SEM_OPERACAO"|"DESCONHECIDO";
+export type OperationalSituation="DESLOCAMENTO"|"AGUARDANDO_AREA"|"ATOLADO"|"APOIO_OUTRA_OPERACAO"|"SOLO_UMIDO"|"AGUARDANDO_PREVISAO"|"OPERANDO_COM_RESTRICAO"|"NORMAL";
+export type FieldConfidence={equipment:number;operation:number;status:number;situation:number;location:number;forecast:number};
+export type ParsedOperationalMessage={originalText:string;operation:string|null;mainEquipment:string|null;attachments:string[];equipmentSet:string|null;currentStatus:MainStatus|null;proposedStatus:MainStatus|null;operationalSituation:OperationalSituation|null;description:string|null;location:string|null;destination:string|null;forecastAt:string|null;date:string|null;time:string|null;shift:string|null;variety:string|null;confidence:number;fieldConfidence:FieldConfidence;warnings:string[];unresolvedFields:string[]};
+export type ParsedReport={originalText:string;header:{title:string|null;sector:string|null;date:string|null;shift:string|null;variety:string|null};items:ParsedOperationalMessage[];warnings:string[]};

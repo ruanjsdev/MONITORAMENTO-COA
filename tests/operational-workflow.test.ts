@@ -1,0 +1,13 @@
+import{describe,expect,it}from"vitest";import{OperationalEngine}from"../apps/api/src/services/operational-engine";import{OperationalWorkflow}from"../apps/api/src/services/operational-workflow";
+const base={fleet:"625",operation:"Plantio Mecanizado",shift:"C",user:"Teste",responsible:"Teste",source:"SIMULATION"as const,approved:true,priority:"normal"as const};
+function setup(status="RODANDO"){const engine=new OperationalEngine({simulationMode:true,seed:[{...base,type:"STATUS_CHANGED",newStatus:status,newDescription:"Operação normal",newSector:"D1"}]});return{engine,workflow:new OperationalWorkflow(engine)}}
+function receive(workflow:OperationalWorkflow,text:string,key="message-1"){const message=workflow.simulate({idempotencyKey:key,group:"Plantio",sender:"Teste",shift:"C",text});return{message,pending:workflow.createPendings(message.id)[0]}}
+describe("fluxo operacional completo",()=>{
+ it("ignora mensagem sem mudança",()=>{const{workflow}=setup();const{message}=receive(workflow,"625 = rodando");expect(workflow.createPendings(message.id)).toEqual([])});
+ it("impede mensagem duplicada",()=>{const{workflow}=setup();workflow.simulate({idempotencyKey:"duplicate",group:"G",sender:"S",shift:"C",text:"625 = rodando"});expect(()=>workflow.simulate({idempotencyKey:"duplicate",group:"G",sender:"S",shift:"C",text:"625 = parado"})).toThrow(/duplicada/)});
+ it("cria pendência para mudança e aprova via evento",()=>{const{workflow,engine}=setup();const{pending}=receive(workflow,"625 = parado, bico injetor");const result=workflow.approve(pending.id,"Admin");expect(result.event.type).toBe("STOPPED");expect(engine.currentState("625")[0].status).toBe("PARADO");expect(result.externalActionExecuted).toBe(false)});
+ it("rejeita sem mudar o estado confirmado",()=>{const{workflow,engine}=setup();const{pending}=receive(workflow,"625 = parado, bico injetor");workflow.reject(pending.id,"Admin");expect(engine.currentState("625")[0].status).toBe("RODANDO")});
+ it("detecta conflito na aprovação",()=>{const{workflow,engine}=setup();const{pending}=receive(workflow,"625 = parado, bico injetor");engine.append({...base,type:"DESCRIPTION_CHANGED",newDescription:"Mudança concorrente"});expect(()=>workflow.approve(pending.id,"Admin")).toThrow(/Conflito/)});
+ it("reconstrói projeções somente pelos eventos",()=>{const{workflow}=setup();const first=workflow.rebuild();workflow.projections.clear();const rebuilt=workflow.rebuild();expect(rebuilt).toEqual(first)});
+ it("troca de turno separa pendência não confirmada",()=>{const{workflow}=setup();receive(workflow,"625 = parado, bico injetor");const draft=workflow.shiftDraft();expect(draft.text).toContain("PENDÊNCIAS NÃO CONFIRMADAS");expect(draft.openPendings).toHaveLength(1)});
+});
