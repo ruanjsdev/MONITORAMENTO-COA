@@ -6,6 +6,7 @@ import { useLoadable } from "../../hooks/useLoadable";
 import { OperationalSnapshot } from "../../types";
 import { SystemIndicator } from "../common/SystemIndicator";
 import { useEffect, useState } from "react";
+import { MobileBottomNavigation } from "./MobileBottomNavigation";
 
 export function AppLayout({ currentPath, navigate, logout, children }: { currentPath: string; navigate: (path: string) => void; logout: () => void; children: React.ReactNode }) {
   const { api } = useApp();
@@ -26,6 +27,11 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
     navigate(path);
     setDrawerOpen(false);
   }
+
+  const groupedRoutes = ["Operação", "Configuração e sistema"].map(section => ({
+    section,
+    items: routes.filter(route => route.section === section)
+  }));
 
   return (
     <div className={`app-shell ${collapsed ? "nav-collapsed" : ""}`}>
@@ -57,11 +63,16 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
           <strong>COA</strong>
           <button className="icon-button mobile-only" aria-label="Fechar menu" onClick={() => setDrawerOpen(false)}><X size={18} /></button>
         </div>
-        {routes.map(({ path, label, icon: Icon }) => (
-          <button className={currentPath === path ? "active" : ""} key={path} onClick={() => go(path)} title={label}>
-            <Icon size={18} />
-            <span>{label}</span>
-          </button>
+        {groupedRoutes.map(group => (
+          <div className="nav-group" key={group.section}>
+            <span className="nav-group-label">{group.section}</span>
+            {group.items.map(({ path, label, icon: Icon }) => (
+              <button className={currentPath === path ? "active" : ""} key={path} onClick={() => go(path)} title={label}>
+                <Icon size={18} />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
         ))}
         <button onClick={logout}>
           <LogOut size={18} />
@@ -75,6 +86,7 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
         <span>Última atualização: {clock.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
         <span>Excel/WhatsApp sem execução real em homologação</span>
       </footer>
+      <MobileBottomNavigation currentPath={currentPath} navigate={navigate} />
     </div>
   );
 }
