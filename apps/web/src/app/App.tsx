@@ -13,6 +13,7 @@ function normalize(path: string) {
   if (path === "/operations") return "/operacoes";
   if (path === "/spreadsheets") return "/planilhas";
   if (path === "/tests") return "/testes";
+  if (path === "/excel") return "/planilhas";
   return path;
 }
 
