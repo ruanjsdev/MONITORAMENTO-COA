@@ -10,6 +10,28 @@ export type PendingChangeStatus = "PENDING" | "APPROVED_SIMULATED" | "REJECTED" 
 
 export type OperationStatus = "active" | "paused" | "not_updated";
 
+export type OperationalEventType =
+  | "SHIFT_STARTED" | "MESSAGE_RECEIVED" | "MESSAGE_INTERPRETED" | "PENDING_CREATED"
+  | "PENDING_APPROVED" | "STATUS_CHANGED" | "DESCRIPTION_CHANGED" | "SECTOR_CHANGED"
+  | "OPERATION_CHANGED" | "REPORT_SENT" | "SHIFT_REPORT_CREATED" | "SHIFT_REPORT_SENT"
+  | "STOPPED" | "RETURNED" | "DISPLACED" | "ERROR" | "WARNING" | "SYNCED" | "CONFIRMED";
+
+export type OperationalEvent = Readonly<{
+  id: string; timestamp: string; type: OperationalEventType; operation?: string; fleet?: string;
+  implement?: string; group?: string; shift?: string; user?: string; previousStatus?: string;
+  newStatus?: string; previousDescription?: string; newDescription?: string; previousSector?: string;
+  newSector?: string; source: "WHATSAPP" | "PANEL" | "EXCEL" | "SYSTEM" | "SIMULATION";
+  originalMessage?: string; observation?: string; simulated: boolean; approved: boolean;
+  responsible?: string; priority: "low" | "normal" | "high" | "urgent";
+}>;
+
+export type FleetProjection = {
+  fleet: string; status: string; description: string; operation: string; sector: string;
+  updatedAt: string; stoppedMinutes: number; stopMetrics: StopMetrics;
+};
+
+export type StopMetrics = { todayMinutes: number; shiftMinutes: number; weekMinutes: number; stopCount: number; longestMinutes: number; lastStopAt?: string; runningSince?: string };
+
 export type AuditAction =
   | "LOGIN"
   | "GROUP_CREATED"

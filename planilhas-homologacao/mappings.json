@@ -1,0 +1,18 @@
+{
+  "warning": "MAPEAMENTOS CANDIDATOS — escrita bloqueada até confirmação humana",
+  "mappings": [
+    {
+      "operation": "Plantio Mecanizado",
+      "workbook": "Planilha Plantio cana.dev.xlsm",
+      "worksheet": "PLANTIO",
+      "fleetColumn": "F",
+      "statusColumn": "H",
+      "descriptionColumn": "S",
+      "timeColumn": "L",
+      "pictureRange": "A1:AI26",
+      "headerRow": 7,
+      "editableFields": [],
+      "confirmed": false
+    }
+  ]
+}

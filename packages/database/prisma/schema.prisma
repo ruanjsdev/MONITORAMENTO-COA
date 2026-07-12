@@ -404,3 +404,34 @@ model GeneralSetting {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/// Registro append-only. A aplicacao cria eventos; nao atualiza nem apaga registros antigos.
+model OperationalEvent {
+  id                  String   @id @default(cuid())
+  timestamp           DateTime @default(now())
+  type                String
+  operation           String?
+  fleet               String?
+  implement           String?
+  groupName           String?
+  shift               String?
+  userName            String?
+  previousStatus      String?
+  newStatus           String?
+  previousDescription String?
+  newDescription      String?
+  previousSector      String?
+  newSector           String?
+  source              String
+  originalMessage     String?
+  observation         String?
+  simulated           Boolean  @default(true)
+  approved            Boolean  @default(false)
+  responsible         String?
+  priority            String   @default("normal")
+  createdAt           DateTime @default(now())
+
+  @@index([fleet, timestamp])
+  @@index([operation, timestamp])
+  @@index([type, timestamp])
+}

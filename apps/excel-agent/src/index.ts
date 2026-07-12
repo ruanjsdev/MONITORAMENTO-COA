@@ -1,60 +1,11 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-import { ExcelAgentCommand, ExcelAgentStatus } from "@coa-bot/excel-contracts";
-
-const simulationMode = process.env.SIMULATION_MODE !== "false";
-const apiUrl = process.env.API_URL ?? "http://localhost:3333";
-const agentId = process.env.EXCEL_AGENT_ID ?? "local-excel-agent";
-const version = process.env.EXCEL_AGENT_VERSION ?? "0.1.0";
-const configuredFiles = [
-  "planilhas/Planilha Plantio cana.xlsm",
-  "planilhas/Acompanhamento Tratos Culturais.xlsm"
-].map((filePath) => ({
-  path: path.resolve(filePath),
-  exists: fs.existsSync(filePath)
-}));
-
-export function detectExcelInstalled(): boolean | "unknown" {
-  if (os.platform() !== "win32") return "unknown";
-  return fs.existsSync("C:/Program Files/Microsoft Office") || fs.existsSync("C:/Program Files (x86)/Microsoft Office");
-}
-
-export function getStatus(): ExcelAgentStatus {
-  return {
-    agentId,
-    online: true,
-    operatingSystem: `${os.platform()} ${os.release()}`,
-    version,
-    simulationMode,
-    excelInstalled: detectExcelInstalled(),
-    configuredFiles
-  };
-}
-
-export async function handleCommand(command: ExcelAgentCommand) {
-  return {
-    command,
-    simulated: true,
-    executed: false,
-    reason: "Agente Excel esta em modo de simulacao. Nenhum arquivo real foi alterado."
-  };
-}
-
-async function register() {
-  const status = getStatus();
-  try {
-    await fetch(`${apiUrl}/excel-agent/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(status)
-    });
-    console.log("Agente Excel registrado na API em modo simulacao.", status);
-  } catch (error) {
-    console.log("API indisponivel; agente Excel permanece em modo local.", status, error);
-  }
-}
-
-if (process.argv[1]?.endsWith("index.ts")) {
-  register();
-}
+import fs from"node:fs";import os from"node:os";import path from"node:path";import{randomUUID}from"node:crypto";import{ExcelAgentCommand,ExcelAgentStatus}from"@coa-bot/excel-contracts";import{executeComCommand}from"./com-bridge.js";import{homologationRoot,validateDevWorkbook}from"./security.js";
+const apiUrl=process.env.API_URL??"http://localhost:3333";const agentId=process.env.EXCEL_AGENT_ID??"local-excel-agent";const version=process.env.EXCEL_AGENT_VERSION??"0.2.0";const whatsappSimulation=process.env.SIMULATION_MODE!=="false";
+const files=["Planilha Plantio cana.dev.xlsm","Acompanhamento Tratos Culturais.dev.xlsm"].map(name=>path.join(homologationRoot,name));
+export function detectExcelInstalled():boolean|"unknown"{if(os.platform()!=="win32")return"unknown";try{return Boolean(requireProgId())}catch{return false}}
+function requireProgId(){return fs.existsSync("C:/Program Files/Microsoft Office")||fs.existsSync("C:/Program Files (x86)/Microsoft Office")}
+export function getStatus():ExcelAgentStatus{return{agentId,online:true,operatingSystem:`${os.platform()} ${os.release()}`,version,simulationMode:whatsappSimulation,homologationMode:true,excelInstalled:detectExcelInstalled(),configuredFiles:files.map(file=>({path:file,exists:fs.existsSync(file),authorized:safe(file)})),lastHeartbeat:new Date().toISOString()}}
+function safe(file:string){try{validateDevWorkbook(file);return true}catch{return false}}
+export async function handleCommand(input:ExcelAgentCommand|Record<string,unknown>){if(!("commandId"in input))return{command:input,simulated:true,executed:false,reason:"Contrato legado bloqueado: use o envelope homologado para comandos Excel."};return executeComCommand(input as ExcelAgentCommand)}
+export function command(type:ExcelAgentCommand["type"],input:Partial<ExcelAgentCommand>={}):ExcelAgentCommand{return{commandId:randomUUID(),correlationId:randomUUID(),requestedAt:new Date().toISOString(),requestedBy:"local-operator",type,payload:{},simulation:true,...input}}
+async function registerForever(){let delay=1000;const headers={"Content-Type":"application/json","x-excel-agent-token":process.env.EXCEL_AGENT_TOKEN??"local-dev-excel-agent"};for(;;){try{await fetch(`${apiUrl}/excel-agent/local/heartbeat`,{method:"POST",headers,body:JSON.stringify(getStatus())});const next=await fetch(`${apiUrl}/excel-agent/local/commands/next`,{headers});if(next.ok&&next.status!==204){const queued=await next.json() as ExcelAgentCommand;const result=await handleCommand(queued);await fetch(`${apiUrl}/excel-agent/local/commands/${queued.commandId}/result`,{method:"POST",headers,body:JSON.stringify(result)})}delay=1000}catch(error){console.log(`API indisponível; nova tentativa em ${delay}ms.`,error);delay=Math.min(delay*2,30_000)}await new Promise(resolve=>setTimeout(resolve,delay))}}
+if(process.argv[1]?.endsWith("index.ts"))registerForever();

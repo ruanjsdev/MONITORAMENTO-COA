@@ -8,9 +8,11 @@ body {
   margin: 0;
 }
 
-button, input {
+button, input, textarea {
   font: inherit;
 }
+
+textarea { font: inherit; min-height: 92px; border: 1px solid #cbd5c0; border-radius: 8px; padding: 10px; resize: vertical; }
 
 button {
   min-height: 44px;
@@ -337,6 +339,18 @@ pre {
   justify-content: flex-start;
 }
 
+.status-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.status-item { display:grid; gap:6px; padding:12px; border:1px solid #e2e8f0; border-radius:8px; }
+.state-online { background:#dcfce7; color:#14532d; } .state-simulated { background:#fef3c7; color:#713f12; }
+.filter-bar,.search-box { display:flex; gap:8px; margin:12px 0; overflow:auto; } .search-box input { flex:1; }
+.priority-urgent { background:#fee2e2;color:#991b1b }.priority-high { background:#ffedd5;color:#9a3412 }
+.search-results { margin-top:12px }.search-results article { border-top:1px solid #e2e8f0;padding:10px 0 }
+.comparison { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}.comparison>div { padding:12px;border:1px solid #e2e8f0;border-radius:8px;display:grid;gap:6px}.comparison .changed { border-color:#fb923c;background:#fff7ed }
+.image-placeholder { min-height:160px;margin:14px 0;display:grid;place-items:center;background:linear-gradient(135deg,#e2e8f0,#f8fafc);border:2px dashed #94a3b8;border-radius:8px;color:#475569;font-weight:700 }
+.report-editor { margin-top:14px }.report-editor textarea { width:calc(100% - 22px);min-height:420px }
+.operations-center { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 }.zone-activity { grid-row:span 2 }.operation-row { display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:10px 0;border-top:1px solid #e2e8f0 }.timeline { display:grid }.timeline-event { display:grid;grid-template-columns:52px 30px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid #e2e8f0 }.timeline-event p { margin:3px 0 }.timeline-icon { font-size:18px }
+.interpretation { border:1px solid #e2e8f0;border-radius:8px;padding:12px;background:#f8fafc }
+
 @media (max-width: 800px) {
   .sidebar {
     position: static;
@@ -352,7 +366,7 @@ pre {
     padding: 16px;
   }
 
-  .grid, .columns {
+  .grid, .columns, .status-grid {
     grid-template-columns: 1fr;
   }
 
@@ -374,4 +388,7 @@ pre {
     left: 16px;
     right: 16px;
   }
+  .comparison { grid-template-columns:1fr; }
+  .operations-center { grid-template-columns:1fr }.zone-activity { grid-row:auto }.operation-row { grid-template-columns:1fr auto }.operation-row small { grid-column:1/-1 }
+  .simulation { font-size:12px; padding:8px 12px; }
 }

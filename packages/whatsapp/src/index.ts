@@ -2,6 +2,16 @@ import { ONLY_ALLOWED_REACTION, canSendReaction } from "@coa-bot/shared";
 
 export type WhatsAppConnectionMode = "qr" | "pairing-code";
 
+export type OperationalEventWhatsAppCommand = {
+  type: "RECORD_OPERATIONAL_EVENT";
+  eventId: string;
+  group?: string;
+  text: string;
+  execute: false;
+  simulated: true;
+  reaction: null;
+};
+
 export type WhatsAppClient = {
   connect(mode: WhatsAppConnectionMode): Promise<void>;
   listGroups(): Promise<Array<{ id: string; name: string }>>;

@@ -4,6 +4,8 @@ import { EmptyState } from "../components/common/EmptyState";
 import { TestResultPanel } from "../components/tests/TestResultPanel";
 import { useLoadable } from "../hooks/useLoadable";
 import { TestResult } from "../types";
+import { MessageSimulator } from "../components/tests/MessageSimulator";
+import { ExcelHomologationPanel } from "../components/tests/ExcelHomologationPanel";
 
 export default function TestCenterPage() {
   const { api, notify } = useApp();
@@ -36,6 +38,8 @@ export default function TestCenterPage() {
       </div></div>
       {result ? <TestResultPanel result={result} /> : <EmptyState title="Nenhum teste executado ainda." action="Gerar prévia" onAction={() => run("gerar previa")} />}
       <section className="panel"><h2>Histórico de testes</h2>{history.loading ? <p>Carregando...</p> : history.data?.length ? <p>{history.data.length} execução(ões) registradas.</p> : <p className="muted">Nenhum teste persistido ainda.</p>}</section>
+      <MessageSimulator />
+      <ExcelHomologationPanel />
     </section>
   );
 }

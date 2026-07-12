@@ -1,22 +1,9 @@
-export type ExcelAgentCommand =
-  | { type: "READ_CELL"; workbookPath: string; sheet: string; cell: string }
-  | { type: "READ_RANGE"; workbookPath: string; sheet: string; range: string }
-  | { type: "LOCATE_EQUIPMENT"; workbookPath: string; sheet: string; equipment: string }
-  | { type: "UPDATE_STATUS"; workbookPath: string; sheet: string; rowKey: string; status: string }
-  | { type: "UPDATE_DESCRIPTION"; workbookPath: string; sheet: string; rowKey: string; description: string }
-  | { type: "UPDATE_TIME"; workbookPath: string; sheet: string; rowKey: string; time: string }
-  | { type: "SAVE_FILE"; workbookPath: string }
-  | { type: "CONFIRM_UPDATE"; workbookPath: string; sheet: string; cell: string; expectedValue: string }
-  | { type: "COPY_PICTURE"; workbookPath: string; sheet: string; range: string }
-  | { type: "EXPORT_TEMP_IMAGE"; tempPath: string }
-  | { type: "DELETE_TEMP_IMAGE"; tempPath: string };
-
-export type ExcelAgentStatus = {
-  agentId: string;
-  online: boolean;
-  operatingSystem: string;
-  version: string;
-  simulationMode: boolean;
-  excelInstalled: boolean | "unknown";
-  configuredFiles: Array<{ path: string; exists: boolean }>;
-};
+export type ExcelCommandType="CHECK_EXCEL_INSTALLED"|"LIST_OPEN_WORKBOOKS"|"OPEN_DEV_WORKBOOK"|"READ_CELL"|"READ_RANGE"|"FIND_EQUIPMENT"|"PREVIEW_CHANGE"|"APPLY_CHANGE"|"VERIFY_CHANGE"|"SAVE_DEV_WORKBOOK"|"COPY_RANGE_AS_PICTURE"|"EXPORT_TEMP_IMAGE"|"DELETE_TEMP_IMAGE"|"HEALTH_CHECK";
+export type ExcelCommandPayload={cell?:string;range?:string;fleet?:string;fleetColumn?:string;headerRow?:number;row?:number;statusCell?:string;descriptionCell?:string;timeCell?:string;expectedCurrent?:Record<string,unknown>;proposed?:Record<string,unknown>;editableFields?:string[];mappingConfirmed?:boolean;tempPath?:string};
+export type ExcelAgentCommand={commandId:string;correlationId:string;requestedAt:string;requestedBy:string;type:ExcelCommandType;workbook?:string;worksheet?:string;payload:ExcelCommandPayload;simulation:boolean;timeoutMs?:number};
+export type ExcelCommandResult={commandId:string;correlationId:string;type:ExcelCommandType;success:boolean;result?:unknown;error?:{code:string;message:string;details?:unknown};duration:number;completedAt:string;simulation:boolean;executed:boolean;macrosExecuted:false;officialWorkbookTouched:false};
+export type ExcelMapping={operation:string;workbook:string;worksheet:string;fleetColumn:string;statusColumn:string;descriptionColumn:string;timeColumn?:string;forecastColumn?:string;pictureRange:string;headerRow:number;editableFields:string[];confirmed:boolean;confirmedBy?:string;confirmedAt?:string};
+export type ExcelChangePreview={workbook:string;worksheet:string;row:number;fleet:string;attachments:string[];current:Record<string,unknown>;proposed:Record<string,unknown>;changedCells:Array<{field:string;cell:string;from:unknown;to:unknown}>;unchangedFields:string[];baselineHash:string;mappingConfirmed:boolean};
+export type EquipmentMatch={status:"NOT_FOUND"|"UNIQUE_MATCH"|"AMBIGUOUS_MATCH";fleet:string;candidates:Array<{row:number;cell:string;value:string;mergedArea?:string}>};
+export type ExcelAgentStatus={agentId:string;online:boolean;operatingSystem:string;version:string;simulationMode:boolean;homologationMode:boolean;excelInstalled:boolean|"unknown";configuredFiles:Array<{path:string;exists:boolean;authorized:boolean}>;lastHeartbeat?:string};
+export type OperationalEventExcelCommand={type:"PROJECT_OPERATIONAL_EVENT";eventId:string;fleet:string;status?:string;description?:string;sector?:string;execute:false;simulated:true};

@@ -64,3 +64,7 @@ export const simulatedMessageSchema = z.object({
   equipment: z.string().min(1).default("Frota simulada"),
   newStatus: z.string().min(1).default("PARADO")
 });
+
+export const operationalParseSchema=z.object({text:z.string().min(1).max(20000),operation:z.string().nullable().optional(),shift:z.string().max(20).nullable().optional(),date:z.string().nullable().optional(),variety:z.string().nullable().optional()});
+export const operationalSimulateSchema=z.object({idempotencyKey:z.string().min(8),group:z.string().min(1),sender:z.string().min(1),receivedAt:z.string().datetime().optional(),shift:z.string().min(1).max(20),text:z.string().min(1).max(20000)});
+export const operationalDecisionSchema=z.object({responsible:z.string().min(1).max(120).default("Operador Simulado"),reason:z.string().max(1000).optional()});

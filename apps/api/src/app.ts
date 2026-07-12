@@ -12,6 +12,8 @@ import { spreadsheetRoutes } from "./modules/spreadsheets/routes.js";
 import { testRoutes } from "./modules/tests/routes.js";
 import { logRoutes } from "./modules/logs/routes.js";
 import { integrationRoutes } from "./modules/integrations/routes.js";
+import { operationalRoutes } from "./modules/operational/routes.js";
+import { excelAgentPublicRoutes, excelHomologationRoutes } from "./modules/excel-homologation/routes.js";
 
 export function createApp(source: DataSource = createPrismaDataSource()) {
   const app = express();
@@ -26,6 +28,7 @@ export function createApp(source: DataSource = createPrismaDataSource()) {
   });
 
   app.use("/auth", authRoutes(source, jwtSecret));
+  app.use("/excel-agent/local", excelAgentPublicRoutes());
   app.use(auth);
   app.get("/dashboard", async (_req, res, next) => {
     try {
@@ -48,6 +51,8 @@ export function createApp(source: DataSource = createPrismaDataSource()) {
   app.use("/tests", testRoutes(source));
   app.use("/logs", logRoutes(source));
   app.use("/", integrationRoutes(source));
+  app.use("/operational", operationalRoutes());
+  app.use("/excel-homologation", excelHomologationRoutes());
   app.post("/whatsapp/reaction/check", (req, res) => {
     res.json({
       allowed: canSendReaction({

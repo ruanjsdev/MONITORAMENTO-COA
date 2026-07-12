@@ -9,6 +9,7 @@ import { SpreadsheetCard } from "../apps/web/src/components/spreadsheets/Spreads
 import { TechnicalDetails } from "../apps/web/src/components/common/TechnicalDetails";
 import { TestResultPanel } from "../apps/web/src/components/tests/TestResultPanel";
 import { Operation, WhatsAppGroup } from "@coa-bot/shared";
+import { MessageState } from "../apps/web/src/pages/DashboardPage";
 
 const group: WhatsAppGroup = {
   id: "group_1",
@@ -138,5 +139,13 @@ describe("telas visuais do painel", () => {
     expect(html).toContain("SIMULADO");
     expect(html).toContain("Logs do teste");
     expect(html).toContain("A1:AI26");
+  });
+
+  it("apresenta estados operacionais sem usar reacao de WhatsApp", () => {
+    const pending = renderToString(<MessageState status="PENDING_APPROVAL" />);
+    const failed = renderToString(<MessageState status="FAILED" />);
+    expect(pending).toContain("Aguardando aprovação");
+    expect(failed).toContain("Falhou");
+    expect(pending).not.toContain("👍");
   });
 });

@@ -1,0 +1,16 @@
+import{useState}from"react";import{useApp}from"../../app/providers";
+const example=`RELATÓRIO PLANTIO E COLHEITA DE MUDA
+Setor: Rafael Pandolf
+Data: 10/07/2026
+Turno: C
+Variedade: RB07-818
+
+PLANTIO
+1531/830 = deslocamento para Chapadinha
+1530/2006 = atolada
+
+COLHEITA DE MUDA
+625 = rodando
+626 = cilindro quebrado, previsão 18:00`;
+type Result={items?:Array<Record<string,unknown>>;originalText?:string;[key:string]:unknown};
+export function MessageSimulator(){const{api,notify}=useApp();const[group,setGroup]=useState("Plantio / Muda / Preparo");const[sender,setSender]=useState("Operador Simulado");const[shift,setShift]=useState("C");const[text,setText]=useState("625 = rodando");const[result,setResult]=useState<Result>();const[messageId,setMessageId]=useState<string>();async function interpret(){setResult(await api.request<Result>("/operational/messages/parse",{method:"POST",body:JSON.stringify({text,shift})}))}async function simulate(){const response=await api.request<{id:string;interpretations:Array<Record<string,unknown>>}>("/operational/messages/simulate",{method:"POST",body:JSON.stringify({idempotencyKey:`ui-${Date.now()}`,group,sender,shift,text})});setMessageId(response.id);setResult({items:response.interpretations});notify("success","Mensagem recebida somente em simulação.")}async function pending(){if(!messageId)return;await api.request(`/operational/messages/${messageId}/create-pending-change`,{method:"POST",body:"{}"});notify("success","Pendências simuladas criadas.")}const items=result?.items??(result?[result]:[]);return <section className="panel form"><div className="row"><h2>Simular mensagem recebida</h2><span className="badge">SEM IA · SIMULADO</span></div><div className="form-grid"><label>Grupo<input value={group} onChange={e=>setGroup(e.target.value)}/></label><label>Remetente<input value={sender} onChange={e=>setSender(e.target.value)}/></label><label>Turno<select value={shift} onChange={e=>setShift(e.target.value)}><option>A</option><option>B</option><option>C</option></select></label></div><label>Texto<textarea value={text} onChange={e=>setText(e.target.value)}/></label><div className="actions"><button onClick={interpret}>Interpretar</button><button onClick={()=>{setText("");setResult(undefined)}}>Limpar</button><button onClick={()=>setText(example)}>Carregar exemplo</button><button className="primary" onClick={simulate}>Simular relatório completo</button><button disabled={!messageId} onClick={pending}>Criar pendência</button></div>{items.map((item,index)=><article className="interpretation" key={index}><div className="row"><strong>{String(item.equipmentSet??item.mainEquipment??"Sem frota")}</strong><span className="badge">Confiança {Math.round(Number(item.confidence??0)*100)}%</span></div><p>{String(item.operation??"Operação não resolvida")} · {String(item.proposedStatus??"Status anterior mantido")} · {String(item.operationalSituation??"Situação não identificada")}</p><p>{String(item.description??"")} · Setor: {String(item.location??"não identificado")} · Previsão: {String(item.forecastAt??"não identificada")}</p><small>Implementos: {Array.isArray(item.attachments)?item.attachments.join(", "):""} · Alertas: {Array.isArray(item.warnings)?item.warnings.join(" | "):"nenhum"}</small></article>)}</section>}
