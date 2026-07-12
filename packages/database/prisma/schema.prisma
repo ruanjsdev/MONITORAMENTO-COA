@@ -435,3 +435,50 @@ model OperationalEvent {
   @@index([operation, timestamp])
   @@index([type, timestamp])
 }
+
+model OperationalMessage {
+  id             String   @id
+  idempotencyKey String   @unique
+  groupName      String
+  sender         String
+  receivedAt     DateTime
+  shift          String
+  text           String
+  interpretations Json
+  status         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  pendings       OperationalPending[]
+}
+
+model OperationalPending {
+  id                  String   @id
+  messageId           String
+  interpretation      Json
+  baselineStatus      String?
+  baselineDescription String?
+  baselineSector      String?
+  status              String
+  reason              String
+  createdAt           DateTime
+  resolvedAt          DateTime?
+  updatedAt           DateTime @updatedAt
+  message             OperationalMessage @relation(fields: [messageId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([messageId])
+}
+
+model OperationalProjection {
+  id        String   @id
+  value     Json
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
+}
+
+model OperationalReportDraft {
+  id        String   @id
+  text      String
+  updatedAt DateTime @updatedAt
+}

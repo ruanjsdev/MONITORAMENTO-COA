@@ -139,6 +139,7 @@ Copie `.env.example` para `.env` quando for executar localmente com configuracoe
 Variaveis principais:
 
 - `SIMULATION_MODE=true`
+- `DATABASE_MODE=prisma`
 - `DATABASE_URL=postgresql://coa_bot:coa_bot_dev@localhost:5433/coa_bot?schema=public`
 - `JWT_SECRET`
 - `ADMIN_EMAIL`
@@ -208,6 +209,7 @@ A API desta etapa usa store de simulacao para permitir testes sem banco real.
 
 ```bash
 npm run test
+npm run test:integration
 npm run lint
 npm run build
 npm run format
@@ -325,6 +327,7 @@ Comece por:
 3. `docs/03-Regras-de-Negocio.md`
 4. `docs/17-Relatorio-Troca-de-Turno.md`
 5. `docs/18-Mapa-de-Telas.md`
+6. `docs/27-Persistencia-Operacional-PostgreSQL.md`
 6. `docs/19-Central-de-Ocorrencias.md`
 7. `docs/20-Assistente-COA.md`
 8. `docs/21-Indicadores-e-Tempo-Parado.md`

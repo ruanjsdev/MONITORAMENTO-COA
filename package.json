@@ -13,13 +13,16 @@
     "excel:prepare-dev": "tsx apps/excel-agent/src/prepare-dev.ts",
     "excel:agent": "tsx apps/excel-agent/src/index.ts",
     "test:excel": "vitest run --config vitest.excel.config.ts",
+    "test:integration": "tsx tools/run-integration-tests.ts",
     "setup": "tsx tools/setup-dev.ts",
     "dev": "concurrently --kill-others-on-fail --names API,WEB,EXCEL --prefix-colors blue,green,magenta \"npm run dev --workspace @coa-bot/api\" \"npm run dev --workspace @coa-bot/web\" \"npm run dev --workspace @coa-bot/excel-agent\"",
     "build": "npm run build --workspaces --if-present",
     "test": "vitest run",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "db:generate": "prisma generate --schema packages/database/prisma/schema.prisma",
     "db:migrate": "prisma migrate dev --schema packages/database/prisma/schema.prisma",
+    "db:rebuild-operational-projections": "tsx tools/rebuild-operational-projections.ts",
     "db:seed": "tsx packages/database/prisma/seed.ts"
   },
   "devDependencies": {
