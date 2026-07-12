@@ -60,6 +60,11 @@ export default function PendingChangesPage() {
                   <dt>Recebida</dt><dd>{new Date(item.receivedAt).toLocaleString("pt-BR")}</dd>
                   <dt>Campos</dt><dd>status, descrição</dd>
                 </dl>
+                <div className="secondary-actions">
+                  <button onClick={() => decide(item.id, "defer")}>Atualizar leitura</button>
+                  <button onClick={() => location.assign(`/historico?fleet=${encodeURIComponent(item.equipment)}`)}>Ver histórico</button>
+                  <button onClick={() => decide(item.id, "reject")}>Cancelar</button>
+                </div>
               </details>
               <div className="decision-actions">
                 <button className="primary" onClick={() => confirm("Confirmar aprovação simulada desta pendência?") && decide(item.id, "approve")}><Check size={18} />Aprovar</button>

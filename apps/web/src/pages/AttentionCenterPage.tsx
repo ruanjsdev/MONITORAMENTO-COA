@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, Clock3, Eye, X } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "../app/providers";
 import { FilterBar } from "../components/common/FilterBar";
@@ -59,6 +59,8 @@ export default function AttentionCenterPage() {
               <small>Desde <RelativeTime value={item.since} /></small>
               <div className="decision-actions">
                 <button className="primary" onClick={() => confirm("Confirmar aprovação simulada?") && action(item.id, "approve")}><Check size={18} />Aprovar</button>
+                <button onClick={() => action(item.id, "review")}><Eye size={18} />Revisar</button>
+                <button onClick={() => action(item.id, "defer")}><Clock3 size={18} />Adiar</button>
                 <button className="danger" onClick={() => action(item.id, "resolve")}><X size={18} />Resolver</button>
               </div>
             </article>

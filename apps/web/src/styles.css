@@ -827,7 +827,7 @@ main {
   background: rgba(113, 63, 18, 0.16);
 }
 
-.pending-mobile-page, .attention-page {
+.pending-mobile-page, .attention-page, .more-page {
   display: grid;
   gap: 14px;
 }
@@ -854,7 +854,7 @@ main {
   width: 100%;
 }
 
-.pending-mainline, .pending-route, .pending-facts, .decision-actions {
+.pending-mainline, .pending-route, .pending-facts, .decision-actions, .secondary-actions {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -890,11 +890,67 @@ main {
 
 .decision-actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
 }
 
 .decision-actions button {
   min-height: 46px;
+}
+
+.secondary-actions {
+  margin-top: 10px;
+}
+
+.secondary-actions button {
+  min-height: 38px;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.more-section {
+  display: grid;
+  gap: 12px;
+}
+
+.more-section h2 {
+  margin-bottom: 0;
+}
+
+.more-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.more-tile {
+  min-height: 104px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-content: center;
+  justify-content: start;
+  gap: 4px 10px;
+  padding: 12px;
+  text-align: left;
+}
+
+.more-tile span {
+  grid-row: span 2;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #93c5fd;
+  background: rgba(30, 64, 175, 0.22);
+}
+
+.more-tile strong {
+  color: #f8fafc;
+}
+
+.more-tile small {
+  color: #94a3b8;
+  line-height: 1.35;
 }
 
 .mobile-bottom-nav {
@@ -1228,6 +1284,10 @@ dd {
   }
 
   .decision-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .more-grid {
     grid-template-columns: 1fr;
   }
 
