@@ -32,8 +32,8 @@ try {
   }));
   const current = await prisma.operationalProjection.findUnique({ where: { id: "current" } });
   const proposed = rebuildProjections(mapped);
-  const currentText = JSON.stringify(current?.value ?? null);
-  const proposedText = JSON.stringify(proposed);
+  const currentText = stableStringify(current?.value ?? null);
+  const proposedText = stableStringify(proposed);
 
   console.log(`Modo: ${write ? "gravacao" : "dry-run"}`);
   console.log(`Eventos: ${events.length}`);
@@ -53,4 +53,14 @@ try {
   }
 } finally {
   await prisma.$disconnect();
+}
+
+function stableStringify(value: unknown) {
+  return JSON.stringify(sortObjectKeys(value));
+}
+
+function sortObjectKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortObjectKeys);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.keys(value).sort().map(key => [key, sortObjectKeys((value as Record<string, unknown>)[key])]));
 }
