@@ -11,6 +11,7 @@ let baseUrl: string;
 
 async function start() {
   process.env.SIMULATION_MODE = "true";
+  process.env.DATABASE_MODE = "memory";
   process.env.ADMIN_EMAIL = "admin@coa.local";
   process.env.ADMIN_PASSWORD = "change-me";
   const app = createApp(createMemoryDataSource(createStore()));
