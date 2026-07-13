@@ -1,5 +1,6 @@
 import { evaluateForecasts } from "./forecast-engine.js";
 import { OperationStateItem } from "./excel-adapters.js";
+import { formatMinutes, formatOperationalDate, formatOperationalTime, operationalDateForSchedule, operationalParts, operationalTimezone, parseMinutes } from "./clock.js";
 
 export type ReportSchedule = {
   id: string;
@@ -17,6 +18,8 @@ export type ReportSchedule = {
   requiresApproval: boolean;
   futureAutoSend: boolean;
   testGroup: boolean;
+  catchUpWindowMinutes: number;
+  expiredForecastAction: "CREATE_PENDING" | "AUTO_UPDATE_MOCK";
 };
 
 export const defaultSchedule: ReportSchedule = {
@@ -34,13 +37,16 @@ export const defaultSchedule: ReportSchedule = {
   enabled: false,
   requiresApproval: true,
   futureAutoSend: false,
-  testGroup: true
+  testGroup: true,
+  catchUpWindowMinutes: 15,
+  expiredForecastAction: "CREATE_PENDING"
 };
 
-export function renderTemplate(template: string, input: { operation: string; shift: string; at?: Date }) {
+export function renderTemplate(template: string, input: { operation: string; shift: string; at?: Date; timezone?: string }) {
   const at = input.at ?? new Date();
-  const hora = `${String(at.getHours()).padStart(2, "0")}:${String(at.getMinutes()).padStart(2, "0")}h`;
-  const data = at.toLocaleDateString("pt-BR");
+  const timezone = input.timezone ?? operationalTimezone;
+  const hora = `${formatOperationalTime(at, timezone)}h`;
+  const data = formatOperationalDate(at, timezone);
   return template
     .replaceAll("{operacao}", input.operation)
     .replaceAll("{turno}", input.shift)
@@ -52,7 +58,13 @@ export function activeReportTimes(schedule: ReportSchedule) {
   const times = new Set(schedule.specificTimes);
   const start = parseMinutes(schedule.startTime);
   const end = parseMinutes(schedule.endTime);
-  for (let minute = start; minute <= end; minute += Math.max(1, schedule.intervalHours) * 60) times.add(formatMinutes(minute));
+  const step = Math.max(1, schedule.intervalHours) * 60;
+  if (end < start) {
+    for (let minute = start; minute < 1440; minute += step) times.add(formatMinutes(minute));
+    for (let minute = 0; minute <= end; minute += step) times.add(formatMinutes(minute));
+  } else {
+    for (let minute = start; minute <= end; minute += step) times.add(formatMinutes(minute));
+  }
   return [...times].sort();
 }
 
@@ -86,10 +98,22 @@ export function validateSchedule(input: Partial<ReportSchedule>): ReportSchedule
   return schedule;
 }
 
-function parseMinutes(time: string) {
-  const [h = "0", m = "0"] = time.split(":");
-  return Number(h) * 60 + Number(m);
+export function dueScheduleSlots(schedule: ReportSchedule, now: Date, timezone = operationalTimezone) {
+  if (!schedule.enabled) return [];
+  const parts = operationalParts(now, timezone);
+  if (!schedule.activeDays.includes(parts.weekday)) return [];
+  const current = parseMinutes(parts.time);
+  return activeReportTimes(schedule).flatMap(time => {
+    const scheduled = parseMinutes(time);
+    const lateByMinutes = current - scheduled >= 0 ? current - scheduled : current + 1440 - scheduled;
+    const dueNow = lateByMinutes === 0;
+    const late = lateByMinutes > 0 && lateByMinutes <= schedule.catchUpWindowMinutes;
+    if (!dueNow && !late) return [];
+    const operationalDate = operationalDateForSchedule(now, schedule.startTime, schedule.endTime, timezone);
+    return [{ scheduledTime: time, operationalDate, late: !dueNow, lateByMinutes }];
+  });
 }
-function formatMinutes(value: number) {
-  return `${String(Math.floor(value / 60) % 24).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+
+export function reportExecutionKey(schedule: ReportSchedule, slot: { scheduledTime: string; operationalDate: string }) {
+  return [schedule.id, schedule.operation, schedule.groupName, schedule.shift, slot.operationalDate, slot.scheduledTime].join("|");
 }
