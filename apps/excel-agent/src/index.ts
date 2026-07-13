@@ -19,9 +19,9 @@ function safe(file: string) { try { validateDevWorkbook(file); return true; } ca
 export async function handleCommand(input: ExcelAgentCommand | Record<string, unknown>) {
   if (!("commandId" in input)) return { command: input, simulated: true, executed: false, reason: "Contrato legado bloqueado" };
   const command = input as ExcelAgentCommand;
-  if (command.type === "OPEN_LOCAL_FOLDER" || command.type === "OPEN_LOCAL_WORKBOOK") {
+  if (command.type === "OPEN_LOCAL_FOLDER") {
     if (process.platform !== "win32") return { commandId:command.commandId, correlationId:command.correlationId, type:command.type, success:false, error:{code:"WINDOWS_REQUIRED",message:"Abertura requer Windows"}, duration:0, completedAt:new Date().toISOString(), simulation:false, executed:false, macrosExecuted:false, officialWorkbookTouched:false } as any;
-    const target = command.type === "OPEN_LOCAL_FOLDER" ? homologationRoot : validateDevWorkbook(String(command.workbook));
+    const target = homologationRoot;
     const { spawn } = await import("node:child_process"); spawn("explorer.exe", [target], { detached:true, stdio:"ignore" }).unref();
     return { commandId:command.commandId, correlationId:command.correlationId, type:command.type, success:true, result:{ opened:true, path:target }, duration:0, completedAt:new Date().toISOString(), simulation:false, executed:true, macrosExecuted:false, officialWorkbookTouched:false } as any;
   }

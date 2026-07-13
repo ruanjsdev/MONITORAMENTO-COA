@@ -23,7 +23,23 @@ export function whatsappShadowRoutes(prisma = new PrismaClient()) {
     try { const setting = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } }); res.json({ mode: setting?.value ?? "SIMULATION" }); } catch (error) { next(error); }
   });
   router.get("/selected-group", async (_req, res, next) => {
-    try { const group = await prisma.whatsAppGroup.findFirst({ where: { isTestGroup: true, isMonitored: true, isActive: true, active: true } }); res.json({ externalId: group?.externalId ?? null }); } catch (error) { next(error); }
+    try {
+      const group = await prisma.whatsAppGroup.findFirst({ where: { isTestGroup: true, isMonitored: true, isActive: true, active: true } });
+      res.json({ externalId: group?.externalId ?? null, groupName: group?.name ?? null, name: group?.name ?? null });
+    } catch (error) { next(error); }
+  });
+  router.get("/status", async (_req, res, next) => {
+    try {
+      const setting = await prisma.generalSetting.findUnique({ where: { key: "WHATSAPP_SHADOW_STATUS" } });
+      const value = (setting?.value ?? { qrState: "DISCONNECTED" }) as Record<string, unknown>;
+      const group = await prisma.whatsAppGroup.findFirst({ where: { isTestGroup: true, isMonitored: true, isActive: true, active: true } });
+      res.json({
+        qrState: value.qrState ?? "DISCONNECTED",
+        sendMessage: false,
+        sendReaction: false,
+        monitoredGroup: group ? { externalId: group.externalId, name: group.name } : null
+      });
+    } catch (error) { next(error); }
   });
   router.get("/refresh-request", async (_req, res, next) => {
     try { const setting = await prisma.generalSetting.findUnique({ where: { key: "WHATSAPP_GROUP_REFRESH" } }); res.json({ version: setting?.version ?? 0 }); } catch (error) { next(error); }

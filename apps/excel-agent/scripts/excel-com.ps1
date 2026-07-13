@@ -189,7 +189,13 @@ try {
 
   $writeAction = @("APPLY_CHANGE", "SAVE_DEV_WORKBOOK", "APPLY_OFFICIAL_PILOT") -contains $command.type
   $workbook = GetWorkbook $excel ([string]$command.workbook) (-not $writeAction)
-  if ($command.type -eq "OPEN_DEV_WORKBOOK") { Result @{name=$workbook.Name;fullName=$workbook.FullName;readOnly=$workbook.ReadOnly;createdExcel=$createdExcel}; exit 0 }
+  if ($command.type -eq "OPEN_DEV_WORKBOOK" -or $command.type -eq "OPEN_LOCAL_WORKBOOK") {
+    $excel.Visible = $true
+    [void]$workbook.Activate()
+    try { $excel.WindowState = -4137 } catch {}
+    Result @{name=$workbook.Name;fullName=$workbook.FullName;readOnly=$workbook.ReadOnly;createdExcel=$createdExcel;reused=(-not $openedWorkbook);macrosExecuted=$false;officialWorkbookTouched=$false}
+    exit 0
+  }
   if ($command.type -eq "LIST_WORKSHEETS") { Result @{workbook=$workbook.Name;worksheets=@($workbook.Worksheets | ForEach-Object {@{name=$_.Name;visible=$_.Visible;usedRange=$_.UsedRange.Address()}})}; exit 0 }
   $sheet = $workbook.Worksheets.Item([string]$command.worksheet)
 
