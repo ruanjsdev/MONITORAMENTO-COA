@@ -6,7 +6,7 @@ import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { normalizeOperationalExcelUpdate } from "@coa-bot/excel-contracts";
 import { parseMessage } from "../../services/operational-parser/index.js";
-import { maskJid, requireConnectedWhatsApp, shadowGroupPersistence, shouldCaptureShadowMessage } from "./group-policy.js";
+import { maskJid, requireConnectedWhatsApp, resolveAuditUserId, shadowGroupPersistence, shouldCaptureShadowMessage } from "./group-policy.js";
 
 const token = process.env.WHATSAPP_SHADOW_TOKEN ?? "local-dev-whatsapp-shadow";
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -91,12 +91,13 @@ export function whatsappShadowPanelRoutes(prisma = new PrismaClient()) {
       const group = await prisma.whatsAppGroup.findUnique({ where: { externalId: String(req.body.externalId) } });
       const operation = await prisma.operation.findUnique({ where: { id: String(req.body.operationId) } });
       if (!group || !operation) return res.status(404).json({ message: "Grupo ou operação não encontrado." });
+      const actorId = await resolveAuditUserId(prisma, res.locals.user?.email);
       await prisma.$transaction(async tx => {
         await tx.whatsAppGroup.updateMany({ where: { isTestGroup: true }, data: { isTestGroup: false, isMonitored: false } });
-        await tx.whatsAppGroup.update({ where: { id: group.id }, data: { name: group.name, ...shadowGroupPersistence(String(group.externalId)), version: { increment: 1 }, updatedBy: res.locals.user?.id } });
+        await tx.whatsAppGroup.update({ where: { id: group.id }, data: { name: group.name, ...shadowGroupPersistence(String(group.externalId)), version: { increment: 1 }, updatedBy: actorId } });
         await tx.groupOperation.deleteMany({ where: { groupId: group.id } });
         await tx.groupOperation.create({ data: { groupId: group.id, operationId: operation.id } });
-        await tx.systemLog.create({ data: { userId: res.locals.user?.id, action: "WHATSAPP_SHADOW_GROUP_SELECTED", entity: "WhatsAppGroup", entityId: group.id, message: "Grupo único selecionado para piloto SHADOW.", metadata: { externalId: group.externalId, operationId: operation.id, sendMessage: false, sendReaction: false, officialExcelWrite: false } } });
+        await tx.systemLog.create({ data: { userId: actorId, action: "WHATSAPP_SHADOW_GROUP_SELECTED", entity: "WhatsAppGroup", entityId: group.id, message: "Grupo único selecionado para piloto SHADOW.", metadata: { externalId: group.externalId, operationId: operation.id, sendMessage: false, sendReaction: false, officialExcelWrite: false } } });
       });
       res.json({ selected: true, group: { name: group.name, externalId: group.externalId }, operation: operation.name, banner: "GRUPO MONITORADO EM SHADOW", sendMessage: false, sendReaction: false, officialExcelWrite: false });
     } catch (error) { next(error); }

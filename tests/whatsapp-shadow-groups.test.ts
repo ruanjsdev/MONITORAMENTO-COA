@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapAvailableGroups, maskJid, requireConnectedWhatsApp, searchAvailableGroups, selectSingleGroup, shadowGroupPersistence, shouldCaptureShadowMessage } from "../apps/api/src/modules/whatsapp-shadow/group-policy";
+import { mapAvailableGroups, maskJid, requireConnectedWhatsApp, resolveAuditUserId, searchAvailableGroups, selectSingleGroup, shadowGroupPersistence, shouldCaptureShadowMessage } from "../apps/api/src/modules/whatsapp-shadow/group-policy";
 
 const groups=[{externalId:"120363001@g.us",name:"COA Plantio",participantCount:12},{externalId:"120363002@g.us",name:"Oficina",participantCount:8}];
 
@@ -12,4 +12,5 @@ describe("seleção de grupos WhatsApp em SHADOW",()=>{
   it("captura mensagem somente do grupo monitorado",()=>expect(shouldCaptureShadowMessage("120363001@g.us","120363001@g.us")).toBe(true));
   it("impede seleção com WhatsApp desconectado",()=>expect(()=>requireConnectedWhatsApp("OFFLINE")).toThrow("WHATSAPP_DISCONNECTED"));
   it("oculta parcialmente o JID",()=>expect(maskJid("120363001@g.us")).toBe("1203••••001@g.us"));
+  it("resolve o usuário real do PostgreSQL pelo e-mail mesmo com token antigo",async()=>expect(await resolveAuditUserId({user:{findUnique:async()=>({id:"db-user-id"})}},"admin@coa.local")).toBe("db-user-id"));
 });

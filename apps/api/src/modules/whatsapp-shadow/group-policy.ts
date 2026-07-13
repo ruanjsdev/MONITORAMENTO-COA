@@ -25,6 +25,11 @@ export function requireConnectedWhatsApp(state?: string) {
   if (state !== "ONLINE") throw new Error("WHATSAPP_DISCONNECTED");
 }
 
+export async function resolveAuditUserId(client: { user: { findUnique(input: { where: { email: string }; select: { id: true } }): Promise<{ id: string } | null> } }, email?: string) {
+  if (!email) return null;
+  return (await client.user.findUnique({ where: { email }, select: { id: true } }))?.id ?? null;
+}
+
 export function maskJid(value: string | null) {
   if (!value) return "—";
   const [number, domain] = value.split("@");
