@@ -1,18 +1,16 @@
 {
-  "warning": "MAPEAMENTOS CANDIDATOS — escrita bloqueada até confirmação humana",
+  "warning": "MAPEAMENTOS CANDIDATOS — escrita bloqueada até confirmação humana por operação",
+  "generatedFrom": "Leitura COM real das cópias .dev.xlsm em 12/07/2026",
   "mappings": [
-    {
-      "operation": "Plantio Mecanizado",
-      "workbook": "Planilha Plantio cana.dev.xlsm",
-      "worksheet": "PLANTIO",
-      "fleetColumn": "F",
-      "statusColumn": "H",
-      "descriptionColumn": "S",
-      "timeColumn": "L",
-      "pictureRange": "A1:AI26",
-      "headerRow": 7,
-      "editableFields": [],
-      "confirmed": false
-    }
+    { "operation": "Plantio Mecanizado", "workbook": "Planilha Plantio cana.dev.xlsm", "worksheet": "PLANTIO", "operationalRange": "D7:S14", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AI26", "editableFields": ["status", "description", "startDate", "startTime", "forecastDate", "forecastTime"], "readOnlyFields": ["fleet", "implement", "formulas"], "duplicatesFound": false, "confirmed": false },
+    { "operation": "Colheita e Transporte de Muda", "workbook": "Planilha Plantio cana.dev.xlsm", "worksheet": "COLHEITA E TRANSPORTE DE MUDA", "operationalRange": "D7:S14", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AJ25", "editableFields": [], "duplicatesFound": false, "confirmed": false },
+    { "operation": "Preparo de Solo", "workbook": "Planilha Plantio cana.dev.xlsm", "worksheet": "PREPARO DE SOLO", "operationalRange": "D7:S23", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AL37", "editableFields": [], "duplicatesFound": false, "confirmed": false },
+    { "operation": "Preparo de Solo — aba auxiliar", "workbook": "Planilha Plantio cana.dev.xlsm", "worksheet": "PREPARO DE SOLO (2)", "operationalRange": "D7:S23", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AJ35", "editableFields": [], "ambiguity": "Aba oculta; confirmar se é auxiliar ou operacional.", "confirmed": false },
+    { "operation": "CPD", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "CPD", "operationalRange": "D7:S41", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AH51", "editableFields": [], "ambiguity": "Dois blocos operacionais observados.", "confirmed": false },
+    { "operation": "Compostagem", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "COMPOSTAGEM ", "operationalRange": "D7:S29", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AH29", "editableFields": [], "confirmed": false },
+    { "operation": "Cultivo", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "CULTIVO", "operationalRange": "D7:S34", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AH50", "editableFields": [], "ambiguity": "Cabeçalhos/blocos nas linhas 7 e 27.", "confirmed": false },
+    { "operation": "Correção de Solo", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "CORREÇÃO DE SOLO", "operationalRange": "D7:S14", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": "K", "startTimeColumn": "L", "forecastDateColumn": "M", "forecastTimeColumn": "N", "descriptionColumn": "S", "pictureRange": "A1:AH36", "editableFields": [], "confirmed": false },
+    { "operation": "Quebra Lombo", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "QUEBRA LOMBO", "operationalRange": "D7:O26", "fleetColumn": "F", "implementColumn": "G", "statusColumn": "H", "startDateColumn": null, "startTimeColumn": null, "forecastDateColumn": null, "forecastTimeColumn": null, "descriptionColumn": "O", "pictureRange": "A1:AD31", "editableFields": [], "ambiguity": "Dois blocos; colunas temporais ainda não confirmadas.", "confirmed": false },
+    { "operation": "Número de Viagens", "workbook": "Acompanhamento Tratos Culturais.dev.xlsm", "worksheet": "NÚMERO DE VIAGENS ", "operationalRange": "B5:H22", "fleetColumn": "E", "implementColumn": null, "statusColumn": null, "descriptionColumn": null, "pictureRange": "B1:N22", "editableFields": [], "ambiguity": "Estrutura de viagens, não de status de máquina.", "confirmed": false }
   ]
 }

@@ -4,6 +4,14 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx watch src/shadow-agent.ts"
+  },
+  "dependencies": {
+    "baileys": "^7.0.0-rc13",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/qrcode-terminal": "^0.12.2"
   }
 }

@@ -27,6 +27,7 @@ try {
   $writeAction=@("APPLY_CHANGE","SAVE_DEV_WORKBOOK") -contains $command.type
   $workbook=GetWorkbook $excel $command.workbook (-not $writeAction)
   if($command.type -eq "OPEN_DEV_WORKBOOK"){Result @{name=$workbook.Name;fullName=$workbook.FullName;readOnly=$workbook.ReadOnly;createdExcel=$createdExcel};exit 0}
+  if($command.type -eq "LIST_WORKSHEETS"){Result @{workbook=$workbook.Name;worksheets=@($workbook.Worksheets|ForEach-Object{@{name=$_.Name;visible=$_.Visible;usedRange=$_.UsedRange.Address()}})};exit 0}
   $sheet=$workbook.Worksheets.Item($command.worksheet)
   switch($command.type){
     "READ_CELL" { $cell=$sheet.Range($command.payload.cell);Result @{cell=$cell.Address($false,$false);value=$cell.Value2;formula=$cell.Formula;numberFormat=$cell.NumberFormat} }
@@ -50,11 +51,27 @@ try {
       else { $status="AMBIGUOUS_MATCH" }
       Result @{status=$status;fleet=$fleet;candidates=$matches}
     }
-    "PREVIEW_CHANGE" { $cells=@{};foreach($name in @("statusCell","descriptionCell","timeCell")){ $address=$command.payload.$name;if($address){$cell=$sheet.Range($address);$cells[$name]=@{cell=$address;value=$cell.Value2;formula=$cell.Formula}}};Result @{current=$cells;proposed=$command.payload.proposed;mappingConfirmed=$command.payload.mappingConfirmed} }
-    "APPLY_CHANGE" { if(!$command.payload.mappingConfirmed){throw "MAPPING_NOT_CONFIRMED"};foreach($name in @("statusCell","descriptionCell","timeCell")){ $address=$command.payload.$name;if(!$address){continue};$field=$name.Replace("Cell","");if($command.payload.editableFields -notcontains $field){throw "FIELD_NOT_EDITABLE:$field"};$cell=$sheet.Range($address);$expected=$command.payload.expectedCurrent.$field;if([string]$cell.Value2 -ne [string]$expected){throw "CELL_CONFLICT:$address|$expected|$($cell.Value2)"};if($cell.HasFormula){throw "FORMULA_PROTECTED:$address"};$cell.Value2=$command.payload.proposed.$field};$workbook.Save();Result @{saved=$true;values=@{status=$sheet.Range($command.payload.statusCell).Value2;description=$sheet.Range($command.payload.descriptionCell).Value2}} }
-    "VERIFY_CHANGE" { $values=@{};foreach($name in @("statusCell","descriptionCell","timeCell")){ $address=$command.payload.$name;if($address){$values[$name.Replace("Cell","")]=$sheet.Range($address).Value2}};Result @{values=$values;matches=$true} }
+    "PREVIEW_CHANGE" { $cells=@{};foreach($name in @("statusCell","descriptionCell","timeCell","startDateCell","startTimeCell","forecastDateCell","forecastTimeCell")){ $address=$command.payload.$name;if($address){$cell=$sheet.Range($address);$cells[$name]=@{cell=$address;value=$cell.Value2;formula=$cell.Formula}}};Result @{current=$cells;proposed=$command.payload.proposed;mappingConfirmed=$command.payload.mappingConfirmed} }
+    "APPLY_CHANGE" {
+      if(!$command.payload.mappingConfirmed){throw "MAPPING_NOT_CONFIRMED"}
+      $fieldNames=@("statusCell","descriptionCell","timeCell","startDateCell","startTimeCell","forecastDateCell","forecastTimeCell")
+      foreach($name in $fieldNames){
+        $address=$command.payload.$name;if(!$address){continue};$field=$name.Replace("Cell","")
+        if($command.payload.editableFields -notcontains $field){throw "FIELD_NOT_EDITABLE:$field"}
+        $cell=$sheet.Range($address);$expected=$command.payload.expectedCurrent.$field;$actual=$cell.Value2
+        $equal=([string]$actual -eq [string]$expected)
+        if($actual -is [ValueType] -and $expected -is [ValueType]){$equal=[Math]::Abs(([double]$actual)-([double]$expected)) -lt 0.000000001}
+        if(!$equal){throw "CELL_CONFLICT:$address|$expected|$actual"}
+        if($cell.HasFormula){throw "FORMULA_PROTECTED:$address"}
+      }
+      foreach($name in $fieldNames){$address=$command.payload.$name;if(!$address){continue};$field=$name.Replace("Cell","");$targetCell=$sheet.Range($address);if($targetCell.MergeCells){$targetCell=$targetCell.MergeArea.Cells.Item(1,1)};$proposed=$command.payload.proposed.$field;if($null-eq $proposed){$targetCell.ClearContents()}else{$targetCell.Value2=$proposed}}
+      $workbook.Save();$values=@{}
+      foreach($name in $fieldNames){$address=$command.payload.$name;if($address){$values[$name.Replace("Cell","")]=$sheet.Range($address).Value2}}
+      Result @{saved=$true;values=$values}
+    }
+    "VERIFY_CHANGE" { $values=@{};foreach($name in @("statusCell","descriptionCell","timeCell","startDateCell","startTimeCell","forecastDateCell","forecastTimeCell")){ $address=$command.payload.$name;if($address){$values[$name.Replace("Cell","")]=$sheet.Range($address).Value2}};Result @{values=$values;matches=$true} }
     "SAVE_DEV_WORKBOOK" { $workbook.Save();Result @{saved=$true} }
-    "COPY_RANGE_AS_PICTURE" { $range=$sheet.Range($command.payload.range);$range.CopyPicture(1,2);$chart=$sheet.ChartObjects().Add(0,0,$range.Width,$range.Height);try{$chart.Chart.Paste();$ok=$chart.Chart.Export($command.payload.tempPath,"PNG");Result @{exported=$ok;tempPath=$command.payload.tempPath;range=$command.payload.range}}finally{$chart.Delete()} }
+    "COPY_RANGE_AS_PICTURE" { [void]$workbook.Activate();[void]$sheet.Activate();$range=$sheet.Range($command.payload.range);[void]$range.Select();$copied=$false;foreach($attempt in 1..3){try{[void]$range.CopyPicture(1,2);Start-Sleep -Milliseconds 500;$copied=$true;break}catch{Start-Sleep -Milliseconds 300}};if(!$copied){throw "COPY_PICTURE_FAILED:$($command.payload.range)"};$before=$sheet.ChartObjects().Count;$chart=$sheet.ChartObjects().Add(0,0,$range.Width,$range.Height);try{[void]$chart.Activate();[void]$chart.Chart.Paste();Start-Sleep -Milliseconds 700;$shapes=$chart.Chart.Shapes.Count;if($shapes-lt 1){throw "COPY_PICTURE_EMPTY:$($command.payload.range)"};$ok=$chart.Chart.Export($command.payload.tempPath,"PNG");Result @{exported=$ok;tempPath=$command.payload.tempPath;range=$command.payload.range;chartObjectsBefore=$before;chartObjectsDuring=$sheet.ChartObjects().Count;shapes=$shapes}}finally{[void]$chart.Delete()} }
     "HEALTH_CHECK" { Result @{healthy=$true;excelVersion=$excel.Version;createdExcel=$createdExcel;workbook=$workbook.Name} }
     default { throw "UNSUPPORTED_COMMAND:$($command.type)" }
   }
