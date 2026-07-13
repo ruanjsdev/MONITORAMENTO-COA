@@ -11,6 +11,9 @@ coverage/
 *.tmp
 *.sqlite
 *.db
+logs/
+temp/
+.coa-runtime/
 
 .DS_Store
 Thumbs.db
