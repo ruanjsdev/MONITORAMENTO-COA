@@ -41,4 +41,35 @@ describe("parser avançado de relatórios operacionais", () => {
     const comparison = compareWithOperationState(parsed.items, [{ fleet: "1531", implement: "830", status: "RODANDO", description: "RODANDO" }]);
     expect(comparison.changes).toHaveLength(0);
   });
+
+  it("interpreta relatório real com emojis, markdown, descrição na linha seguinte e múltiplos implementos", () => {
+    const parsed = parseAdvancedOperationalReport(`*RELATÓRIO PLANTIO E COLHEITA DE MUDA*🎋
+
+🗾*Setor*: *Rafael Pandolf*
+📅*Data*: *10/07/2026*
+*🎋 VARIEDADE:* *RB07-818*
+*TURNO: C*
+
+*PLANTIO*
+✅🚜🚟*=1531/830 =*
+*Deslocamento para chapadinha*
+⚠️🚜🚟= *1530/2006 : Atolada*
+⚠️🚜🚟*1529/2003: Atolada*
+
+*COLHEITA DE MUDA*
+✅🚜 *= 625*= rodando
+❌🚜 *= 626*= *Cilindro de inclinação divisor de linha quebrado pino de suspensão do divisorde linha quebrado previsãode liberação 18:00 Hrs
+✅🚜 🚟🚟 *1506-12016/12017= deslocamento chapadinha*
+✅🚜🚟🚟 *= 1509 = 12010/1211*= *rodando*
+✅🚜🚟🚟 *= 1510 = 12038/12039 =* *Deslocamento chapadinha*
+✅ 🚜🚟🚟 *= 1511 = 12020/12021= rodando*
+✅🚒 *914*= *rodando*
+@COA 🌱`);
+    expect(parsed.header).toEqual({ sector: "Rafael Pandolf", date: "10/07/2026", shift: "C", variety: "RB07-818" });
+    expect(parsed.sections.map(section => [section.operation, section.items.length])).toEqual([["Plantio Mecanizado", 3], ["Colheita de Muda", 7]]);
+    expect(parsed.items.map(item => item.mainEquipment)).toEqual(["1531", "1530", "1529", "625", "626", "1506", "1509", "1510", "1511", "914"]);
+    expect(parsed.items.find(item => item.mainEquipment === "1531")?.description).toBe("DESLOCAMENTO PARA CHAPADINHA");
+    expect(parsed.items.find(item => item.mainEquipment === "1509")?.informedImplement).toBe("12010/1211");
+    expect(parsed.items.find(item => item.mainEquipment === "626")?.forecastAt).toContain("2026-07-10");
+  });
 });

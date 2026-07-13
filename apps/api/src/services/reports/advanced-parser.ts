@@ -16,8 +16,8 @@ export type AdvancedReportParse = {
   alerts: ReportAlert[];
 };
 
-const knownFleets = ["1531", "1529", "164", "626", "625", "1530", "1601"];
-const knownDescriptions = ["MANGUEIRA ESTOURADA", "PROBLEMA MECÂNICO", "NÃO GIRA LADO DIREITO", "RODANDO", "VAZAMENTO HIDRÁULICO"];
+const knownFleets = ["1531", "1529", "164", "626", "625", "1530", "1506", "1509", "1510", "1511", "914", "1601"];
+const knownDescriptions = ["MANGUEIRA ESTOURADA", "PROBLEMA MECÂNICO", "NÃO GIRA LADO DIREITO", "RODANDO", "VAZAMENTO HIDRÁULICO", "ATOLADA", "DESLOCAMENTO CHAPADINHA", "DESLOCAMENTO PARA CHAPADINHA"];
 
 export function parseAdvancedOperationalReport(text: string, context: { operation?: string | null; shift?: string | null } = {}): AdvancedReportParse {
   const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
@@ -37,7 +37,7 @@ export function parseAdvancedOperationalReport(text: string, context: { operatio
     const line = pendingLineParts.join(" ");
     pendingLineParts.length = 0;
     if (!/\d/.test(line)) return;
-    const item = parseItem(line, operation, header.shift);
+    const item = parseItem(line, operation, header.shift, header.date);
     if (item.alert) alerts.push(item.alert);
     const bucket = sections.get(operation) ?? [];
     bucket.push(item.item);
@@ -45,16 +45,17 @@ export function parseAdvancedOperationalReport(text: string, context: { operatio
   }
 
   for (const raw of lines) {
-    const normalized = stripEmoji(raw);
+    const normalized = cleanLine(raw);
+    if (!normalized || normalized.startsWith("@") || /^coa\b/i.test(normalized) || /^relat[oó]rio\b/i.test(normalized)) continue;
     const maybeOperation = operationName(normalized);
-    if (maybeOperation && !/\d+\s*=/.test(normalized)) {
+    if (maybeOperation && !extractItemParts(normalized)) {
       flushLineParts();
       operation = maybeOperation;
       if (!sections.has(operation)) sections.set(operation, []);
       continue;
     }
     if (/^\d{2}\/\d{2}|\b(setor|data|turno|variedade)\b/i.test(normalized)) continue;
-    if (/^[a-zA-Z0-9]{2,6}(?:\/[a-zA-Z0-9]{2,6})?\s*=/.test(normalized)) {
+    if (extractItemParts(normalized)) {
       flushLineParts();
       pendingLineParts.push(normalized);
     } else if (pendingLineParts.length) {
@@ -68,10 +69,11 @@ export function parseAdvancedOperationalReport(text: string, context: { operatio
   return { header, sections: sectionList, items: sectionList.flatMap(section => section.items), alerts };
 }
 
-function parseItem(line: string, operation: string, shift: string | null) {
-  const [left, ...rightParts] = line.split("=");
-  const right = rightParts.join("=").trim();
-  const [fleetRaw, implementRaw] = left.trim().split("/");
+function parseItem(line: string, operation: string, shift: string | null, reportDate: string | null) {
+  const parts = extractItemParts(line) ?? { fleetRaw: line, implementRaw: null, descriptionRaw: "" };
+  const right = parts.descriptionRaw;
+  const fleetRaw = parts.fleetRaw;
+  const implementRaw = parts.implementRaw;
   const fleet = normalizeFleet(fleetRaw);
   const description = normalizeDescription(right);
   const parsed = parseMessage(`${fleet.value}${implementRaw ? `/${implementRaw}` : ""} = ${description.value}`, { operation, shift });
@@ -79,6 +81,8 @@ function parseItem(line: string, operation: string, shift: string | null) {
   parsed.mainEquipment = fleet.value;
   parsed.attachments = implementRaw ? [implementRaw.trim()] : parsed.attachments;
   parsed.description = parsed.proposedStatus === "RODANDO" ? "RODANDO" : description.value;
+  parsed.forecastAt = forecastFromReportDate(description.value, reportDate) ?? parsed.forecastAt;
+  if (!parsed.proposedStatus && parsed.operationalSituation && parsed.operationalSituation !== "DESLOCAMENTO") parsed.proposedStatus = "PARADO";
   parsed.confidence = Number(Math.min(parsed.confidence, fleet.confidence, description.confidence).toFixed(2));
   const normalized = [
     ...(fleet.original !== fleet.value ? [{ field: "fleet", original: fleet.original, interpreted: fleet.value, confidence: fleet.confidence, reason: fleet.reason }] : []),
@@ -89,13 +93,22 @@ function parseItem(line: string, operation: string, shift: string | null) {
   return { item, alert };
 }
 
+function extractItemParts(line: string) {
+  const normalized = cleanLine(line).replace(/^=+\s*/, "").trim();
+  const splitImplement = normalized.match(/^([a-zA-Z0-9]{2,6})\s*=\s*([a-zA-Z0-9][a-zA-Z0-9/\-\s]{1,30}?)\s*(?:=|:)\s*(.*)$/);
+  if (splitImplement) return { fleetRaw: splitImplement[1]!, implementRaw: splitImplement[2]?.trim() || null, descriptionRaw: splitImplement[3]?.trim() ?? "" };
+  const direct = normalized.match(/^([a-zA-Z0-9]{2,6})(?:\s*[/\-]\s*([a-zA-Z0-9][a-zA-Z0-9/\-\s]{1,30}?))?\s*(?:=|:)\s*(.*)$/);
+  if (direct) return { fleetRaw: direct[1]!, implementRaw: direct[2]?.trim() || null, descriptionRaw: direct[3]?.trim() ?? "" };
+  return null;
+}
+
 function consolidateDuplicates(items: AdvancedParsedItem[], alerts: ReportAlert[]) {
   const grouped = new Map<string, AdvancedParsedItem[]>();
   for (const item of items) grouped.set(item.mainEquipment ?? item.originalText, [...(grouped.get(item.mainEquipment ?? item.originalText) ?? []), item]);
   const result: AdvancedParsedItem[] = [];
   for (const group of grouped.values()) {
     if (group.length === 1) { result.push(group[0]!); continue; }
-    const statuses = new Set(group.map(item => item.proposedStatus ?? "UNKNOWN"));
+    const statuses = new Set(group.map(item => item.proposedStatus).filter(Boolean));
     if (statuses.size > 1) {
       for (const item of group) item.duplicateState = "CONFLICT";
       alerts.push({ code: "DUPLICATE_CONFLICT", severity: "danger", fleet: group[0]?.mainEquipment ?? undefined, message: `Frota ${group[0]?.mainEquipment} repetida com informações contraditórias.`, metadata: { lines: group.flatMap(item => item.sourceLines) } });
@@ -140,7 +153,7 @@ function normalizeDescription(raw: string) {
   const original = raw.trim();
   const upper = stripEmoji(original).toUpperCase().replace(/\s+/g, " ");
   if (/RODANDO|RODANDO NORMAL|OK/.test(upper)) return { original, value: "RODANDO", confidence: 0.98, reason: "palavra conhecida" };
-  const typo = upper.replace("MANGERA", "MANGUEIRA").replace("ESTOURDA", "ESTOURADA");
+  const typo = upper.replace("MANGERA", "MANGUEIRA").replace("ESTOURDA", "ESTOURADA").replace("PREVISÃODE", "PREVISÃO DE").replace("DIVISORDE", "DIVISOR DE");
   const nearest = nearestText(typo, knownDescriptions);
   if (nearest.distance <= 3) return { original, value: nearest.value, confidence: original.toUpperCase() === nearest.value ? 1 : 0.88, reason: "histórico de descrições" };
   return { original, value: typo, confidence: typo.length > 4 ? 0.82 : 0.6, reason: "normalização textual" };
@@ -148,14 +161,24 @@ function normalizeDescription(raw: string) {
 
 function operationName(line: string) {
   const text = line.toLowerCase();
-  if (text.includes("plantio")) return "Plantio de Cana";
+  if (text.includes("plantio de cana")) return "Plantio de Cana";
+  if (text.includes("plantio")) return "Plantio Mecanizado";
   if (text.includes("tratos") || text.includes("cultivo")) return "Tratos Culturais";
   if (text.includes("colheita")) return "Colheita de Muda";
   if (text.includes("preparo")) return "Preparo de Solo";
   return null;
 }
-function headerValue(lines: string[], key: string) { return lines.find(line => line.toLowerCase().startsWith(`${key}:`))?.split(":").slice(1).join(":").trim() ?? null; }
+function headerValue(lines: string[], key: string) { return cleanLine(lines.find(line => cleanLine(line).toLowerCase().startsWith(`${key}:`)) ?? "").split(":").slice(1).join(":").trim() || null; }
+function cleanLine(value: string) { return stripEmoji(value).replace(/\*/g, "").replace(/_/g, "").replace(/\s+/g, " ").trim(); }
 function stripEmoji(value: string) { return value.replace(/[^\p{L}\p{N}\s:=/.,-]/gu, "").trim(); }
+function forecastFromReportDate(description: string, reportDate: string | null) {
+  if (!reportDate) return null;
+  const date = reportDate.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  const time = description.match(/PREVIS[AÃ]O(?: DE LIBERA[CÇ][AÃ]O)?\s+(\d{1,2})(?::|H)(\d{2})?/i);
+  if (!date || !time) return null;
+  const year = Number(date[3]!.length === 2 ? `20${date[3]}` : date[3]);
+  return new Date(year, Number(date[2]) - 1, Number(date[1]), Number(time[1]), Number(time[2] ?? 0), 0, 0).toISOString();
+}
 function nearestText(value: string, options: string[]) {
   return options.map(option => ({ value: option, distance: levenshtein(value, option) })).sort((a, b) => a.distance - b.distance)[0] ?? { value, distance: 99 };
 }
