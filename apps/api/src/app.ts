@@ -21,6 +21,7 @@ import { whatsappShadowPanelRoutes, whatsappShadowRoutes } from "./modules/whats
 import { officialPilotRoutes } from "./modules/official-pilot/routes.js";
 import { localWorkbookRoutes } from "./modules/local-workbooks/routes.js";
 import { configurationRoutes } from "./modules/configuration/routes.js";
+import { reportRoutes } from "./modules/reports/routes.js";
 
 export function createApp(source: DataSource = createDefaultDataSource()) {
   const app = express();
@@ -68,6 +69,7 @@ export function createApp(source: DataSource = createDefaultDataSource()) {
   app.use("/whatsapp-shadow", whatsappShadowPanelRoutes());
   app.use("/official-pilot", officialPilotRoutes());
   app.use("/configuration", configurationRoutes());
+  app.use("/reports", reportRoutes());
   app.post("/whatsapp/reaction/check", (req, res) => {
     res.json({
       allowed: canSendReaction({
