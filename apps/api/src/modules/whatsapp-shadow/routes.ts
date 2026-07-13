@@ -1,10 +1,15 @@
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { normalizeOperationalExcelUpdate } from "@coa-bot/excel-contracts";
 import { parseMessage } from "../../services/operational-parser/index.js";
 
 const token = process.env.WHATSAPP_SHADOW_TOKEN ?? "local-dev-whatsapp-shadow";
+const here = path.dirname(fileURLToPath(import.meta.url));
+const qrPath = process.env.WHATSAPP_QR_PATH ?? path.resolve(here, "../../../../../whatsapp-runtime/qr.png");
 const statusMap: Record<string, string> = { RODANDO: "R", PARADO: "P", DISPONIVEL: "D", MANUTENCAO: "P", SEM_OPERACAO: "E" };
 
 export function whatsappShadowRoutes(prisma = new PrismaClient()) {
@@ -15,7 +20,9 @@ export function whatsappShadowRoutes(prisma = new PrismaClient()) {
   });
   router.post("/status", async (req, res, next) => {
     try {
-      await prisma.integrationStatus.upsert({ where: { kind: "WHATSAPP" }, update: { state: req.body.connected ? "ONLINE" : "OFFLINE", message: "WHATSAPP REAL — MODO SOMENTE LEITURA" }, create: { kind: "WHATSAPP", state: req.body.connected ? "ONLINE" : "OFFLINE", message: "WHATSAPP REAL — MODO SOMENTE LEITURA" } });
+      const qrState = String(req.body.qrState ?? (req.body.connected ? "CONNECTED" : "DISCONNECTED"));
+      await prisma.integrationStatus.upsert({ where: { kind: "WHATSAPP" }, update: { state: req.body.connected ? "ONLINE" : "OFFLINE", message: `WHATSAPP REAL — MODO SOMENTE LEITURA · ${qrState}` }, create: { kind: "WHATSAPP", state: req.body.connected ? "ONLINE" : "OFFLINE", message: `WHATSAPP REAL — MODO SOMENTE LEITURA · ${qrState}` } });
+      await prisma.generalSetting.upsert({ where: { key: "WHATSAPP_SHADOW_STATUS" }, update: { value: { qrState, updatedAt: new Date().toISOString(), ...req.body }, version: { increment: 1 } }, create: { key: "WHATSAPP_SHADOW_STATUS", value: { qrState, updatedAt: new Date().toISOString(), ...req.body } } });
       res.json({ ok: true, sendMessage: false, sendReaction: false });
     } catch (error) { next(error); }
   });
@@ -45,6 +52,23 @@ export function whatsappShadowRoutes(prisma = new PrismaClient()) {
       }
       await prisma.systemLog.create({ data: { action: "WHATSAPP_SHADOW_MESSAGE_RECEIVED", entity: "IncomingMessage", entityId: message.id, message: "Mensagem real recebida em modo somente leitura.", metadata: { group: group.name, sender: req.body.sender, parsed, normalized, sendMessage: false, sendReaction: false }, result: normalized.valid ? "SUCCESS" : "VALIDATION_REQUIRED" } });
       res.status(201).json({ messageId: message.id, pendingId: pending?.id, parsed, normalized, externalActions: false });
+    } catch (error) { next(error); }
+  });
+  return router;
+}
+
+export function whatsappShadowPanelRoutes(prisma = new PrismaClient()) {
+  const router = Router();
+  router.get("/status", async (_req, res, next) => {
+    try {
+      const setting = await prisma.generalSetting.findUnique({ where: { key: "WHATSAPP_SHADOW_STATUS" } });
+      const value = (setting?.value ?? { qrState: "DISCONNECTED" }) as Record<string, unknown>;
+      let qrDataUrl: string | null = null;
+      if (value.qrState === "QR_VALID") {
+        try { qrDataUrl = `data:image/png;base64,${(await readFile(qrPath)).toString("base64")}`; } catch { value.qrState = "QR_EXPIRED"; }
+      }
+      res.setHeader("Cache-Control", "no-store");
+      res.json({ ...value, qrDataUrl, sendMessage: false, sendReaction: false, officialExcelWrite: false, mode: "SHADOW" });
     } catch (error) { next(error); }
   });
   return router;

@@ -1,5 +1,5 @@
 import { Copy, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "../app/providers";
 import { MetricCard } from "../components/common/MetricCard";
 import { SystemIndicator } from "../components/common/SystemIndicator";
@@ -8,15 +8,19 @@ import { OperationalSnapshot } from "../types";
 
 type Health = { ok: boolean; simulationMode: boolean; banner: string };
 type ModeStatus = {mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";postgres:string;whatsapp:string;whatsappReadOnly:boolean;officialExcelReadOnly:boolean;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean;banner:string;confirmationRequired:Record<string,string>};
+type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false};
+const qrLabels:Record<WhatsAppQrStatus["qrState"],string>={AWAITING_QR:"Aguardando QR",QR_VALID:"QR válido",QR_EXPIRED:"QR expirado",CONNECTED:"Conectado",DISCONNECTED:"Desconectado"};
 
 export default function DiagnosticsPage() {
   const { api, notify } = useApp();
   const health = useLoadable(() => api.request<Health>("/health"));
   const snapshot = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
   const mode = useLoadable(() => api.request<ModeStatus>("/operational-mode"));
+  const whatsappQr = useLoadable(() => api.request<WhatsAppQrStatus>("/whatsapp-shadow/status"));
   const [confirmation, setConfirmation] = useState("");
   const systems = snapshot.data?.systems ?? [];
   const logs = snapshot.data?.timeline ?? [];
+  useEffect(()=>{const timer=window.setInterval(()=>whatsappQr.reload(),3_000);return()=>window.clearInterval(timer)},[]);
 
   function copyLogs() {
     navigator.clipboard?.writeText(JSON.stringify(logs, null, 2));
@@ -36,7 +40,7 @@ export default function DiagnosticsPage() {
           <h1>Diagnóstico</h1>
           <p className="muted">Estado de serviços, simulação, homologação e sinais operacionais disponíveis.</p>
         </div>
-        <button onClick={() => { health.reload(); snapshot.reload(); }}><RefreshCw size={18} />Atualizar</button>
+        <button onClick={() => { health.reload(); snapshot.reload(); mode.reload(); whatsappQr.reload(); }}><RefreshCw size={18} />Atualizar</button>
       </div>
 
       <div className="metric-grid">
@@ -59,6 +63,11 @@ export default function DiagnosticsPage() {
         <label>Confirmação explícita<input value={confirmation} onChange={event=>setConfirmation(event.target.value)} placeholder="Digite a frase exigida pelo modo" /></label>
         <div className="actions"><button onClick={()=>changeMode("SIMULATION")}>Simulation</button><button onClick={()=>changeMode("SHADOW")}>Shadow</button><button onClick={()=>changeMode("LIVE_APPROVAL")}>Live Approval</button></div>
         <p className="muted">SHADOW exige: ATIVAR SHADOW SOMENTE LEITURA. LIVE_APPROVAL não libera escrita oficial automaticamente.</p>
+        <section className="technical">
+          <div className="row"><strong>Autenticação WhatsApp</strong><span className="badge badge-warning">{whatsappQr.data ? qrLabels[whatsappQr.data.qrState] : "Sem dados"}</span></div>
+          {whatsappQr.data?.qrDataUrl ? <div><p>Escaneie este QR pelo WhatsApp. Ele será substituído automaticamente quando expirar.</p><img src={whatsappQr.data.qrDataUrl} alt="QR de autenticação do WhatsApp SHADOW" width="420" height="420" style={{maxWidth:"100%",height:"auto",background:"white",padding:12}} /></div> : <p className="muted">{whatsappQr.data?.qrState === "CONNECTED" ? "QR removido após conexão." : "Aguardando um QR válido do agente."}</p>}
+          <small>Envio bloqueado · reação bloqueada · escrita oficial bloqueada</small>
+        </section>
       </section>
 
       <section className="diagnostic-grid">

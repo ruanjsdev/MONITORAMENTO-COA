@@ -17,7 +17,7 @@ import { integrationRoutes } from "./modules/integrations/routes.js";
 import { operationalRoutes } from "./modules/operational/routes.js";
 import { excelAgentPublicRoutes, excelHomologationRoutes } from "./modules/excel-homologation/routes.js";
 import { operationalModeRoutes } from "./modules/operational-mode/routes.js";
-import { whatsappShadowRoutes } from "./modules/whatsapp-shadow/routes.js";
+import { whatsappShadowPanelRoutes, whatsappShadowRoutes } from "./modules/whatsapp-shadow/routes.js";
 
 export function createApp(source: DataSource = createDefaultDataSource()) {
   const app = express();
@@ -59,6 +59,7 @@ export function createApp(source: DataSource = createDefaultDataSource()) {
   app.use("/operational", operationalRoutes());
   app.use("/excel-homologation", excelHomologationRoutes());
   app.use("/operational-mode", operationalModeRoutes());
+  app.use("/whatsapp-shadow", whatsappShadowPanelRoutes());
   app.post("/whatsapp/reaction/check", (req, res) => {
     res.json({
       allowed: canSendReaction({

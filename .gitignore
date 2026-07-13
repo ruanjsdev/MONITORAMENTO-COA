@@ -19,5 +19,6 @@ Thumbs.db
 planilhas-homologacao/*
 !planilhas-homologacao/mappings.json
 whatsapp-session/
+whatsapp-runtime/
 planilhas/*.backup.xlsm
 planilhas/~$*
