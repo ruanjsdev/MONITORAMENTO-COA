@@ -1,10 +1,11 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { validateLocalOperationalWorkbook } from "@coa-bot/excel-contracts";
 
 export const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 export const officialRoot = path.resolve(projectRoot, "planilhas");
 export const homologationRoot = path.resolve(projectRoot, "planilhas-homologacao");
-export const tempRoot = path.resolve(homologationRoot, "temp");
+export const tempRoot = path.resolve(projectRoot, "temp");
 export const officialBackupRoot = path.resolve(projectRoot, "backups-excel");
 
 function inside(file: string, root: string) {
@@ -14,6 +15,7 @@ function inside(file: string, root: string) {
 
 export function validateDevWorkbook(file: string) {
   const resolved = path.resolve(file);
+  validateLocalOperationalWorkbook({ filePath: resolved, root: homologationRoot, officialRoot, mustExist: false });
   if (inside(resolved, officialRoot) || resolved === officialRoot) throw safety("OFFICIAL_WORKBOOK_BLOCKED", "Planilhas oficiais nunca podem ser abertas pelo fluxo genérico de escrita.");
   if (!inside(resolved, homologationRoot)) throw safety("UNAUTHORIZED_PATH", "Arquivo fora de planilhas-homologacao.");
   if (path.extname(resolved).toLowerCase() !== ".xlsm" || !path.basename(resolved).endsWith(".dev.xlsm")) throw safety("INVALID_DEV_WORKBOOK", "Somente cópias .dev.xlsm são autorizadas.");

@@ -953,6 +953,51 @@ main {
   line-height: 1.35;
 }
 
+.settings-page {
+  display: grid;
+  gap: 14px;
+}
+
+.first-run-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.first-run-steps article {
+  min-height: 118px;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.34);
+}
+
+.first-run-steps article span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(51, 65, 85, 0.42);
+}
+
+.first-run-steps article.done span {
+  color: #bbf7d0;
+  background: rgba(20, 83, 45, 0.5);
+}
+
+.first-run-steps article.pending span {
+  color: #fde68a;
+  background: rgba(113, 63, 18, 0.38);
+}
+
+.first-run-steps small {
+  color: #94a3b8;
+}
+
 .mobile-bottom-nav {
   display: none;
 }
@@ -1288,6 +1333,10 @@ dd {
   }
 
   .more-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .first-run-steps {
     grid-template-columns: 1fr;
   }
 
