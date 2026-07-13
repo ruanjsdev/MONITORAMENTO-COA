@@ -1,5 +1,4 @@
 import { LogOut, Menu, Search, UserCircle, X } from "lucide-react";
-import { SIMULATION_BANNER } from "@coa-bot/shared";
 import { routes } from "../../app/router";
 import { useApp } from "../../app/providers";
 import { useLoadable } from "../../hooks/useLoadable";
@@ -7,10 +6,12 @@ import { OperationalSnapshot } from "../../types";
 import { SystemIndicator } from "../common/SystemIndicator";
 import { useEffect, useState } from "react";
 import { MobileBottomNavigation } from "./MobileBottomNavigation";
+type ModeStatus={mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";banner:string;whatsapp:string;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean};
 
 export function AppLayout({ currentPath, navigate, logout, children }: { currentPath: string; navigate: (path: string) => void; logout: () => void; children: React.ReactNode }) {
   const { api } = useApp();
   const { data } = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
+  const mode = useLoadable(() => api.request<ModeStatus>("/operational-mode"));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [clock, setClock] = useState(new Date());
@@ -35,7 +36,7 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
 
   return (
     <div className={`app-shell ${collapsed ? "nav-collapsed" : ""}`}>
-      <div className="simulation">{SIMULATION_BANNER}</div>
+      <div className="simulation">{mode.data?.banner ?? "Carregando modo operacional..."}</div>
       <header className="topbar">
         <button className="icon-button mobile-only" aria-label="Abrir menu" onClick={() => setDrawerOpen(true)}><Menu size={20} /></button>
         <div className="brand-block">
@@ -51,7 +52,7 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
           <SystemIndicator name="API" state={systems.find((item) => item.name === "API")?.state ?? "sem dados"} />
           <SystemIndicator name="PostgreSQL" state={systems.find((item) => item.name === "Banco de dados")?.state ?? "simulated"} />
           <SystemIndicator name="Excel" state={systems.find((item) => item.name === "Agente Excel")?.state ?? "simulated"} />
-          <SystemIndicator name="WhatsApp" state={systems.find((item) => item.name === "WhatsApp")?.state ?? "simulated"} />
+          <SystemIndicator name="WhatsApp" state={mode.data?.whatsapp === "CONNECTED" ? "online" : "offline"} />
         </div>
         <button className="search-trigger" onClick={() => go("/pesquisa")}><Search size={17} />Pesquisa</button>
         <span className="pending-pill">{pendingCount} pendências</span>
@@ -82,9 +83,9 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
       {drawerOpen && <button className="drawer-backdrop" aria-label="Fechar menu" onClick={() => setDrawerOpen(false)} />}
       <main>{children}</main>
       <footer className="statusbar">
-        <span>Modo: {data?.simulationMode ? "simulação protegida" : "produção"}</span>
+        <span>Modo: {mode.data?.mode ?? "carregando"}</span>
         <span>Última atualização: {clock.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
-        <span>Excel/WhatsApp sem execução real em homologação</span>
+        <span>Envio/reação/escrita oficial bloqueados</span>
       </footer>
       <MobileBottomNavigation currentPath={currentPath} navigate={navigate} />
     </div>

@@ -8,7 +8,7 @@ import { OperationalSnapshot } from "../types";
 
 type Health = { ok: boolean; simulationMode: boolean; banner: string };
 type ModeStatus = {mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";postgres:string;whatsapp:string;whatsappReadOnly:boolean;officialExcelReadOnly:boolean;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean;banner:string;confirmationRequired:Record<string,string>};
-type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null};
+type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;source?:string;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null;pipeline?:{lastPersistedMessage:string|null;lastInterpretation:unknown;lastPendingId:string|null;captured:number;processed:number;ignored:number;duplicates:number;lastError:string|null}};
 const qrLabels:Record<WhatsAppQrStatus["qrState"],string>={AWAITING_QR:"Aguardando QR",QR_VALID:"QR válido",QR_EXPIRED:"QR expirado",CONNECTED:"Conectado",DISCONNECTED:"Desconectado"};
 
 export default function DiagnosticsPage() {
@@ -45,7 +45,7 @@ export default function DiagnosticsPage() {
 
       <div className="metric-grid">
         <MetricCard label="Web" value="online" detail="PWA carregado" tone="success" />
-        <MetricCard label="API" value={health.data?.ok ? "online" : health.loading ? "verificando" : "sem dados"} detail={health.data?.simulationMode ? "modo simulação" : "sem dados"} tone={health.data?.ok ? "success" : "warning"} />
+        <MetricCard label="API" value={health.data?.ok ? "online" : health.loading ? "verificando" : "sem dados"} detail={mode.data?.mode ? `modo ${mode.data.mode}` : "sem dados"} tone={health.data?.ok ? "success" : "warning"} />
         <MetricCard label="Pendências" value={snapshot.data?.pendencies.filter((item) => item.status === "open").length ?? "Sem dados"} tone="warning" />
         <MetricCard label="Última sincronização" value="Sem dados" detail="endpoint ainda não disponível" />
       </div>
@@ -69,6 +69,7 @@ export default function DiagnosticsPage() {
           <small>Envio bloqueado · reação bloqueada · escrita oficial bloqueada</small>
         </section>
         <section className="technical"><strong>Grupo selecionado</strong>{whatsappQr.data?.monitoredGroup?<dl><dt>Status</dt><dd>{whatsappQr.data.monitoredGroup.monitoring}</dd><dt>Grupo</dt><dd>{whatsappQr.data.monitoredGroup.name}</dd><dt>JID</dt><dd>{whatsappQr.data.monitoredGroup.maskedExternalId}</dd><dt>Operação</dt><dd>{whatsappQr.data.monitoredGroup.operation??"Não vinculada"}</dd><dt>Última mensagem</dt><dd>{whatsappQr.data.monitoredGroup.lastMessage??"Nenhuma"}</dd><dt>Mensagens capturadas</dt><dd>{whatsappQr.data.monitoredGroup.processedMessages}</dd></dl>:<p className="muted">Nenhum grupo selecionado para monitoramento.</p>}</section>
+        <section className="technical"><strong>Pipeline real</strong><dl><dt>Origem</dt><dd>{whatsappQr.data?.source??"Sem dados"}</dd><dt>Persistida</dt><dd>{whatsappQr.data?.pipeline?.lastPersistedMessage??"Nenhuma"}</dd><dt>Última pendência</dt><dd>{whatsappQr.data?.pipeline?.lastPendingId??"Nenhuma"}</dd><dt>Capturadas</dt><dd>{whatsappQr.data?.pipeline?.captured??0}</dd><dt>Processadas</dt><dd>{whatsappQr.data?.pipeline?.processed??0}</dd><dt>Ignoradas</dt><dd>{whatsappQr.data?.pipeline?.ignored??0}</dd><dt>Duplicadas</dt><dd>{whatsappQr.data?.pipeline?.duplicates??0}</dd><dt>Último erro</dt><dd>{whatsappQr.data?.pipeline?.lastError??"Nenhum"}</dd></dl></section>
       </section>
 
       <section className="diagnostic-grid">

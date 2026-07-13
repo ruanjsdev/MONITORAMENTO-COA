@@ -1,11 +1,11 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { normalizeOperationalExcelUpdate } from "@coa-bot/excel-contracts";
-import { parseMessage } from "../../services/operational-parser/index.js";
+import { parseMessage, parseReport } from "../../services/operational-parser/index.js";
 import { maskJid, requireConnectedWhatsApp, resolveAuditUserId, shadowGroupPersistence, shouldCaptureShadowMessage } from "./group-policy.js";
 
 const token = process.env.WHATSAPP_SHADOW_TOKEN ?? "local-dev-whatsapp-shadow";
@@ -40,28 +40,22 @@ export function whatsappShadowRoutes(prisma = new PrismaClient()) {
       res.json({ ok: true, count: req.body.groups?.length ?? 0 });
     } catch (error) { next(error); }
   });
+  router.post("/ignored", async (req, res, next) => {
+    try { await prisma.systemLog.create({ data: { action: "WHATSAPP_SHADOW_MESSAGE_IGNORED", message: "Mensagem ignorada por pertencer a grupo não monitorado.", metadata: { groupJid: req.body.groupId, messageId: req.body.messageId, source: "WHATSAPP_SHADOW" }, result: "IGNORED" } }); res.json({ ignored: true }); } catch (error) { next(error); }
+  });
   router.post("/messages", async (req, res, next) => {
     try {
       const receivedAt = new Date(req.body.receivedAt);
       const originalText = String(req.body.text ?? "");
       const selected = await prisma.whatsAppGroup.findFirst({ where: { externalId: req.body.groupId, isTestGroup: true, isMonitored: true, isActive: true, active: true } });
       if (!selected || !shouldCaptureShadowMessage(selected.externalId, String(req.body.groupId))) return res.status(202).json({ ignored: true, reason: "GROUP_NOT_SELECTED" });
-      const idempotencyKey = createHash("sha256").update(String(req.body.messageId)).digest("hex");
+      const idempotencyKey = createHash("sha256").update(`${req.body.groupId}:${req.body.messageId}`).digest("hex");
       const existing = await prisma.incomingMessage.findUnique({ where: { idempotencyKey } });
-      if (existing) return res.json({ duplicate: true, messageId: existing.id });
+      if (existing) { await prisma.systemLog.create({ data: { action: "WHATSAPP_SHADOW_MESSAGE_DUPLICATE", entity: "IncomingMessage", entityId: existing.id, message: "Mensagem duplicada ignorada.", metadata: { groupJid: req.body.groupId, messageId: req.body.messageId }, result: "DUPLICATE" } }); return res.json({ duplicate: true, messageId: existing.id }); }
       const group = await prisma.whatsAppGroup.update({ where: { id: selected.id }, data: { lastMessage: originalText, lastActivity: receivedAt, processedMessages: { increment: 1 }, connectionStatus: "shadow-readonly" } });
-      const parsed = parseMessage(originalText);
-      const status = parsed.proposedStatus ? statusMap[parsed.proposedStatus] : undefined;
-      const normalized = normalizeOperationalExcelUpdate({ status, description: parsed.description, receivedAt, forecastAt: parsed.forecastAt, forecastInformed: Boolean(parsed.forecastAt) });
       const message = await prisma.incomingMessage.create({ data: { idempotencyKey, groupId: group.id, sender: req.body.sender ?? "desconhecido", content: originalText, receivedAt } });
-      await prisma.parsedMessage.create({ data: { incomingMessageId: message.id, confidence: parsed.confidence, parsedJson: { ...parsed, normalized } } });
-      let pending = null;
-      if (parsed.mainEquipment && normalized.valid) {
-        const operation = parsed.operation ? await prisma.operation.findFirst({ where: { name: { contains: parsed.operation, mode: "insensitive" } } }) : null;
-        pending = await prisma.pendingChange.create({ data: { incomingMessageId: message.id, operationId: operation?.id, equipmentCode: parsed.mainEquipment, currentStatus: "DESCONHECIDO", newStatus: normalized.status, description: normalized.description, confidence: parsed.confidence, createdBy: "WHATSAPP_SHADOW" } });
-      }
-      await prisma.systemLog.create({ data: { action: "WHATSAPP_SHADOW_MESSAGE_RECEIVED", entity: "IncomingMessage", entityId: message.id, message: "Mensagem real recebida em modo somente leitura.", metadata: { group: group.name, sender: req.body.sender, parsed, normalized, sendMessage: false, sendReaction: false }, result: normalized.valid ? "SUCCESS" : "VALIDATION_REQUIRED" } });
-      res.status(201).json({ messageId: message.id, pendingId: pending?.id, parsed, normalized, externalActions: false });
+      const result = await processShadowMessage(prisma, message.id);
+      res.status(201).json({ messageId: message.id, ...result, externalActions: false });
     } catch (error) { next(error); }
   });
   return router;
@@ -102,6 +96,9 @@ export function whatsappShadowPanelRoutes(prisma = new PrismaClient()) {
       res.json({ selected: true, group: { name: group.name, externalId: group.externalId }, operation: operation.name, banner: "GRUPO MONITORADO EM SHADOW", sendMessage: false, sendReaction: false, officialExcelWrite: false });
     } catch (error) { next(error); }
   });
+  router.post("/messages/:id/reprocess", async (req, res, next) => {
+    try { res.json(await processShadowMessage(prisma, String(req.params.id))); } catch (error) { next(error); }
+  });
   router.get("/status", async (_req, res, next) => {
     try {
       const setting = await prisma.generalSetting.findUnique({ where: { key: "WHATSAPP_SHADOW_STATUS" } });
@@ -112,8 +109,51 @@ export function whatsappShadowPanelRoutes(prisma = new PrismaClient()) {
       }
       res.setHeader("Cache-Control", "no-store");
       const selected = await prisma.whatsAppGroup.findFirst({ where: { isTestGroup: true, isMonitored: true, isActive: true, active: true }, include: { operations: { include: { operation: true } } } });
-      res.json({ ...value, qrDataUrl, sendMessage: false, sendReaction: false, officialExcelWrite: false, mode: "SHADOW", monitoredGroup: selected ? { name: selected.name, maskedExternalId: maskJid(selected.externalId), lastMessage: selected.lastMessage, processedMessages: selected.processedMessages, monitoring: "GRUPO MONITORADO EM SHADOW", operation: selected.operations[0]?.operation.name ?? null } : null });
+      const [lastMessage,lastParsed,lastPending,ignored,duplicates,processed] = await Promise.all([
+        prisma.incomingMessage.findFirst({where:{groupId:selected?.id},orderBy:{receivedAt:"desc"}}),
+        prisma.parsedMessage.findFirst({where:{incomingMessage:{groupId:selected?.id}},orderBy:{id:"desc"}}),
+        prisma.pendingChange.findFirst({where:{incomingMessage:{groupId:selected?.id},createdBy:"WHATSAPP_SHADOW"},orderBy:{createdAt:"desc"}}),
+        prisma.systemLog.count({where:{action:"WHATSAPP_SHADOW_MESSAGE_IGNORED"}}),prisma.systemLog.count({where:{action:"WHATSAPP_SHADOW_MESSAGE_DUPLICATE"}}),prisma.systemLog.count({where:{action:"WHATSAPP_SHADOW_MESSAGE_PROCESSED",result:"SUCCESS"}})
+      ]);
+      res.json({ ...value, qrDataUrl, sendMessage: false, sendReaction: false, officialExcelWrite: false, mode: "SHADOW", source:"REAL_SHADOW", monitoredGroup: selected ? { name: selected.name, maskedExternalId: maskJid(selected.externalId), lastMessage: selected.lastMessage, processedMessages: selected.processedMessages, monitoring: "GRUPO MONITORADO EM SHADOW", operation: selected.operations[0]?.operation.name ?? null } : null, pipeline:{lastPersistedMessage:lastMessage?.content??null,lastInterpretation:lastParsed?.parsedJson??null,lastPendingId:lastPending?.id??null,captured:selected?.processedMessages??0,processed,ignored,duplicates,lastError:null} });
     } catch (error) { next(error); }
   });
   return router;
+}
+
+export async function processShadowMessage(prisma: PrismaClient, messageId: string) {
+  const message = await prisma.incomingMessage.findUniqueOrThrow({ where: { id: messageId }, include: { group: { include: { operations: { include: { operation: true } } } } } });
+  const correlationId = randomUUID();
+  const report = parseReport(message.content);
+  const fallback = parseMessage(message.content, { operation: message.group?.operations[0]?.operation.name });
+  const items = report.items.length ? report.items : [fallback];
+  const operation = message.group?.operations[0]?.operation ?? null;
+  const results = [];
+  for (const parsed of items) {
+    const status = parsed.proposedStatus ? statusMap[parsed.proposedStatus] : undefined;
+    const description = normalizeDescription(parsed.description, status);
+    const normalized = normalizeOperationalExcelUpdate({ status, description, receivedAt: message.receivedAt, forecastAt: parsed.forecastAt, forecastInformed: Boolean(parsed.forecastAt) });
+    const metadata = { ...parsed, operation: parsed.operation ?? operation?.name ?? null, normalized, source: "WHATSAPP_SHADOW", simulated: false, correlationId, groupJid: message.group?.externalId, rulesApplied: normalized.reasons, candidateCells: candidateCells(operation, parsed.mainEquipment) };
+    const existingParsed = await prisma.parsedMessage.findFirst({ where: { incomingMessageId: message.id, parsedJson: { path: ["mainEquipment"], equals: parsed.mainEquipment ?? "__NONE__" } } });
+    if (existingParsed) await prisma.parsedMessage.update({ where: { id: existingParsed.id }, data: { confidence: parsed.confidence, parsedJson: metadata } });
+    else await prisma.parsedMessage.create({ data: { incomingMessageId: message.id, confidence: parsed.confidence, parsedJson: metadata } });
+    let pending = null;
+    if (parsed.mainEquipment && normalized.valid) {
+      const existing = await prisma.pendingChange.findFirst({ where: { incomingMessageId: message.id, equipmentCode: parsed.mainEquipment, createdBy: "WHATSAPP_SHADOW" } });
+      const data = { operationId: operation?.id, currentStatus: existing?.currentStatus ?? "LEITURA_OFICIAL_PENDENTE", newStatus: normalized.status, description: normalized.description, confidence: parsed.confidence, status: "PENDING" as const, active: true, createdBy: "WHATSAPP_SHADOW", updatedBy: null };
+      pending = existing ? await prisma.pendingChange.update({ where: { id: existing.id }, data: { ...data, version: { increment: 1 } } }) : await prisma.pendingChange.create({ data: { ...data, incomingMessageId: message.id, equipmentCode: parsed.mainEquipment } });
+    }
+    results.push({ parsed: metadata, pendingId: pending?.id ?? null });
+  }
+  await prisma.systemLog.create({ data: { action: "WHATSAPP_SHADOW_MESSAGE_PROCESSED", entity: "IncomingMessage", entityId: message.id, message: "Mensagem real processada no pipeline operacional SHADOW.", metadata: { correlationId, source: "WHATSAPP_SHADOW", simulated: false, itemCount: results.length, pendingIds: results.map(item => item.pendingId), sendMessage: false, sendReaction: false, officialExcelWrite: false }, result: results.every(item => item.pendingId) ? "SUCCESS" : "VALIDATION_REQUIRED" } });
+  return { correlationId, source: "WHATSAPP_SHADOW", simulated: false, items: results, pendingIds: results.map(item => item.pendingId).filter(Boolean), externalActions: { sendMessage: false, sendReaction: false, officialExcelWrite: false } };
+}
+
+function normalizeDescription(value: string | null, status?: string) {
+  if (status === "R") return "RODANDO";
+  return String(value ?? "").replace(/^parad[oa],?\s*/i, "").replace(/,?\s*previs[aã]o.+$/i, "").trim().toUpperCase();
+}
+
+function candidateCells(operation: { fleetColumn: string | null; implementColumn: string | null; statusColumn: string | null; descriptionColumn: string | null; timeColumn: string | null } | null, fleet: string | null) {
+  return { fleet, fleetColumn: operation?.fleetColumn, implementColumn: operation?.implementColumn, statusColumn: operation?.statusColumn, descriptionColumn: operation?.descriptionColumn, timeColumn: operation?.timeColumn, officialExcelWrite: false };
 }

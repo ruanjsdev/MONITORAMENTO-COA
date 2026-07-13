@@ -111,7 +111,7 @@ async function connect() {
     for (const message of event.messages) {
       const groupId = message.key.remoteJid;
       if (!groupId?.endsWith("@g.us") || message.key.fromMe) continue;
-      if (!selectedGroupId || groupId !== selectedGroupId) continue;
+      if (!selectedGroupId || groupId !== selectedGroupId) { await post("/whatsapp-shadow/local/ignored", { groupId, messageId: message.key.id }).catch(() => undefined); continue; }
       const text = message.message?.conversation ?? message.message?.extendedTextMessage?.text ?? message.message?.imageMessage?.caption;
       if (!text) continue;
       await post("/whatsapp-shadow/local/messages", { messageId: message.key.id, groupId, sender: message.key.participant, text, receivedAt: new Date(Number(message.messageTimestamp) * 1000).toISOString() }).catch(error => console.error("Falha ao persistir mensagem SHADOW:", error));

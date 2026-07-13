@@ -402,9 +402,12 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
       const current = await prisma.pendingChange.findUnique({ where: { id } });
       if (!current) throw new HttpError(404, "Alteracao nao encontrada.");
       const status = decision === "approve" ? ChangeStatus.APPROVED_SIMULATED : decision === "reject" ? ChangeStatus.REJECTED : ChangeStatus.DEFERRED;
-      const change = await prisma.pendingChange.update({ where: { id }, data: { status, description: description ?? current.description, updatedBy: userId, version: { increment: 1 } } });
-      await this.log(`PENDING_CHANGE_${status}`, "Decisao de alteracao em simulacao.", { userId, entity: "PendingChange", entityId: id, beforeValue: current, afterValue: change });
-      return { change, externalActions: { excelUpdated: false, whatsappReactionSent: false, reason: "SIMULATION_MODE=true bloqueia Excel e WhatsApp." } };
+      const safeDescription = description?.trim() ? description.trim() : current.description;
+      const change = await prisma.pendingChange.update({ where: { id }, data: { status, description: safeDescription, updatedBy: userId, version: { increment: 1 } } });
+      const mode = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } });
+      const shadow = mode?.value === "SHADOW";
+      await this.log(`PENDING_CHANGE_${status}`, shadow ? "Decisão registrada em SHADOW; nenhuma ação externa executada." : "Decisão de alteração em simulação.", { userId, entity: "PendingChange", entityId: id, beforeValue: current, afterValue: change, metadata: { mode: mode?.value, officialExcelWrite: false, sendMessage: false, sendReaction: false } });
+      return { change, externalActions: { excelUpdated: false, whatsappReactionSent: false, reason: shadow ? "Aprovação registrada. Escrita oficial bloqueada pelo modo SHADOW." : "SIMULATION_MODE=true bloqueia Excel e WhatsApp." } };
     },
     async simulateMessage(input, userId) {
       const existing = await prisma.incomingMessage.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
@@ -485,8 +488,9 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
       return prisma.systemLog.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
     },
     async log(action, message, options = {}) {
+      const validUser = options.userId ? await prisma.user.findUnique({ where: { id: options.userId }, select: { id: true } }) : null;
       await prisma.systemLog.create({
-        data: { action, message, userId: options.userId, entity: options.entity, entityId: options.entityId, beforeValue: options.beforeValue as any, afterValue: options.afterValue as any, metadata: options.metadata as any, ipAddress: options.ipAddress, result: options.result ?? "SUCCESS" }
+        data: { action, message, userId: validUser?.id, entity: options.entity, entityId: options.entityId, beforeValue: options.beforeValue as any, afterValue: options.afterValue as any, metadata: options.metadata as any, ipAddress: options.ipAddress, result: options.result ?? "SUCCESS" }
       });
     }
   };

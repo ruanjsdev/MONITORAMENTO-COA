@@ -16,8 +16,8 @@ export default function PendingChangesPage() {
   if (error || !data) return <section className="panel error-box"><p>{error}</p><button onClick={reload}>Tentar novamente</button></section>;
 
   async function decide(id: string, decision: string) {
-    await api.request(`/pending-changes/${id}/decision`, { method: "POST", body: JSON.stringify({ decision, description: observation }) });
-    notify("success", `SIMULADO: decisão ${decision} registrada.`);
+    const result=await api.request<{externalActions:{reason:string}}>(`/pending-changes/${id}/decision`, { method: "POST", body: JSON.stringify({ decision, description: observation }) });
+    notify("success", result.externalActions.reason);
     await reload();
   }
 

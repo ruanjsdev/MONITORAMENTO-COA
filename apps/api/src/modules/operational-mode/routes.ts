@@ -29,11 +29,13 @@ export function operationalModeRoutes(prisma = new PrismaClient()) {
 async function status(prisma: PrismaClient) {
   const setting = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } });
   const mode = (setting?.value ?? "SIMULATION") as OperationalMode;
+  const whatsappStatus = await prisma.integrationStatus.findUnique({ where: { kind: "WHATSAPP" } });
   return {
     mode,
     confirmationRequired: confirmations,
     postgres: "CONNECTED",
-    whatsapp: mode === "SIMULATION" ? "SIMULATED" : "NOT_CONNECTED",
+    whatsapp: whatsappStatus?.state === "ONLINE" ? "CONNECTED" : mode === "SIMULATION" ? "SIMULATED" : "NOT_CONNECTED",
+    whatsappSource: whatsappStatus?.state === "ONLINE" ? "REAL_SHADOW" : null,
     whatsappReadOnly: mode === "SHADOW",
     officialExcelReadOnly: mode !== "SIMULATION",
     officialExcelWrite: false,
@@ -41,6 +43,6 @@ async function status(prisma: PrismaClient) {
     sendReaction: false,
     groupUpdate: false,
     deleteMessage: false,
-    banner: mode === "SHADOW" ? "WHATSAPP REAL — MODO SOMENTE LEITURA" : mode
+    banner: mode === "SHADOW" ? "MODO SHADOW ATIVO — mensagens reais em leitura; escrita, envio e reação bloqueados." : mode
   };
 }
