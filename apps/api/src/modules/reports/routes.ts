@@ -5,12 +5,18 @@ import { createOperationalExcelAdapter } from "../../services/reports/excel-adap
 import { compareWithOperationState, parseAdvancedOperationalReport } from "../../services/reports/advanced-parser.js";
 import { buildHourlyReport, defaultSchedule, ReportSchedule, validateSchedule } from "../../services/reports/report-scheduler.js";
 import { evaluateForecasts } from "../../services/reports/forecast-engine.js";
+import { Clock, operationalTimezone } from "../../services/reports/clock.js";
+import { ReportQueueService } from "../../services/reports/report-queue.js";
+import { ForecastVigilanceService } from "../../services/reports/forecast-vigilance.js";
 
 const scheduleKey = "REPORT_SCHEDULES";
 
 export function reportRoutes(prisma = new PrismaClient()) {
   const router = Router();
   const adapter = createOperationalExcelAdapter();
+  const clock = new Clock();
+  const queue = new ReportQueueService(prisma, adapter, clock);
+  const vigilance = new ForecastVigilanceService(prisma, adapter, clock);
 
   async function schedules(): Promise<ReportSchedule[]> {
     const setting = await prisma.generalSetting.findUnique({ where: { key: scheduleKey } });
@@ -23,7 +29,7 @@ export function reportRoutes(prisma = new PrismaClient()) {
   }
 
   router.get("/schedules", async (_req, res, next) => {
-    try { res.json({ schedules: await schedules(), sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+    try { res.json({ schedules: await schedules(), timezone: operationalTimezone, sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
   });
 
   router.put("/schedules/:id", async (req, res, next) => {
@@ -40,18 +46,18 @@ export function reportRoutes(prisma = new PrismaClient()) {
     try {
       const schedule = validateSchedule({ ...defaultSchedule, ...req.body });
       const state = await adapter.readOperationState({ operation: schedule.operation });
-      res.json({ schedule, report: buildHourlyReport(schedule, state.items, requestedDate(req.body.at)), adapter: process.env.EXCEL_ADAPTER ?? "mock" });
+      res.json({ schedule, report: buildHourlyReport(schedule, state.items, requestedDate(req.body.at, clock)), adapter: process.env.EXCEL_ADAPTER ?? "mock", timezone: operationalTimezone });
     } catch (error) { next(error); }
   });
 
   router.post("/generate-now", async (req, res, next) => {
     try {
       const schedule = validateSchedule({ ...(await schedules())[0], ...req.body });
-      const state = await adapter.readOperationState({ operation: schedule.operation });
-      const report = buildHourlyReport(schedule, state.items, requestedDate(req.body.at));
-      const picture = await adapter.generatePicture({ operation: schedule.operation });
+      const execution = await queue.generateNow(schedule);
+      const report = { text: execution.text, withoutForecast: execution.withoutForecast, expired: execution.expired, alerts: execution.alerts, summaryIncluded: false, sendMessage: false, sendReaction: false };
+      const picture = { simulated: execution.imageState === "MOCK", message: execution.imageMessage };
       await prisma.systemLog.create({ data: { action: "REPORT_GENERATED_NOW", message: "Relatório horário gerado sem envio externo.", metadata: { operation: schedule.operation, sendMessage: false, sendReaction: false }, result: "SIMULATED" } });
-      res.json({ report, picture, externalActionExecuted: false, sendMessage: false, sendReaction: false });
+      res.json({ execution, report, picture, externalActionExecuted: false, sendMessage: false, sendReaction: false });
     } catch (error) { next(error); }
   });
 
@@ -59,7 +65,7 @@ export function reportRoutes(prisma = new PrismaClient()) {
     try {
       const schedule = validateSchedule({ ...defaultSchedule, ...req.body, testGroup: true });
       const state = await adapter.readOperationState({ operation: schedule.operation });
-      res.json({ test: true, report: buildHourlyReport(schedule, state.items, requestedDate(req.body.at)), externalActionExecuted: false, sendMessage: false, sendReaction: false });
+      res.json({ test: true, report: buildHourlyReport(schedule, state.items, requestedDate(req.body.at, clock)), externalActionExecuted: false, sendMessage: false, sendReaction: false });
     } catch (error) { next(error); }
   });
 
@@ -67,9 +73,13 @@ export function reportRoutes(prisma = new PrismaClient()) {
     try {
       const operation = String(req.query.operation ?? defaultSchedule.operation);
       const state = await adapter.readOperationState({ operation });
-      const forecast = evaluateForecasts(state.items, requestedDate(req.query.at));
+      const forecast = evaluateForecasts(state.items, requestedDate(req.query.at, clock));
       res.json({ operation, withoutForecast: forecast.withoutForecast, expired: forecast.expired, alerts: forecast.alerts });
     } catch (error) { next(error); }
+  });
+
+  router.post("/forecast/check", async (req, res, next) => {
+    try { res.json(await vigilance.check(String(req.body.operation ?? defaultSchedule.operation))); } catch (error) { next(error); }
   });
 
   router.post("/parse-long-report", async (req, res, next) => {
@@ -114,6 +124,30 @@ export function reportRoutes(prisma = new PrismaClient()) {
     } catch (error) { next(error); }
   });
 
+  router.get("/queue", async (_req, res, next) => {
+    try { res.json({ reports: await queue.list(), timezone: operationalTimezone, sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+  });
+
+  router.post("/scheduler/tick", async (_req, res, next) => {
+    try { res.json(await queue.tick(await schedules())); } catch (error) { next(error); }
+  });
+
+  router.post("/queue/:id/approve", async (req, res, next) => {
+    try { res.json({ report: await queue.approve(String(req.params.id)), message: "Relatório aprovado e pronto. Envio ao WhatsApp continua bloqueado.", sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+  });
+
+  router.post("/queue/:id/reject", async (req, res, next) => {
+    try { res.json({ report: await queue.reject(String(req.params.id)), sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+  });
+
+  router.put("/queue/:id/text", async (req, res, next) => {
+    try { res.json({ report: await queue.edit(String(req.params.id), String(req.body.text ?? "")), sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+  });
+
+  router.post("/queue/:id/regenerate", async (req, res, next) => {
+    try { res.json({ report: await queue.regenerate(String(req.params.id), await schedules()), sendMessage: false, sendReaction: false }); } catch (error) { next(error); }
+  });
+
   router.get("/shift-closing", async (_req, res, next) => {
     try {
       const state = await adapter.readOperationState({ operation: defaultSchedule.operation });
@@ -140,8 +174,8 @@ export function reportRoutes(prisma = new PrismaClient()) {
   return router;
 }
 
-function requestedDate(input: unknown) {
-  if (!input) return new Date("2026-07-13T02:00:00.000Z");
+function requestedDate(input: unknown, clock: Clock) {
+  if (!input) return clock.now();
   const date = new Date(String(input));
-  return Number.isNaN(date.getTime()) ? new Date("2026-07-13T02:00:00.000Z") : date;
+  return Number.isNaN(date.getTime()) ? clock.now() : date;
 }
