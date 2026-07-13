@@ -8,7 +8,7 @@ import { OperationalSnapshot } from "../types";
 
 type Health = { ok: boolean; simulationMode: boolean; banner: string };
 type ModeStatus = {mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";postgres:string;whatsapp:string;whatsappReadOnly:boolean;officialExcelReadOnly:boolean;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean;banner:string;confirmationRequired:Record<string,string>};
-type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false};
+type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null};
 const qrLabels:Record<WhatsAppQrStatus["qrState"],string>={AWAITING_QR:"Aguardando QR",QR_VALID:"QR válido",QR_EXPIRED:"QR expirado",CONNECTED:"Conectado",DISCONNECTED:"Desconectado"};
 
 export default function DiagnosticsPage() {
@@ -68,6 +68,7 @@ export default function DiagnosticsPage() {
           {whatsappQr.data?.qrDataUrl ? <div><p>Escaneie este QR pelo WhatsApp. Ele será substituído automaticamente quando expirar.</p><img src={whatsappQr.data.qrDataUrl} alt="QR de autenticação do WhatsApp SHADOW" width="420" height="420" style={{maxWidth:"100%",height:"auto",background:"white",padding:12}} /></div> : <p className="muted">{whatsappQr.data?.qrState === "CONNECTED" ? "QR removido após conexão." : "Aguardando um QR válido do agente."}</p>}
           <small>Envio bloqueado · reação bloqueada · escrita oficial bloqueada</small>
         </section>
+        <section className="technical"><strong>Grupo selecionado</strong>{whatsappQr.data?.monitoredGroup?<dl><dt>Status</dt><dd>{whatsappQr.data.monitoredGroup.monitoring}</dd><dt>Grupo</dt><dd>{whatsappQr.data.monitoredGroup.name}</dd><dt>JID</dt><dd>{whatsappQr.data.monitoredGroup.maskedExternalId}</dd><dt>Operação</dt><dd>{whatsappQr.data.monitoredGroup.operation??"Não vinculada"}</dd><dt>Última mensagem</dt><dd>{whatsappQr.data.monitoredGroup.lastMessage??"Nenhuma"}</dd><dt>Mensagens capturadas</dt><dd>{whatsappQr.data.monitoredGroup.processedMessages}</dd></dl>:<p className="muted">Nenhum grupo selecionado para monitoramento.</p>}</section>
       </section>
 
       <section className="diagnostic-grid">

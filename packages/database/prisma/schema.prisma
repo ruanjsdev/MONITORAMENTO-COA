@@ -96,6 +96,8 @@ model WhatsAppGroup {
   lastMessage     String?
   lastActivity    DateTime?
   processedMessages Int            @default(0)
+  participantCount Int             @default(0)
+  whatsappUpdatedAt DateTime?
   connectionStatus String           @default("simulated")
   version         Int              @default(1)
   createdBy       String?

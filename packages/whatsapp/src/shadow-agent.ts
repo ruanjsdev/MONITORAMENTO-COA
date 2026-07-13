@@ -15,6 +15,8 @@ const qrPath = process.env.WHATSAPP_QR_PATH ?? path.resolve(here, "../../../what
 const headers = { "Content-Type": "application/json", "x-whatsapp-shadow-token": token };
 let qrGeneration = 0;
 let expiryTimer: ReturnType<typeof setTimeout> | undefined;
+let selectedGroupId: string | null = null;
+let refreshVersion = 0;
 process.stdout.setDefaultEncoding("utf8");
 if (process.platform === "win32" && process.stdout.isTTY) spawnSync("chcp", ["65001"], { shell: true, stdio: "ignore" });
 
@@ -30,6 +32,21 @@ async function publishState(qrState: QrState, details: Record<string, unknown> =
 
 async function removeQr() {
   await rm(qrPath, { force: true });
+}
+
+async function syncGroups(socket: ReturnType<typeof makeWASocket>) {
+  const groups = await socket.groupFetchAllParticipating();
+  await post("/whatsapp-shadow/local/groups", { groups: Object.values(groups).map(group => ({ id: group.id, name: group.subject, participantCount: group.participants.length })) });
+}
+
+async function syncControl(socket: ReturnType<typeof makeWASocket>) {
+  const selectedResponse = await fetch(apiUrl + "/whatsapp-shadow/local/selected-group", { headers });
+  if (selectedResponse.ok) selectedGroupId = (await selectedResponse.json() as { externalId: string | null }).externalId;
+  const refreshResponse = await fetch(apiUrl + "/whatsapp-shadow/local/refresh-request", { headers });
+  if (refreshResponse.ok) {
+    const requested = (await refreshResponse.json() as { version: number }).version;
+    if (requested > refreshVersion) { refreshVersion = requested; await syncGroups(socket); }
+  }
 }
 
 async function publishQr(qr: string) {
@@ -65,6 +82,7 @@ async function connect() {
   await publishState("AWAITING_QR");
   const { state, saveCreds } = await useMultiFileAuthState(authDir);
   const socket = makeWASocket({ auth: state, printQRInTerminal: false, markOnlineOnConnect: false, syncFullHistory: false });
+  let controlTimer: ReturnType<typeof setInterval> | undefined;
   socket.ev.on("creds.update", saveCreds);
   socket.ev.on("connection.update", async update => {
     if (update.qr) await publishQr(update.qr);
@@ -74,12 +92,14 @@ async function connect() {
       await removeQr();
       await publishState("CONNECTED", { connectedAt: new Date().toISOString() });
       console.log("WhatsApp SHADOW conectado. Envio, reação, exclusão e alteração de grupos bloqueados.");
-      const groups = await socket.groupFetchAllParticipating();
-      await post("/whatsapp-shadow/local/groups", { groups: Object.values(groups).map(group => ({ id: group.id, name: group.subject })) });
+      await syncGroups(socket);
+      await syncControl(socket);
+      controlTimer = setInterval(() => syncControl(socket).catch(error => console.error("Falha ao sincronizar controle SHADOW:", error)), 3_000);
     }
     if (update.connection === "close") {
       qrGeneration++;
       if (expiryTimer) clearTimeout(expiryTimer);
+      if (controlTimer) clearInterval(controlTimer);
       await removeQr();
       await publishState("DISCONNECTED", { disconnectedAt: new Date().toISOString() }).catch(() => undefined);
       const code = (update.lastDisconnect?.error as { output?: { statusCode?: number } })?.output?.statusCode;
@@ -91,6 +111,7 @@ async function connect() {
     for (const message of event.messages) {
       const groupId = message.key.remoteJid;
       if (!groupId?.endsWith("@g.us") || message.key.fromMe) continue;
+      if (!selectedGroupId || groupId !== selectedGroupId) continue;
       const text = message.message?.conversation ?? message.message?.extendedTextMessage?.text ?? message.message?.imageMessage?.caption;
       if (!text) continue;
       await post("/whatsapp-shadow/local/messages", { messageId: message.key.id, groupId, sender: message.key.participant, text, receivedAt: new Date(Number(message.messageTimestamp) * 1000).toISOString() }).catch(error => console.error("Falha ao persistir mensagem SHADOW:", error));
