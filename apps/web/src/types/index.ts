@@ -32,6 +32,71 @@ export type PendingChange = {
   status: string;
 };
 
+export type OperationalModeStatus = {
+  mode: "SIMULATION" | "SHADOW" | "LOCAL_OPERATIONAL" | "LIVE_APPROVAL_PILOT";
+  banner: string;
+  postgres: string;
+  whatsapp: string;
+  whatsappReadOnly: boolean;
+  officialExcelReadOnly: boolean;
+  officialExcelWrite: boolean;
+  officialExcelWriteScope: "BLOCKED" | "PILOT_WHITELIST_ONLY";
+  localOperationalExcelWrite?: boolean;
+  sendMessage: boolean;
+  sendReaction: boolean;
+  confirmationRequired: Record<string, string>;
+};
+
+export type OfficialPilotCell = { field: string; address: string; currentValue: unknown; proposedValue: unknown };
+export type OfficialPilotEvent = { id: string; step: string; label: string; status: string; detail?: string; durationMs?: number; createdAt: string };
+export type OfficialPilotWrite = {
+  id: string;
+  pendingChangeId: string;
+  status: string;
+  confirmed: boolean;
+  prepareCommandId: string;
+  commandId?: string;
+  correlationId: string;
+  groupName: string;
+  groupJidMasked: string;
+  originalMessage: string;
+  operation: string;
+  fleet: string;
+  implement: string;
+  workbook: string;
+  worksheet: string;
+  row?: number;
+  cells: OfficialPilotCell[];
+  proposedValues: Record<string, unknown>;
+  rereadValues?: Record<string, unknown>;
+  backupPath: string;
+  originalHash?: string;
+  backupHash?: string;
+  sizeBytes?: number;
+  result?: string;
+  errorCode?: string;
+  errorMessage?: string;
+  durationMs?: number;
+  blockers: string[];
+  rollbackAvailable: boolean;
+  confirmationRequired: string;
+  rollbackConfirmationRequired: string;
+  externalActions: { sendMessage: false; sendReaction: false };
+  events: OfficialPilotEvent[];
+};
+
+export type OfficialPilotStatus = {
+  mode: OperationalModeStatus["mode"];
+  activationRequired: string;
+  writeConfirmationRequired: string;
+  rollbackConfirmationRequired: string;
+  whitelist: { groupName: string; groupJidMasked: string; operation: string; workbook: string; worksheet: string; fleetIds: string[]; expectedImplement: string; columns: Record<string, string>; oneAtATime: boolean };
+  latest: OfficialPilotWrite | null;
+  sendMessage: false;
+  sendReaction: false;
+  officialExcelWrite: boolean;
+};
+
 export type SpreadsheetFile = {
   file: string;
   path: string;

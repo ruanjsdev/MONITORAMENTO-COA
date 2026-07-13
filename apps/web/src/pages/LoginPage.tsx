@@ -4,8 +4,8 @@ import { useApp } from "../app/providers";
 
 export default function LoginPage({ redirectTo }: { redirectTo: string }) {
   const { login } = useApp();
-  const [email, setEmail] = useState("admin@coa.local");
-  const [password, setPassword] = useState("change-me-dev-only");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 

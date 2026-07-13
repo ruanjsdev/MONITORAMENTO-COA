@@ -17,7 +17,17 @@ export class ApiClient {
       localStorage.removeItem("coa_token");
       throw new Error("Sessão expirada. Faça login novamente.");
     }
-    if (!response.ok) throw new Error(await response.text());
+    if (!response.ok) {
+      const raw = await response.text();
+      try {
+        const parsed = JSON.parse(raw) as { error?: string; message?: string; details?: { code?: string; message?: string } };
+        const detail = parsed.details?.message && parsed.details.message !== parsed.error ? ` — ${parsed.details.message}` : "";
+        throw new Error(`${parsed.error ?? parsed.message ?? "Falha na API"}${detail}${parsed.details?.code ? ` [${parsed.details.code}]` : ""}`);
+      } catch (error) {
+        if (error instanceof SyntaxError) throw new Error(raw || `Falha HTTP ${response.status}`);
+        throw error;
+      }
+    }
     return response.json();
   }
 }

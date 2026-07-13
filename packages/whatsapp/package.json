@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json --noEmit",
-    "dev": "tsx watch src/shadow-agent.ts"
+    "dev": "tsx watch --env-file=../../.env src/shadow-agent.ts"
   },
   "dependencies": {
     "baileys": "^7.0.0-rc13",

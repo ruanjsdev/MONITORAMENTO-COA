@@ -2,21 +2,21 @@ import { LogOut, Menu, Search, UserCircle, X } from "lucide-react";
 import { routes } from "../../app/router";
 import { useApp } from "../../app/providers";
 import { useLoadable } from "../../hooks/useLoadable";
-import { OperationalSnapshot } from "../../types";
+import { OperationalModeStatus, OperationalSnapshot, PendingChange } from "../../types";
 import { SystemIndicator } from "../common/SystemIndicator";
 import { useEffect, useState } from "react";
 import { MobileBottomNavigation } from "./MobileBottomNavigation";
-type ModeStatus={mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";banner:string;whatsapp:string;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean};
 
 export function AppLayout({ currentPath, navigate, logout, children }: { currentPath: string; navigate: (path: string) => void; logout: () => void; children: React.ReactNode }) {
   const { api } = useApp();
   const { data } = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
-  const mode = useLoadable(() => api.request<ModeStatus>("/operational-mode"));
+  const mode = useLoadable(() => api.request<OperationalModeStatus>("/operational-mode"));
+  const realPending = useLoadable(() => api.request<PendingChange[]>("/pending-changes"));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [clock, setClock] = useState(new Date());
   const active = routes.find((route) => route.path === currentPath);
-  const pendingCount = data?.pendencies.filter((item) => item.status === "open").length ?? 0;
+  const pendingCount = realPending.data?.filter(item => item.status === "PENDING" || item.status === "APPROVED_SIMULATED").length ?? 0;
   const systems = data?.systems ?? [];
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function AppLayout({ currentPath, navigate, logout, children }: { current
       <footer className="statusbar">
         <span>Modo: {mode.data?.mode ?? "carregando"}</span>
         <span>Última atualização: {clock.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
-        <span>Envio/reação/escrita oficial bloqueados</span>
+        <span>{mode.data?.officialExcelWrite ? "Escrita: somente piloto 1531/830 · envio/reação bloqueados" : "Envio/reação/escrita oficial bloqueados"}</span>
       </footer>
       <MobileBottomNavigation currentPath={currentPath} navigate={navigate} />
     </div>

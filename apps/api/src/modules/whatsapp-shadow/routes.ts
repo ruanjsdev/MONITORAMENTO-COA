@@ -8,14 +8,17 @@ import { normalizeOperationalExcelUpdate } from "@coa-bot/excel-contracts";
 import { parseMessage, parseReport } from "../../services/operational-parser/index.js";
 import { maskJid, requireConnectedWhatsApp, resolveAuditUserId, shadowGroupPersistence, shouldCaptureShadowMessage } from "./group-policy.js";
 
-const token = process.env.WHATSAPP_SHADOW_TOKEN ?? "local-dev-whatsapp-shadow";
+const token = process.env.WHATSAPP_SHADOW_TOKEN?.trim() ?? "";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const qrPath = process.env.WHATSAPP_QR_PATH ?? path.resolve(here, "../../../../../whatsapp-runtime/qr.png");
 const statusMap: Record<string, string> = { RODANDO: "R", PARADO: "P", DISPONIVEL: "D", MANUTENCAO: "P", SEM_OPERACAO: "E" };
 
 export function whatsappShadowRoutes(prisma = new PrismaClient()) {
   const router = Router();
-  router.use((req, res, next) => req.header("x-whatsapp-shadow-token") === token ? next() : res.status(401).json({ message: "Token SHADOW inválido." }));
+  router.use((req, res, next) => {
+    if (token.length < 32) return res.status(503).json({ message: "WHATSAPP_SHADOW_TOKEN forte não configurado." });
+    return req.header("x-whatsapp-shadow-token") === token ? next() : res.status(401).json({ message: "Token SHADOW inválido." });
+  });
   router.get("/mode", async (_req, res, next) => {
     try { const setting = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } }); res.json({ mode: setting?.value ?? "SIMULATION" }); } catch (error) { next(error); }
   });
@@ -139,9 +142,14 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
     else await prisma.parsedMessage.create({ data: { incomingMessageId: message.id, confidence: parsed.confidence, parsedJson: metadata } });
     let pending = null;
     if (parsed.mainEquipment && normalized.valid) {
-      const existing = await prisma.pendingChange.findFirst({ where: { incomingMessageId: message.id, equipmentCode: parsed.mainEquipment, createdBy: "WHATSAPP_SHADOW" } });
+      const pendingKey = { incomingMessageId: message.id, equipmentCode: parsed.mainEquipment, createdBy: "WHATSAPP_SHADOW" };
+      const existing = await prisma.pendingChange.findUnique({ where: { incomingMessageId_equipmentCode_createdBy: pendingKey }, include: { approvedChange: true } });
       const data = { operationId: operation?.id, currentStatus: existing?.currentStatus ?? "LEITURA_OFICIAL_PENDENTE", newStatus: normalized.status, description: normalized.description, confidence: parsed.confidence, status: "PENDING" as const, active: true, createdBy: "WHATSAPP_SHADOW", updatedBy: null };
-      pending = existing ? await prisma.pendingChange.update({ where: { id: existing.id }, data: { ...data, version: { increment: 1 } } }) : await prisma.pendingChange.create({ data: { ...data, incomingMessageId: message.id, equipmentCode: parsed.mainEquipment } });
+      pending = existing?.status === "APPROVED" && existing.approvedChange?.simulated === false
+        ? existing
+        : existing
+          ? await prisma.pendingChange.update({ where: { id: existing.id }, data: { ...data, version: { increment: 1 } } })
+          : await prisma.pendingChange.upsert({ where: { incomingMessageId_equipmentCode_createdBy: pendingKey }, update: { ...data, version: { increment: 1 } }, create: { ...data, incomingMessageId: message.id, equipmentCode: parsed.mainEquipment } });
     }
     results.push({ parsed: metadata, pendingId: pending?.id ?? null });
   }

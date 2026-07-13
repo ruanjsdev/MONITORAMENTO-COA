@@ -8,7 +8,7 @@ import { HttpError } from "../../errors/http-error.js";
 
 export function authRoutes(source: DataSource, jwtSecret: string) {
   const router = Router();
-  const auth = authMiddleware(jwtSecret);
+  const auth = authMiddleware(jwtSecret, source.validateSession.bind(source));
 
   router.post("/login", asyncHandler(async (req, res) => {
     const input = loginSchema.safeParse(req.body);

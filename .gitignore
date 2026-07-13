@@ -22,3 +22,5 @@ whatsapp-session/
 whatsapp-runtime/
 planilhas/*.backup.xlsm
 planilhas/~$*
+backups-excel/
+backups-excel-local/

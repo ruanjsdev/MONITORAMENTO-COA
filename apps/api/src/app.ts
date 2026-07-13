@@ -18,13 +18,17 @@ import { operationalRoutes } from "./modules/operational/routes.js";
 import { excelAgentPublicRoutes, excelHomologationRoutes } from "./modules/excel-homologation/routes.js";
 import { operationalModeRoutes } from "./modules/operational-mode/routes.js";
 import { whatsappShadowPanelRoutes, whatsappShadowRoutes } from "./modules/whatsapp-shadow/routes.js";
+import { officialPilotRoutes } from "./modules/official-pilot/routes.js";
+import { localWorkbookRoutes } from "./modules/local-workbooks/routes.js";
 
 export function createApp(source: DataSource = createDefaultDataSource()) {
   const app = express();
-  const jwtSecret = process.env.JWT_SECRET ?? "dev-secret";
-  const auth = authMiddleware(jwtSecret);
+  const jwtSecret = process.env.JWT_SECRET?.trim();
+  if (!jwtSecret || jwtSecret.length < 32 || jwtSecret === "change-me-in-development") throw new Error("JWT_SECRET forte (mínimo 32 caracteres) é obrigatório.");
+  const auth = authMiddleware(jwtSecret, source.validateSession.bind(source));
 
-  app.use(cors());
+  const allowedOrigins = new Set(["http://127.0.0.1:5173", "http://localhost:5173"]);
+  app.use(cors({ origin: (origin, callback) => callback(null, !origin || allowedOrigins.has(origin)) }));
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/health", (_req, res) => {
@@ -58,8 +62,10 @@ export function createApp(source: DataSource = createDefaultDataSource()) {
   app.use("/", integrationRoutes(source));
   app.use("/operational", operationalRoutes());
   app.use("/excel-homologation", excelHomologationRoutes());
+  app.use("/excel/local-workbooks", localWorkbookRoutes());
   app.use("/operational-mode", operationalModeRoutes());
   app.use("/whatsapp-shadow", whatsappShadowPanelRoutes());
+  app.use("/official-pilot", officialPilotRoutes());
   app.post("/whatsapp/reaction/check", (req, res) => {
     res.json({
       allowed: canSendReaction({

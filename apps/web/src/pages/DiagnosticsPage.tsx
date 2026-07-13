@@ -4,10 +4,9 @@ import { useApp } from "../app/providers";
 import { MetricCard } from "../components/common/MetricCard";
 import { SystemIndicator } from "../components/common/SystemIndicator";
 import { useLoadable } from "../hooks/useLoadable";
-import { OperationalSnapshot } from "../types";
+import { OfficialPilotStatus, OperationalModeStatus, OperationalSnapshot } from "../types";
 
 type Health = { ok: boolean; simulationMode: boolean; banner: string };
-type ModeStatus = {mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";postgres:string;whatsapp:string;whatsappReadOnly:boolean;officialExcelReadOnly:boolean;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean;banner:string;confirmationRequired:Record<string,string>};
 type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;source?:string;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null;pipeline?:{lastMessageId:string|null;lastPersistedMessage:string|null;lastInterpretation:unknown;lastPendingId:string|null;captured:number;processed:number;ignored:number;duplicates:number;lastError:string|null}};
 const qrLabels:Record<WhatsAppQrStatus["qrState"],string>={AWAITING_QR:"Aguardando QR",QR_VALID:"QR válido",QR_EXPIRED:"QR expirado",CONNECTED:"Conectado",DISCONNECTED:"Desconectado"};
 
@@ -15,7 +14,8 @@ export default function DiagnosticsPage() {
   const { api, notify } = useApp();
   const health = useLoadable(() => api.request<Health>("/health"));
   const snapshot = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
-  const mode = useLoadable(() => api.request<ModeStatus>("/operational-mode"));
+  const mode = useLoadable(() => api.request<OperationalModeStatus>("/operational-mode"));
+  const pilot = useLoadable(() => api.request<OfficialPilotStatus>("/official-pilot/status"));
   const whatsappQr = useLoadable(() => api.request<WhatsAppQrStatus>("/whatsapp-shadow/status"));
   const [confirmation, setConfirmation] = useState("");
   const systems = snapshot.data?.systems ?? [];
@@ -27,8 +27,8 @@ export default function DiagnosticsPage() {
     notify("success", "Logs copiados para a área de transferência.");
   }
 
-  async function changeMode(next: ModeStatus["mode"]) {
-    try { await api.request("/operational-mode", { method: "POST", body: JSON.stringify({ mode: next, confirmation }) }); notify("success", `Modo ${next} ativado.`); setConfirmation(""); mode.reload(); }
+  async function changeMode(next: OperationalModeStatus["mode"]) {
+    try { await api.request("/operational-mode", { method: "POST", body: JSON.stringify({ mode: next, confirmation }) }); notify("success", `Modo ${next} ativado.`); setConfirmation(""); mode.reload(); pilot.reload(); }
     catch (error) { notify("error", error instanceof Error ? error.message : "Falha ao alterar modo."); }
   }
   async function reprocessLastMessage(){const id=whatsappQr.data?.pipeline?.lastMessageId;if(!id)return;try{await api.request(`/whatsapp-shadow/messages/${id}/reprocess`,{method:"POST",body:"{}"});notify("success","Mensagem reprocessada sem duplicar pendências.");whatsappQr.reload()}catch(error){notify("error",error instanceof Error?error.message:"Falha ao reprocessar.")}}
@@ -41,7 +41,7 @@ export default function DiagnosticsPage() {
           <h1>Diagnóstico</h1>
           <p className="muted">Estado de serviços, simulação, homologação e sinais operacionais disponíveis.</p>
         </div>
-        <button onClick={() => { health.reload(); snapshot.reload(); mode.reload(); whatsappQr.reload(); }}><RefreshCw size={18} />Atualizar</button>
+        <button onClick={() => { health.reload(); snapshot.reload(); mode.reload(); pilot.reload(); whatsappQr.reload(); }}><RefreshCw size={18} />Atualizar</button>
       </div>
 
       <div className="metric-grid">
@@ -62,8 +62,15 @@ export default function DiagnosticsPage() {
           <article><strong>Reação</strong><span>{mode.data?.sendReaction ? "Habilitada" : "BLOQUEADA"}</span></article>
         </div>
         <label>Confirmação explícita<input value={confirmation} onChange={event=>setConfirmation(event.target.value)} placeholder="Digite a frase exigida pelo modo" /></label>
-        <div className="actions"><button onClick={()=>changeMode("SIMULATION")}>Simulation</button><button onClick={()=>changeMode("SHADOW")}>Shadow</button><button onClick={()=>changeMode("LIVE_APPROVAL")}>Live Approval</button></div>
-        <p className="muted">SHADOW exige: ATIVAR SHADOW SOMENTE LEITURA. LIVE_APPROVAL não libera escrita oficial automaticamente.</p>
+        <div className="actions"><button onClick={()=>changeMode("SIMULATION")}>Simulation</button><button onClick={()=>changeMode("SHADOW")}>Shadow</button><button onClick={()=>changeMode("LOCAL_OPERATIONAL")}>Ativar operação local</button><button className="danger" disabled={mode.data?.mode === "LOCAL_OPERATIONAL"} onClick={()=>changeMode("LIVE_APPROVAL_PILOT")}>Planilha oficial bloqueada</button></div>
+        {mode.data?.mode === "LOCAL_OPERATIONAL" && <div className="safety-notice"><strong>MODO OPERACIONAL LOCAL</strong><span>WhatsApp real em leitura · planilhas .dev locais habilitadas para escrita após aprovação · planilha oficial não integrada · transferência manual por Ctrl+C/Ctrl+V.</span></div>}
+        <p className="muted">O piloto exige exatamente: <strong>ATIVAR PILOTO OFICIAL PLANTIO</strong>.</p>
+        <section className="technical">
+          <div className="row"><strong>Piloto oficial controlado</strong><span className="badge badge-warning">{pilot.data?.latest?.status ?? "SEM PRÉVIA"}</span></div>
+          <dl><dt>Grupo</dt><dd>{pilot.data?.whitelist.groupName ?? "Sem dados"} · {pilot.data?.whitelist.groupJidMasked ?? ""}</dd><dt>Operação</dt><dd>{pilot.data?.whitelist.operation ?? "Sem dados"}</dd><dt>Workbook / aba</dt><dd>{pilot.data?.whitelist.workbook ?? "Sem dados"} · {pilot.data?.whitelist.worksheet ?? ""}</dd><dt>Frota / implemento</dt><dd>{pilot.data?.whitelist.fleetIds[0] ?? ""} / {pilot.data?.whitelist.expectedImplement ?? ""}</dd><dt>Colunas</dt><dd>{pilot.data ? Object.values(pilot.data.whitelist.columns).join(", ") : "Sem dados"}</dd><dt>Último comando</dt><dd>{pilot.data?.latest?.commandId ?? pilot.data?.latest?.prepareCommandId ?? "Nenhum"}</dd><dt>Backup / hash</dt><dd className="hash-value">{pilot.data?.latest?.backupPath ?? "Nenhum"}<br/>{pilot.data?.latest?.backupHash ?? "Não validado"}</dd><dt>Resultado</dt><dd>{pilot.data?.latest?.errorCode ?? pilot.data?.latest?.result ?? "Nenhum"}</dd></dl>
+          <small>Uma escrita por vez · envio bloqueado · reação bloqueada · SHADOW permanece como fallback.</small>
+        </section>
+        <p className="muted">SHADOW exige: ATIVAR SHADOW SOMENTE LEITURA. O piloto não libera envio nem reação no WhatsApp.</p>
         <section className="technical">
           <div className="row"><strong>Autenticação WhatsApp</strong><span className="badge badge-warning">{whatsappQr.data ? qrLabels[whatsappQr.data.qrState] : "Sem dados"}</span></div>
           {whatsappQr.data?.qrDataUrl ? <div><p>Escaneie este QR pelo WhatsApp. Ele será substituído automaticamente quando expirar.</p><img src={whatsappQr.data.qrDataUrl} alt="QR de autenticação do WhatsApp SHADOW" width="420" height="420" style={{maxWidth:"100%",height:"auto",background:"white",padding:12}} /></div> : <p className="muted">{whatsappQr.data?.qrState === "CONNECTED" ? "QR removido após conexão." : "Aguardando um QR válido do agente."}</p>}

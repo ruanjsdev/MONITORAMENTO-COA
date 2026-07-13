@@ -9,7 +9,7 @@ import terminalQr from "qrcode-terminal";
 type QrState = "AWAITING_QR" | "QR_VALID" | "QR_EXPIRED" | "CONNECTED" | "DISCONNECTED";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const apiUrl = process.env.API_URL ?? "http://localhost:3333";
-const token = process.env.WHATSAPP_SHADOW_TOKEN ?? "local-dev-whatsapp-shadow";
+const token = process.env.WHATSAPP_SHADOW_TOKEN?.trim() ?? "";
 const authDir = process.env.WHATSAPP_AUTH_DIR ?? path.resolve(here, "../../../whatsapp-session");
 const qrPath = process.env.WHATSAPP_QR_PATH ?? path.resolve(here, "../../../whatsapp-runtime/qr.png");
 const headers = { "Content-Type": "application/json", "x-whatsapp-shadow-token": token };
@@ -17,6 +17,7 @@ let qrGeneration = 0;
 let expiryTimer: ReturnType<typeof setTimeout> | undefined;
 let selectedGroupId: string | null = null;
 let refreshVersion = 0;
+if (token.length < 32) throw new Error("WHATSAPP_SHADOW_TOKEN forte (mínimo 32 caracteres) é obrigatório.");
 process.stdout.setDefaultEncoding("utf8");
 if (process.platform === "win32" && process.stdout.isTTY) spawnSync("chcp", ["65001"], { shell: true, stdio: "ignore" });
 
@@ -71,9 +72,9 @@ async function waitForShadow() {
   for (;;) {
     try {
       const response = await fetch(apiUrl + "/whatsapp-shadow/local/mode", { headers });
-      if (response.ok && (await response.json() as { mode: string }).mode === "SHADOW") return;
+      if (response.ok && ["SHADOW", "LOCAL_OPERATIONAL"].includes((await response.json() as { mode: string }).mode)) return;
     } catch (error) { console.log("API ainda indisponível para consultar o modo SHADOW.", error); }
-    console.log("WhatsApp aguardando ativação explícita do modo SHADOW no painel.");
+    console.log("WhatsApp aguardando ativação explícita do modo SHADOW/LOCAL_OPERATIONAL no painel.");
     await new Promise(resolve => setTimeout(resolve, 10_000));
   }
 }
