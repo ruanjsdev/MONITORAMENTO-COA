@@ -8,7 +8,7 @@ import { OperationalSnapshot } from "../types";
 
 type Health = { ok: boolean; simulationMode: boolean; banner: string };
 type ModeStatus = {mode:"SIMULATION"|"SHADOW"|"LIVE_APPROVAL";postgres:string;whatsapp:string;whatsappReadOnly:boolean;officialExcelReadOnly:boolean;officialExcelWrite:boolean;sendMessage:boolean;sendReaction:boolean;banner:string;confirmationRequired:Record<string,string>};
-type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;source?:string;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null;pipeline?:{lastPersistedMessage:string|null;lastInterpretation:unknown;lastPendingId:string|null;captured:number;processed:number;ignored:number;duplicates:number;lastError:string|null}};
+type WhatsAppQrStatus = {qrState:"AWAITING_QR"|"QR_VALID"|"QR_EXPIRED"|"CONNECTED"|"DISCONNECTED";qrDataUrl:string|null;updatedAt?:string;sendMessage:false;sendReaction:false;officialExcelWrite:false;source?:string;monitoredGroup:{name:string;maskedExternalId:string;lastMessage:string|null;processedMessages:number;monitoring:string;operation:string|null}|null;pipeline?:{lastMessageId:string|null;lastPersistedMessage:string|null;lastInterpretation:unknown;lastPendingId:string|null;captured:number;processed:number;ignored:number;duplicates:number;lastError:string|null}};
 const qrLabels:Record<WhatsAppQrStatus["qrState"],string>={AWAITING_QR:"Aguardando QR",QR_VALID:"QR válido",QR_EXPIRED:"QR expirado",CONNECTED:"Conectado",DISCONNECTED:"Desconectado"};
 
 export default function DiagnosticsPage() {
@@ -31,6 +31,7 @@ export default function DiagnosticsPage() {
     try { await api.request("/operational-mode", { method: "POST", body: JSON.stringify({ mode: next, confirmation }) }); notify("success", `Modo ${next} ativado.`); setConfirmation(""); mode.reload(); }
     catch (error) { notify("error", error instanceof Error ? error.message : "Falha ao alterar modo."); }
   }
+  async function reprocessLastMessage(){const id=whatsappQr.data?.pipeline?.lastMessageId;if(!id)return;try{await api.request(`/whatsapp-shadow/messages/${id}/reprocess`,{method:"POST",body:"{}"});notify("success","Mensagem reprocessada sem duplicar pendências.");whatsappQr.reload()}catch(error){notify("error",error instanceof Error?error.message:"Falha ao reprocessar.")}}
 
   return (
     <section>
@@ -69,7 +70,7 @@ export default function DiagnosticsPage() {
           <small>Envio bloqueado · reação bloqueada · escrita oficial bloqueada</small>
         </section>
         <section className="technical"><strong>Grupo selecionado</strong>{whatsappQr.data?.monitoredGroup?<dl><dt>Status</dt><dd>{whatsappQr.data.monitoredGroup.monitoring}</dd><dt>Grupo</dt><dd>{whatsappQr.data.monitoredGroup.name}</dd><dt>JID</dt><dd>{whatsappQr.data.monitoredGroup.maskedExternalId}</dd><dt>Operação</dt><dd>{whatsappQr.data.monitoredGroup.operation??"Não vinculada"}</dd><dt>Última mensagem</dt><dd>{whatsappQr.data.monitoredGroup.lastMessage??"Nenhuma"}</dd><dt>Mensagens capturadas</dt><dd>{whatsappQr.data.monitoredGroup.processedMessages}</dd></dl>:<p className="muted">Nenhum grupo selecionado para monitoramento.</p>}</section>
-        <section className="technical"><strong>Pipeline real</strong><dl><dt>Origem</dt><dd>{whatsappQr.data?.source??"Sem dados"}</dd><dt>Persistida</dt><dd>{whatsappQr.data?.pipeline?.lastPersistedMessage??"Nenhuma"}</dd><dt>Última pendência</dt><dd>{whatsappQr.data?.pipeline?.lastPendingId??"Nenhuma"}</dd><dt>Capturadas</dt><dd>{whatsappQr.data?.pipeline?.captured??0}</dd><dt>Processadas</dt><dd>{whatsappQr.data?.pipeline?.processed??0}</dd><dt>Ignoradas</dt><dd>{whatsappQr.data?.pipeline?.ignored??0}</dd><dt>Duplicadas</dt><dd>{whatsappQr.data?.pipeline?.duplicates??0}</dd><dt>Último erro</dt><dd>{whatsappQr.data?.pipeline?.lastError??"Nenhum"}</dd></dl></section>
+        <section className="technical"><div className="row"><strong>Pipeline real</strong><button disabled={!whatsappQr.data?.pipeline?.lastMessageId} onClick={reprocessLastMessage}>Reprocessar mensagem capturada</button></div><dl><dt>Origem</dt><dd>{whatsappQr.data?.source??"Sem dados"}</dd><dt>Persistida</dt><dd>{whatsappQr.data?.pipeline?.lastPersistedMessage??"Nenhuma"}</dd><dt>Última pendência</dt><dd>{whatsappQr.data?.pipeline?.lastPendingId??"Nenhuma"}</dd><dt>Capturadas</dt><dd>{whatsappQr.data?.pipeline?.captured??0}</dd><dt>Processadas</dt><dd>{whatsappQr.data?.pipeline?.processed??0}</dd><dt>Ignoradas</dt><dd>{whatsappQr.data?.pipeline?.ignored??0}</dd><dt>Duplicadas</dt><dd>{whatsappQr.data?.pipeline?.duplicates??0}</dd><dt>Último erro</dt><dd>{whatsappQr.data?.pipeline?.lastError??"Nenhum"}</dd></dl></section>
       </section>
 
       <section className="diagnostic-grid">
