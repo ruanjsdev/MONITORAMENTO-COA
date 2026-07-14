@@ -271,8 +271,12 @@ finally {
     if ($null -ne $previousAskToUpdateLinks) { try { $excel.AskToUpdateLinks=$previousAskToUpdateLinks } catch {} }
     if ($null -ne $previousAutomationSecurity) { try { $excel.AutomationSecurity=$previousAutomationSecurity } catch {} }
   }
-  if($openedWorkbook -and $null-ne $workbook){try{$workbook.Close($false)}catch{}}
-  if($createdExcel -and $null-ne $excel){try{$excel.Quit()}catch{}}
+  # OPEN_LOCAL_WORKBOOK is an interactive operation: leave the user's
+  # workbook and Excel instance open. Read/write commands still clean up
+  # automation-owned objects as before.
+  $keepInteractive = $command.type -eq "OPEN_LOCAL_WORKBOOK" -or $command.type -eq "OPEN_DEV_WORKBOOK"
+  if(!$keepInteractive -and $openedWorkbook -and $null-ne $workbook){try{$workbook.Close($false)}catch{}}
+  if(!$keepInteractive -and $createdExcel -and $null-ne $excel){try{$excel.Quit()}catch{}}
   foreach($object in @($sheet,$workbook,$excel)){if($null-ne $object){try{[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($object)}catch{}}}
   [GC]::Collect(); [GC]::WaitForPendingFinalizers()
 }
