@@ -176,7 +176,7 @@ function Invoke-LoggedProcess([string]$Name, [string]$FilePath, [string[]]$Argum
 
 function Stop-ManagedProcess([string]$Name) {
   $pidFile = Join-Path $PidRoot "$Name.pid"
-  if (!(Test-Path -LiteralPath $pidFile)) { Write-Host "$Name: sem PID registrado."; return }
+  if (!(Test-Path -LiteralPath $pidFile)) { Write-Host "${Name}: sem PID registrado."; return }
   $pidValue = [int](Get-Content -LiteralPath $pidFile -Raw)
   $process = Get-Process -Id $pidValue -ErrorAction SilentlyContinue
   if ($process) { Stop-Process -Id $pidValue -Force; Write-Host "$Name encerrado." }
