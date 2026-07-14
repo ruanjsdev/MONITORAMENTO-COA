@@ -1,8 +1,8 @@
 . "$PSScriptRoot/coa-local-common.ps1"
 
 Import-LocalEnv
-$api = Get-HttpState "http://localhost:3333/health"
-$web = Get-HttpState "http://localhost:5173"
+$api = Get-HttpState "http://127.0.0.1:3333/health"
+$web = Get-HttpState "http://127.0.0.1:5173"
 $postgres = if (Test-Port 5433) { "ONLINE" } else { "OFFLINE" }
 $excelAgent = "UNKNOWN"
 $whatsapp = "UNKNOWN"
@@ -12,20 +12,20 @@ $headers = @{}
 if ($env:WHATSAPP_SHADOW_TOKEN) { $headers["x-whatsapp-shadow-token"] = $env:WHATSAPP_SHADOW_TOKEN }
 
 try {
-  $modeResponse = Invoke-RestMethod -Uri "http://localhost:3333/whatsapp-shadow/local/mode" -Headers $headers -TimeoutSec 2
+  $modeResponse = Invoke-RestMethod -Uri "http://127.0.0.1:3333/whatsapp-shadow/local/mode" -Headers $headers -TimeoutSec 2
   $mode = $modeResponse.mode
 } catch {}
 try {
-  $groupResponse = Invoke-RestMethod -Uri "http://localhost:3333/whatsapp-shadow/local/selected-group" -Headers $headers -TimeoutSec 2
+  $groupResponse = Invoke-RestMethod -Uri "http://127.0.0.1:3333/whatsapp-shadow/local/selected-group" -Headers $headers -TimeoutSec 2
   if ($groupResponse.groupName) { $selected = $groupResponse.groupName }
 } catch { $whatsapp = "OFFLINE" }
 try {
-  $shadowResponse = Invoke-RestMethod -Uri "http://localhost:3333/whatsapp-shadow/local/status" -Headers $headers -TimeoutSec 2
+  $shadowResponse = Invoke-RestMethod -Uri "http://127.0.0.1:3333/whatsapp-shadow/local/status" -Headers $headers -TimeoutSec 2
   $whatsapp = if ($shadowResponse.qrState -eq "CONNECTED") { "CONNECTED" } else { $shadowResponse.qrState }
   if ($shadowResponse.monitoredGroup.name) { $selected = $shadowResponse.monitoredGroup.name }
 } catch { if ($whatsapp -eq "UNKNOWN") { $whatsapp = "OFFLINE" } }
 try {
-  $excelAgent = Get-HttpState "http://localhost:3333/excel-agent/local"
+  $excelAgent = Get-HttpState "http://127.0.0.1:3333/excel-agent/local"
 } catch { $excelAgent = "OFFLINE" }
 
 Write-Host "API: $api"
