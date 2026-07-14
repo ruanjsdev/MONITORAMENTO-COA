@@ -103,7 +103,11 @@ export function localWorkbookRoutes(prisma = new PrismaClient()) {
     try {
       const preview = await buildLocalPreview(prisma, String(req.params.pendingId));
       const operation = await prisma.operation.findUnique({ where: { name: preview.operation } });
-      const range = operation?.imageRange || "A1:AI26";
+      // Plantio report is intentionally cropped to the visible operational
+      // table; do not include the unused columns/rows from the workbook.
+      const range = preview.operation === "Plantio Mecanizado"
+        ? "B2:S20"
+        : (operation?.imageRange || "A1:AI26");
       const outputDir = path.join(tempRoot, new Date().toISOString().slice(0, 10));
       fs.mkdirSync(outputDir, { recursive: true });
       const tempPath = path.join(outputDir, `${preview.fleet.replace(/[^a-z0-9-]/gi, "_")}-${Date.now()}.png`);
