@@ -188,7 +188,10 @@ try {
   }
 
   $writeAction = @("APPLY_CHANGE", "SAVE_DEV_WORKBOOK", "APPLY_OFFICIAL_PILOT") -contains $command.type
-  $workbook = GetWorkbook $excel ([string]$command.workbook) (-not $writeAction)
+  $interactiveLocal = $command.type -eq "OPEN_LOCAL_WORKBOOK" -or $command.type -eq "OPEN_DEV_WORKBOOK"
+  # Local .dev workbooks are intentionally editable in LOCAL_OPERATIONAL.
+  # Official pilot commands keep their existing read-only/write policy.
+  $workbook = GetWorkbook $excel ([string]$command.workbook) ($(if ($interactiveLocal) { $false } else { -not $writeAction }))
   if ($command.type -eq "OPEN_DEV_WORKBOOK" -or $command.type -eq "OPEN_LOCAL_WORKBOOK") {
     $excel.Visible = $true
     [void]$workbook.Activate()

@@ -41,7 +41,7 @@ export default function PendingChangesPage() {
   }
   async function applyLocal(id: string) {
     setPreparing(id);
-    try { const result = await api.request<any>(`/excel/local-workbooks/apply/${id}`, { method: "POST", body: JSON.stringify({ confirmation: localConfirmations[id] ?? "" }) }); setLocalPreviews(value => ({ ...value, [id]: result })); notify("success", "Alteração local .dev salva, relida e registrada."); }
+    try { const result = await api.request<any>(`/excel/local-workbooks/apply/${id}`, { method: "POST", body: JSON.stringify({ confirmation: "CONFIRMO ALTERAÇÃO NA PLANILHA LOCAL" }) }); setLocalPreviews(value => ({ ...value, [id]: result })); notify("success", "Alteração local .dev salva, relida e registrada."); }
     catch (error) { notify("error", message(error)); }
     finally { setPreparing(null); }
   }
