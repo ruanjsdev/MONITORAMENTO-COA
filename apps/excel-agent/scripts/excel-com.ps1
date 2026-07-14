@@ -67,7 +67,14 @@ function FindOpenWorkbook($app, [string]$file) {
 }
 function GetWorkbook($app, [string]$file, [bool]$readOnly) {
   $open = FindOpenWorkbook $app $file
-  if ($null -ne $open) { return $open }
+  if ($null -ne $open) {
+    # A previous preview may have left the .dev workbook read-only. For a
+    # local write, safely reopen that same whitelisted workbook as editable.
+    if (!$readOnly -and $open.ReadOnly) {
+      $open.Close($false)
+      $open = $null
+    } else { return $open }
+  }
   $script:openedWorkbook = $true
   return $app.Workbooks.Open([IO.Path]::GetFullPath($file), 0, $readOnly)
 }
