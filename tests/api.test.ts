@@ -10,6 +10,7 @@ let server: Server;
 let baseUrl: string;
 
 async function start() {
+  process.env.JWT_SECRET = "unit-test-jwt-secret-with-at-least-32-characters";
   process.env.SIMULATION_MODE = "true";
   process.env.DATABASE_MODE = "memory";
   process.env.ADMIN_EMAIL = "admin@coa.local";
@@ -306,4 +307,18 @@ describe("COA-BOT API em simulacao", () => {
   });
 
   it("enfileira e cancela comando Excel de homologacao",async()=>{const token=await login();const queued=await request("/excel-homologation/commands",{method:"POST",headers:auth(token),body:JSON.stringify({type:"READ_CELL",workbook:"planilhas-homologacao/Planilha Plantio cana.dev.xlsm",worksheet:"PLANTIO",payload:{cell:"F8"},simulation:true})});expect(queued.status).toBe(201);const command=await queued.json();const cancelled=await request(`/excel-homologation/commands/${command.commandId}/cancel`,{method:"POST",headers:auth(token),body:"{}"});expect((await cancelled.json()).status).toBe("CANCELLED")});
+
+  it("lista somente workbooks .dev locais e bloqueia abertura por caminho arbitrário", async () => {
+    const token = await login();
+    const listed = await request("/excel/local-workbooks", { headers: auth(token) });
+    expect(listed.status).toBe(200);
+    const body = await listed.json();
+    expect(body.officialExcelWrite).toBe(false);
+    expect(body.workbooks.map((item: any) => item.name)).toEqual(expect.arrayContaining(["Planilha Plantio cana.dev.xlsm", "Acompanhamento Tratos Culturais.dev.xlsm"]));
+    expect(body.workbooks.every((item: any) => item.name.endsWith(".dev.xlsm"))).toBe(true);
+    const arbitrary = await request("/excel/local-workbooks/../outside/open", { method: "POST", headers: auth(token), body: "{}" });
+    expect([404, 405]).toContain(arbitrary.status);
+    const generic = await request("/excel-homologation/commands", { method: "POST", headers: auth(token), body: JSON.stringify({ type: "OPEN_DEV_WORKBOOK", workbook: "C:\\temp\\anything.xlsm", simulation: true }) });
+    expect(generic.status).toBe(403);
+  });
 });

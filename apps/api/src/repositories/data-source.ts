@@ -30,6 +30,7 @@ export type TestExecutionInput = {
 export type DataSource = {
   simulationMode: boolean;
   login(email: string, password: string, ip?: string): Promise<LoginResult>;
+  validateSession(tokenId: string, claimed: UserSession & { mustChangePassword?: boolean }): Promise<(UserSession & { mustChangePassword?: boolean }) | null>;
   changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
   logout(tokenId: string, userId?: string): Promise<void>;
   dashboard(): Promise<DashboardSnapshot>;
@@ -153,6 +154,7 @@ export function createMemoryDataSource(store: Store): DataSource {
       store.log("LOGIN", "Login realizado.", { email });
       return { user: { ...store.sessionFor(user), mustChangePassword: false }, tokenId: randomUUID() };
     },
+    async validateSession(_tokenId, claimed) { return claimed; },
     async logout() {},
     async changePassword() {},
     async dashboard() { return store.dashboard(); },
@@ -294,6 +296,11 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
         }
       };
     },
+    async validateSession(tokenId) {
+      const session = await prisma.authSession.findUnique({ where: { tokenId }, include: { user: { include: { roles: { include: { role: true } } } } } });
+      if (!session || session.revokedAt || session.expiresAt <= new Date() || !session.user.isActive) return null;
+      return { id: session.user.id, name: session.user.name, email: session.user.email, roles: session.user.roles.map(item => item.role.name as never), mustChangePassword: session.user.mustChangePassword };
+    },
     async logout(tokenId, userId) {
       await prisma.authSession.updateMany({ where: { tokenId, revokedAt: null }, data: { revokedAt: new Date() } });
       await this.log("LOGOUT", "Logout realizado.", { userId });
@@ -396,15 +403,23 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
       return { simulated: true, removed: mapOperation({ ...removed, groups: [] }) };
     },
     async listPendingChanges() {
-      return (await prisma.pendingChange.findMany({ where: { active: true }, include: { operation: true, incomingMessage: { include: { group: true } } }, orderBy: { createdAt: "desc" } })).map(mapPending);
+      return (await prisma.pendingChange.findMany({ where: { active: true, status: "PENDING" }, include: { operation: true, incomingMessage: { include: { group: true } } }, orderBy: { createdAt: "desc" } })).map(mapPending);
     },
     async decidePendingChange(id, decision, description, userId) {
       const current = await prisma.pendingChange.findUnique({ where: { id } });
       if (!current) throw new HttpError(404, "Alteracao nao encontrada.");
+      const mode = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } });
+      if (decision === "approve" && mode?.value === "LIVE_APPROVAL_PILOT") {
+        await this.log("PENDING_CHANGE_PILOT_APPROVAL_REQUESTED", "Aprovação comum não executa escrita no piloto; prévia e frase final continuam obrigatórias.", { userId, entity: "PendingChange", entityId: id, beforeValue: current, metadata: { officialExcelWrite: false, sendMessage: false, sendReaction: false } });
+        return { change: current, externalActions: { excelUpdated: false, whatsappReactionSent: false, reason: "Piloto ativo: prepare a prévia e digite a confirmação final. Nenhuma escrita foi executada." } };
+      }
       const status = decision === "approve" ? ChangeStatus.APPROVED_SIMULATED : decision === "reject" ? ChangeStatus.REJECTED : ChangeStatus.DEFERRED;
-      const change = await prisma.pendingChange.update({ where: { id }, data: { status, description: description ?? current.description, updatedBy: userId, version: { increment: 1 } } });
-      await this.log(`PENDING_CHANGE_${status}`, "Decisao de alteracao em simulacao.", { userId, entity: "PendingChange", entityId: id, beforeValue: current, afterValue: change });
-      return { change, externalActions: { excelUpdated: false, whatsappReactionSent: false, reason: "SIMULATION_MODE=true bloqueia Excel e WhatsApp." } };
+      const safeDescription = description?.trim() ? description.trim() : current.description;
+      const change = await prisma.pendingChange.update({ where: { id }, data: { status, description: safeDescription, updatedBy: userId, version: { increment: 1 } } });
+      const shadow = mode?.value === "SHADOW";
+      const local = mode?.value === "LOCAL_OPERATIONAL";
+      await this.log(`PENDING_CHANGE_${status}`, shadow ? "Decisão registrada em SHADOW; nenhuma ação externa executada." : local ? "Aprovação registrada para a prévia da planilha .dev local." : "Decisão de alteração em simulação.", { userId, entity: "PendingChange", entityId: id, beforeValue: current, afterValue: change, metadata: { mode: mode?.value, officialExcelWrite: false, localOperationalExcelWrite: local, sendMessage: false, sendReaction: false } });
+      return { change, externalActions: { excelUpdated: false, whatsappReactionSent: false, reason: shadow ? "Aprovação registrada. Escrita oficial bloqueada pelo modo SHADOW." : local ? "Aprovação registrada. A prévia e a confirmação da alteração local continuam obrigatórias." : "SIMULATION_MODE=true bloqueia Excel e WhatsApp." } };
     },
     async simulateMessage(input, userId) {
       const existing = await prisma.incomingMessage.findUnique({ where: { idempotencyKey: input.idempotencyKey } });
@@ -485,8 +500,9 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
       return prisma.systemLog.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
     },
     async log(action, message, options = {}) {
+      const validUser = options.userId ? await prisma.user.findUnique({ where: { id: options.userId }, select: { id: true } }) : null;
       await prisma.systemLog.create({
-        data: { action, message, userId: options.userId, entity: options.entity, entityId: options.entityId, beforeValue: options.beforeValue as any, afterValue: options.afterValue as any, metadata: options.metadata as any, ipAddress: options.ipAddress, result: options.result ?? "SUCCESS" }
+        data: { action, message, userId: validUser?.id, entity: options.entity, entityId: options.entityId, beforeValue: options.beforeValue as any, afterValue: options.afterValue as any, metadata: options.metadata as any, ipAddress: options.ipAddress, result: options.result ?? "SUCCESS" }
       });
     }
   };

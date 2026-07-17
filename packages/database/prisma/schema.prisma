@@ -31,6 +31,31 @@ enum IntegrationState {
   ERROR
 }
 
+enum OfficialPilotWriteStatus {
+  PREPARING
+  PREVIEW_READY
+  APPROVAL_RECORDED
+  BASELINE_VALIDATED
+  BACKUP_CREATED
+  WRITING
+  SAVED
+  VERIFIED
+  CELL_CONFLICT
+  WRITE_VERIFICATION_FAILED
+  FAILED
+  ROLLBACK_PENDING
+  ROLLBACK_FAILED
+  ROLLED_BACK
+}
+
+enum ExcelAgentJobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
 model User {
   id                  String        @id @default(cuid())
   name                String
@@ -80,67 +105,69 @@ model RolePermission {
 }
 
 model WhatsAppGroup {
-  id              String           @id @default(cuid())
-  name            String
-  externalId      String?          @unique
-  description     String?          @default("")
-  isActive        Boolean          @default(true)
-  active          Boolean          @default(true)
-  isMonitored     Boolean          @default(true)
-  receivesReports Boolean          @default(false)
-  allowTests      Boolean          @default(true)
-  allowedHours    String?          @default("")
-  notes           String?          @default("")
-  isTestGroup     Boolean          @default(false)
-  defaultMessage  String           @default("")
-  lastMessage     String?
-  lastActivity    DateTime?
-  processedMessages Int            @default(0)
-  connectionStatus String           @default("simulated")
-  version         Int              @default(1)
-  createdBy       String?
-  updatedBy       String?
-  operations      GroupOperation[]
-  messages        IncomingMessage[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                String            @id @default(cuid())
+  name              String
+  externalId        String?           @unique
+  description       String?           @default("")
+  isActive          Boolean           @default(true)
+  active            Boolean           @default(true)
+  isMonitored       Boolean           @default(true)
+  receivesReports   Boolean           @default(false)
+  allowTests        Boolean           @default(true)
+  allowedHours      String?           @default("")
+  notes             String?           @default("")
+  isTestGroup       Boolean           @default(false)
+  defaultMessage    String            @default("")
+  lastMessage       String?
+  lastActivity      DateTime?
+  processedMessages Int               @default(0)
+  participantCount  Int               @default(0)
+  whatsappUpdatedAt DateTime?
+  connectionStatus  String            @default("simulated")
+  version           Int               @default(1)
+  createdBy         String?
+  updatedBy         String?
+  operations        GroupOperation[]
+  messages          IncomingMessage[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }
 
 model Operation {
-  id              String             @id @default(cuid())
-  name            String             @unique
-  shortName       String?            @default("")
-  emoji           String
-  description     String?            @default("")
-  spreadsheetFile String?
-  sheetName       String?
-  destinationGroupId String?         @default("")
-  allowedStatuses String[]
-  synonyms        String?            @default("")
-  shifts          String[]           @default([])
-  reportTimes     String?            @default("")
-  legendTemplate  String?            @default("")
-  requiresApproval Boolean           @default(true)
-  imageRange      String?            @default("")
-  fleetColumn     String?            @default("")
-  implementColumn String?            @default("")
-  statusColumn    String?            @default("")
-  descriptionColumn String?          @default("")
-  timeColumn      String?            @default("")
-  fleetCount      Int                @default(0)
-  automaticReport Boolean            @default(false)
-  monitor         Boolean            @default(true)
-  status          String             @default("active")
-  active          Boolean            @default(true)
-  version         Int                @default(1)
-  createdBy       String?
-  updatedBy       String?
-  groups          GroupOperation[]
-  equipment       Equipment[]
-  pendingChanges  PendingChange[]
-  occurrences     Occurrence[]
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  id                 String           @id @default(cuid())
+  name               String           @unique
+  shortName          String?          @default("")
+  emoji              String
+  description        String?          @default("")
+  spreadsheetFile    String?
+  sheetName          String?
+  destinationGroupId String?          @default("")
+  allowedStatuses    String[]
+  synonyms           String?          @default("")
+  shifts             String[]         @default([])
+  reportTimes        String?          @default("")
+  legendTemplate     String?          @default("")
+  requiresApproval   Boolean          @default(true)
+  imageRange         String?          @default("")
+  fleetColumn        String?          @default("")
+  implementColumn    String?          @default("")
+  statusColumn       String?          @default("")
+  descriptionColumn  String?          @default("")
+  timeColumn         String?          @default("")
+  fleetCount         Int              @default(0)
+  automaticReport    Boolean          @default(false)
+  monitor            Boolean          @default(true)
+  status             String           @default("active")
+  active             Boolean          @default(true)
+  version            Int              @default(1)
+  createdBy          String?
+  updatedBy          String?
+  groups             GroupOperation[]
+  equipment          Equipment[]
+  pendingChanges     PendingChange[]
+  occurrences        Occurrence[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 }
 
 model GroupOperation {
@@ -164,63 +191,63 @@ model Equipment {
 }
 
 model Spreadsheet {
-  id        String             @id @default(cuid())
-  fileName  String
-  path      String             @unique
-  sizeBytes Int                @default(0)
-  macrosDetected Boolean       @default(false)
-  externalLinksDetected Boolean @default(false)
-  risks     Json?
-  lastAnalysisAt DateTime?
-  active    Boolean            @default(true)
-  version   Int                @default(1)
-  createdBy String?
-  updatedBy String?
-  sheets    SpreadsheetSheet[]
-  mappings  SpreadsheetMapping[]
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id                    String               @id @default(cuid())
+  fileName              String
+  path                  String               @unique
+  sizeBytes             Int                  @default(0)
+  macrosDetected        Boolean              @default(false)
+  externalLinksDetected Boolean              @default(false)
+  risks                 Json?
+  lastAnalysisAt        DateTime?
+  active                Boolean              @default(true)
+  version               Int                  @default(1)
+  createdBy             String?
+  updatedBy             String?
+  sheets                SpreadsheetSheet[]
+  mappings              SpreadsheetMapping[]
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 }
 
 model SpreadsheetSheet {
-  id            String      @id @default(cuid())
-  spreadsheetId String
-  name          String
-  state         String
-  usedRange     String?
-  formulas      Int         @default(0)
-  mergedCells   Int         @default(0)
-  protected     Boolean     @default(false)
-  official      Boolean     @default(false)
-  candidateColumns Json?
+  id                 String      @id @default(cuid())
+  spreadsheetId      String
+  name               String
+  state              String
+  usedRange          String?
+  formulas           Int         @default(0)
+  mergedCells        Int         @default(0)
+  protected          Boolean     @default(false)
+  official           Boolean     @default(false)
+  candidateColumns   Json?
   candidateImageArea String?
-  humanNotes    String?     @default("")
-  confirmationStatus String @default("NEEDS_ANALYSIS")
-  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id])
+  humanNotes         String?     @default("")
+  confirmationStatus String      @default("NEEDS_ANALYSIS")
+  spreadsheet        Spreadsheet @relation(fields: [spreadsheetId], references: [id])
 }
 
 model SpreadsheetMapping {
-  id            String      @id @default(cuid())
-  spreadsheetId String
-  operationName String
-  sheetName     String
-  headerRow     Int?
-  fleetColumn   String?
-  implementColumn String?
-  statusColumn  String?
-  descriptionColumn String?
-  timeColumn    String?
-  imageRange    String?
-  confidence    String?     @default("necessita confirmação")
-  confirmationStatus String @default("NEEDS_ANALYSIS")
-  editableFields Json?
-  protectedFields Json?
-  notes         String?
-  version       Int         @default(1)
-  active        Boolean     @default(true)
-  createdBy     String?
-  updatedBy     String?
-  spreadsheet   Spreadsheet @relation(fields: [spreadsheetId], references: [id])
+  id                 String      @id @default(cuid())
+  spreadsheetId      String
+  operationName      String
+  sheetName          String
+  headerRow          Int?
+  fleetColumn        String?
+  implementColumn    String?
+  statusColumn       String?
+  descriptionColumn  String?
+  timeColumn         String?
+  imageRange         String?
+  confidence         String?     @default("necessita confirmação")
+  confirmationStatus String      @default("NEEDS_ANALYSIS")
+  editableFields     Json?
+  protectedFields    Json?
+  notes              String?
+  version            Int         @default(1)
+  active             Boolean     @default(true)
+  createdBy          String?
+  updatedBy          String?
+  spreadsheet        Spreadsheet @relation(fields: [spreadsheetId], references: [id])
 }
 
 model IncomingMessage {
@@ -263,6 +290,8 @@ model PendingChange {
   rejectedChange    RejectedChange?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+
+  @@unique([incomingMessageId, equipmentCode, createdBy])
 }
 
 model ApprovedChange {
@@ -292,15 +321,15 @@ model Occurrence {
   occurredAt  DateTime
   confidence  Float
   validation  String
-  active      Boolean  @default(true)
-  version     Int      @default(1)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  active      Boolean    @default(true)
+  version     Int        @default(1)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model EquipmentStatusHistory {
-  id            String    @id @default(cuid())
-  equipmentId   String
+  id             String    @id @default(cuid())
+  equipmentId    String
   previousStatus String?
   newStatus      String
   reason         String?
@@ -310,11 +339,11 @@ model EquipmentStatusHistory {
 }
 
 model Shift {
-  id        String        @id @default(cuid())
-  name      String
-  startsAt  String
-  endsAt    String
-  reports   ShiftReport[]
+  id       String        @id @default(cuid())
+  name     String
+  startsAt String
+  endsAt   String
+  reports  ShiftReport[]
 }
 
 model ShiftReport {
@@ -363,36 +392,36 @@ model IntegrationStatus {
 }
 
 model AuthSession {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  tokenId   String   @unique
+  tokenId   String    @unique
   expiresAt DateTime
   revokedAt DateTime?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model TestExecution {
-  id          String   @id @default(cuid())
-  type        String
-  userId      String?
-  operation   String
-  groupName   String
-  spreadsheet String?
-  sheet       String?
-  range       String?
-  legend      String?
-  result      String
-  status      String
-  error       String?
+  id            String   @id @default(cuid())
+  type          String
+  userId        String?
+  operation     String
+  groupName     String
+  spreadsheet   String?
+  sheet         String?
+  range         String?
+  legend        String?
+  result        String
+  status        String
+  error         String?
   simulatedData Json?
-  durationMs  Int
-  active      Boolean  @default(true)
-  version     Int      @default(1)
-  createdBy   String?
-  updatedBy   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  durationMs    Int
+  active        Boolean  @default(true)
+  version       Int      @default(1)
+  createdBy     String?
+  updatedBy     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model GeneralSetting {
@@ -403,6 +432,88 @@ model GeneralSetting {
   version   Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model OfficialPilotWrite {
+  id                String                    @id @default(cuid())
+  pendingChangeId   String                    @unique
+  status            OfficialPilotWriteStatus  @default(PREPARING)
+  confirmed         Boolean                   @default(false)
+  prepareCommandId  String                    @unique
+  commandId         String?                   @unique
+  rollbackCommandId String?                   @unique
+  correlationId     String                    @unique
+  userId            String?
+  userName          String
+  groupName         String
+  groupJid          String
+  messageId         String
+  originalMessage   String
+  operation         String
+  fleet             String
+  implement         String
+  workbook          String
+  worksheet         String
+  row               Int?
+  cells             Json
+  baselineValues    Json?
+  proposedValues    Json
+  rereadValues      Json?
+  backupPath        String
+  originalHash      String?
+  backupHash        String?
+  sizeBytes         Int?
+  pendingVersion    Int
+  contextHash       String
+  writtenHash       String?
+  result            String?
+  errorCode         String?
+  errorMessage      String?
+  startedAt         DateTime                  @default(now())
+  completedAt       DateTime?
+  durationMs        Int?
+  rolledBackAt      DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  events            OfficialPilotWriteEvent[]
+
+  @@index([status, createdAt])
+}
+
+model ExcelAgentJob {
+  id            String              @id @default(cuid())
+  commandId     String              @unique
+  correlationId String
+  type          String
+  scope         String
+  command       Json
+  status        ExcelAgentJobStatus @default(QUEUED)
+  result        Json?
+  attempts      Int                 @default(0)
+  expiresAt     DateTime
+  leasedAt      DateTime?
+  completedAt   DateTime?
+  reconciledAt  DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([scope, status, reconciledAt, createdAt])
+}
+
+model OfficialPilotWriteEvent {
+  id         String             @id @default(cuid())
+  writeId    String
+  step       String
+  label      String
+  status     String
+  userId     String?
+  detail     String?
+  data       Json?
+  durationMs Int?
+  createdAt  DateTime           @default(now())
+  write      OfficialPilotWrite @relation(fields: [writeId], references: [id])
+
+  @@index([writeId, createdAt])
 }
 
 /// Registro append-only. A aplicacao cria eventos; nao atualiza nem apaga registros antigos.
@@ -437,23 +548,23 @@ model OperationalEvent {
 }
 
 model OperationalMessage {
-  id             String   @id
-  idempotencyKey String   @unique
-  groupName      String
-  sender         String
-  receivedAt     DateTime
-  shift          String
-  text           String
+  id              String   @id
+  idempotencyKey  String   @unique
+  groupName       String
+  sender          String
+  receivedAt      DateTime
+  shift           String
+  text            String
   interpretations Json
-  status         String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  status          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  pendings       OperationalPending[]
+  pendings OperationalPending[]
 }
 
 model OperationalPending {
-  id                  String   @id
+  id                  String             @id
   messageId           String
   interpretation      Json
   baselineStatus      String?
@@ -463,7 +574,7 @@ model OperationalPending {
   reason              String
   createdAt           DateTime
   resolvedAt          DateTime?
-  updatedAt           DateTime @updatedAt
+  updatedAt           DateTime           @updatedAt
   message             OperationalMessage @relation(fields: [messageId], references: [id])
 
   @@index([status, createdAt])

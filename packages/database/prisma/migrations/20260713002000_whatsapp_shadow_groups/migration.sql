@@ -1,0 +1,3 @@
+ALTER TABLE "WhatsAppGroup"
+ADD COLUMN "participantCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "whatsappUpdatedAt" TIMESTAMP(3);

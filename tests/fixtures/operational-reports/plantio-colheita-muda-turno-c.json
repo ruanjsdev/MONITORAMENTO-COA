@@ -1,0 +1,9 @@
+{
+  "name": "plantio-colheita-muda-turno-c",
+  "input": "Turno: C\nSetor: HOMOLOGACAO\nPlantio Mecanizado\n1531/830 = rodando\n164 = problema mecanico\nColheita de Muda\n626 = nao gira lado direito",
+  "expected": {
+    "sections": [],
+    "items": [],
+    "alerts": []
+  }
+}

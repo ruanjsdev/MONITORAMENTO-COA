@@ -18,7 +18,14 @@ async function seedRolesAndAdmin() {
     create: { name: "ADMIN" }
   });
 
-  for (const key of ["dashboard:read", "groups:write", "operations:write", "spreadsheets:confirm", "tests:run", "logs:read"]) {
+  for (const key of [
+    "dashboard:read",
+    "groups:write",
+    "operations:write",
+    "spreadsheets:confirm",
+    "tests:run",
+    "logs:read"
+  ]) {
     const permission = await prisma.permission.upsert({
       where: { key },
       update: {},
@@ -34,9 +41,7 @@ async function seedRolesAndAdmin() {
   const user = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
-      passwordHash,
-      isActive: true,
-      mustChangePassword: true
+      isActive: true
     },
     create: {
       name: "Administrador COA",
@@ -55,16 +60,120 @@ async function seedRolesAndAdmin() {
 
 async function seedOperations() {
   const operations = [
-    ["Plantio Mecanizado", "Plantio", "🚜", "Planilha Plantio cana.xlsm", "PLANTIO", "A1:AI26", "F", "G", "H", "S", "L", 8],
-    ["Colheita de Muda", "Muda", "🌱", "Planilha Plantio cana.xlsm", "COLHEITA E TRANSPORTE DE MUDA", "A1:AJ25", "F", "G", "H", "S", "L", 5],
-    ["Preparo de Solo", "Preparo", "🚛", "Planilha Plantio cana.xlsm", "PREPARO DE SOLO", "A1:AL37", "F", "G", "H", "S", "L", 4],
-    ["CPD", "CPD", "🧪", "Acompanhamento Tratos Culturais.xlsm", "CPD", "A1:AH51", "F", "G", "H", "S", "L", 3],
-    ["Compostagem", "Compostagem", "♻️", "Acompanhamento Tratos Culturais.xlsm", "COMPOSTAGEM", "A1:AH29", "F", "G", "H", "S", "L", 4],
-    ["Cultivo", "Cultivo", "🌿", "Acompanhamento Tratos Culturais.xlsm", "CULTIVO", "A1:AH50", "F", "G", "H", "S", "L", 6],
-    ["Correção de Solo", "Correção", "🧱", "Acompanhamento Tratos Culturais.xlsm", "CORREÇÃO DE SOLO", "A1:AH36", "F", "G", "H", "S", "L", 2]
+    [
+      "Plantio Mecanizado",
+      "Plantio",
+      "🚜",
+      "Planilha Plantio cana.xlsm",
+      "PLANTIO",
+      "A1:AI26",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      8
+    ],
+    [
+      "Colheita de Muda",
+      "Muda",
+      "🌱",
+      "Planilha Plantio cana.xlsm",
+      "COLHEITA E TRANSPORTE DE MUDA",
+      "A1:AJ25",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      5
+    ],
+    [
+      "Preparo de Solo",
+      "Preparo",
+      "🚛",
+      "Planilha Plantio cana.xlsm",
+      "PREPARO DE SOLO",
+      "A1:AL37",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      4
+    ],
+    [
+      "CPD",
+      "CPD",
+      "🧪",
+      "Acompanhamento Tratos Culturais.xlsm",
+      "CPD",
+      "A1:AH51",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      3
+    ],
+    [
+      "Compostagem",
+      "Compostagem",
+      "♻️",
+      "Acompanhamento Tratos Culturais.xlsm",
+      "COMPOSTAGEM",
+      "A1:AH29",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      4
+    ],
+    [
+      "Cultivo",
+      "Cultivo",
+      "🌿",
+      "Acompanhamento Tratos Culturais.xlsm",
+      "CULTIVO",
+      "A1:AH50",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      6
+    ],
+    [
+      "Correção de Solo",
+      "Correção",
+      "🧱",
+      "Acompanhamento Tratos Culturais.xlsm",
+      "CORREÇÃO DE SOLO",
+      "A1:AH36",
+      "F",
+      "G",
+      "H",
+      "S",
+      "L",
+      2
+    ]
   ] as const;
 
-  for (const [name, shortName, emoji, spreadsheetFile, sheetName, imageRange, fleetColumn, implementColumn, statusColumn, descriptionColumn, timeColumn, fleetCount] of operations) {
+  for (const [
+    name,
+    shortName,
+    emoji,
+    spreadsheetFile,
+    sheetName,
+    imageRange,
+    fleetColumn,
+    implementColumn,
+    statusColumn,
+    descriptionColumn,
+    timeColumn,
+    fleetCount
+  ] of operations) {
     await prisma.operation.upsert({
       where: { name },
       update: {

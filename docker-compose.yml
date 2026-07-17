@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-coa_bot}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coa_bot_dev}
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     volumes:
       - coa_bot_postgres_data:/var/lib/postgresql/data
     healthcheck:
