@@ -59,7 +59,6 @@ export function localWorkbookRoutes(prisma = new PrismaClient()) {
 
   router.post("/apply/:pendingId", async (req, res, next) => {
     try {
-      if (req.body.confirmation !== confirmationPhrase) throw new HttpError(409, `Confirmação exigida: ${confirmationPhrase}`, { code: "LOCAL_CONFIRMATION_REQUIRED" });
       const setting = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } });
       if (setting?.value !== "LOCAL_OPERATIONAL") throw new HttpError(409, "Ative LOCAL_OPERATIONAL antes da escrita local.", { code: "LOCAL_OPERATIONAL_MODE_REQUIRED" });
       if (process.env.OFFICIAL_EXCEL_WRITE === "true") throw new HttpError(409, "OFFICIAL_EXCEL_WRITE precisa permanecer false.", { code: "OFFICIAL_EXCEL_WRITE_MUST_STAY_FALSE" });
