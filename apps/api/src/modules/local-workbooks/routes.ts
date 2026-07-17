@@ -94,6 +94,7 @@ export function localWorkbookRoutes(prisma = new PrismaClient()) {
       const result = await waitForExcelResult(excelCommand.commandId, 95_000);
       if (!result.success) throw new HttpError(409, "Escrita local bloqueada pelo Excel Agent.", { code: result.error?.code, message: result.error?.message, backup });
       await prisma.systemLog.create({ data: { userId: res.locals.user?.id, action: "LOCAL_OPERATIONAL_EXCEL_WRITE", entity: "PendingChange", entityId: preview.pendingId, message: "Alteração local .dev confirmada, escrita e relida pelo Excel Agent.", metadata: { backup, result: result.result ?? null, officialExcelWrite: false, sendMessage: false, sendReaction: false } as Prisma.InputJsonObject } });
+      await prisma.pendingChange.update({ where: { id: preview.pendingId }, data: { active: false, status: "APPROVED_SIMULATED", updatedAt: new Date() } });
       res.json({ ...preview, confirmed: true, backup, result, officialExcelWrite: false, sendMessage: false, sendReaction: false });
     } catch (error) { next(error); }
   });
