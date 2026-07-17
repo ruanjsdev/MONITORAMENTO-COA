@@ -97,7 +97,7 @@ function extractItemParts(line: string) {
   const normalized = cleanLine(line).replace(/^=+\s*/, "").trim();
   const splitImplement = normalized.match(/^([a-zA-Z0-9]{2,6})\s*=\s*([a-zA-Z0-9][a-zA-Z0-9/\-\s]{1,30}?)\s*(?:=|:)\s*(.*)$/);
   if (splitImplement) return { fleetRaw: splitImplement[1]!, implementRaw: splitImplement[2]?.trim() || null, descriptionRaw: splitImplement[3]?.trim() ?? "" };
-  const direct = normalized.match(/^([a-zA-Z0-9]{2,6})(?:\s*[/\-]\s*([a-zA-Z0-9][a-zA-Z0-9/\-\s]{1,30}?))?\s*(?:=|:)\s*(.*)$/);
+  const direct = normalized.match(/^([a-zA-Z0-9]{2,6})(?:\s*[/\-]\s*([a-zA-Z0-9][a-zA-Z0-9/-\s]{1,30}?))?\s*(?:=|:)\s*(.*)$/);
   if (direct) return { fleetRaw: direct[1]!, implementRaw: direct[2]?.trim() || null, descriptionRaw: direct[3]?.trim() ?? "" };
   return null;
 }
