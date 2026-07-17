@@ -7,6 +7,7 @@ import { assertDatabaseConfiguration, resolveDatabaseMode } from "../../config/d
 import { OperationalPrismaContext } from "../../repositories/operational-prisma.js";
 import { OperationalEngine } from "../../services/operational-engine.js";
 import { OperationalWorkflow, WorkflowError } from "../../services/operational-workflow.js";
+import { readRealLocalFleetSnapshot } from "../local-workbooks/snapshot.js";
 
 type OperationalContext = OperationalPrismaContext | MemoryOperationalContext;
 
@@ -44,7 +45,10 @@ export function operationalRoutes(prisma = new PrismaClient()) {
   router.get("/snapshot", async (_req, res, next) => {
     try {
       const ctx = await context();
-      const fleets = ctx.engine.currentState();
+      const setting = await prisma.generalSetting.findUnique({ where: { key: "OPERATIONAL_MODE" } });
+      const localOperational = setting?.value === "LOCAL_OPERATIONAL" && process.env.NODE_ENV !== "test";
+      const realSnapshot = localOperational ? await readRealLocalFleetSnapshot(prisma) : undefined;
+      const fleets = realSnapshot?.fleets ?? ctx.engine.currentState();
       const grouped = Object.values(fleets.reduce<Record<string, { operation: string; machines: number; stopped: number; updatedAt: string }>>((acc, item) => {
         const row = acc[item.operation] ??= { operation: item.operation, machines: 0, stopped: 0, updatedAt: item.updatedAt };
         row.machines++;
@@ -54,7 +58,7 @@ export function operationalRoutes(prisma = new PrismaClient()) {
       }, {}));
       const messages = ctx.workflow.messages.list().map(message => ({ id: message.id, text: message.text, sender: message.sender, group: message.group, operation: message.interpretations[0]?.operation, status: message.status === "PENDING" ? "PENDING_APPROVAL" : message.status, receivedAt: message.receivedAt }));
       const eventMessages = ctx.engine.timeline().filter(event => event.type === "MESSAGE_RECEIVED" || event.type === "ERROR").map(event => ({ id: event.id, text: event.originalMessage ?? event.observation, sender: event.user, group: event.group, operation: event.operation, status: event.type === "ERROR" ? "FAILED" : "PENDING_APPROVAL", receivedAt: event.timestamp }));
-      res.json({ simulationMode: true, shift: "C", shiftEndsAt: new Date(Date.now() + 3_600_000).toISOString(), fleets, messages: [...messages, ...eventMessages], pendencies: pendingSummary(ctx), systems: systemStatus(resolveDatabaseMode(), ctx), operations: grouped.map(item => `${item.operation}: ${item.machines} máquinas · ${item.stopped} paradas`), operationSummary: grouped, timeline: ctx.engine.timeline().slice(0, 12), nextReport: "21:45 · Plantio", shiftReportStatus: "Aguardando revisão" });
+      res.json({ simulationMode: !localOperational, source: realSnapshot?.source ?? "OPERATIONAL_PROJECTION", readAt: realSnapshot?.readAt, shift: "C", shiftEndsAt: new Date(Date.now() + 3_600_000).toISOString(), fleets, messages: [...messages, ...eventMessages], pendencies: pendingSummary(ctx), systems: systemStatus(resolveDatabaseMode(), ctx), operations: grouped.map(item => `${item.operation}: ${item.machines} máquinas · ${item.stopped} paradas`), operationSummary: grouped, timeline: ctx.engine.timeline().slice(0, 12), nextReport: "21:45 · Plantio", shiftReportStatus: "Aguardando revisão" });
     } catch (error) { next(error); }
   });
 

@@ -41,6 +41,14 @@ function FileHash([string]$file) {
 function ValuesEqual($left, $right) {
   if ($null -eq $left -and $null -eq $right) { return $true }
   if ($null -eq $left -or $null -eq $right) { return ([string]$left -eq [string]$right) }
+  if ($left -is [ValueType] -and ([string]$right) -match '^(\d{1,2}):(\d{2})$') {
+    $expectedTime = (([int]$Matches[1] * 60) + [int]$Matches[2]) / 1440.0
+    return [Math]::Abs((([double]$left) % 1) - $expectedTime) -lt (1.0 / 86400.0)
+  }
+  if ($left -is [ValueType] -and ([string]$right) -match '^(\d{1,2})/(\d{1,2})/(\d{4})$') {
+    $expectedDate = [DateTime]::new([int]$Matches[3], [int]$Matches[2], [int]$Matches[1]).ToOADate()
+    return [Math]::Abs(([double]$left) - $expectedDate) -lt 0.000000001
+  }
   if ($left -is [ValueType] -and $right -is [ValueType]) { return [Math]::Abs(([double]$left) - ([double]$right)) -lt 0.000000001 }
   return [string]$left -eq [string]$right
 }

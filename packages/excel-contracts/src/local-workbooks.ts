@@ -9,7 +9,7 @@ export type LocalWorkbookDefinition = {
 };
 
 export const LOCAL_OPERATIONAL_WORKBOOKS: readonly LocalWorkbookDefinition[] = [
-  { id: "planilha-plantio-cana-dev-xlsm", fileName: "Planilha Plantio cana.dev.xlsm", label: "Planilha de Plantio", operations: ["Plantio Mecanizado"] },
+  { id: "planilha-plantio-cana-dev-xlsm", fileName: "Planilha Plantio cana.dev.xlsm", label: "Planilha de Plantio", operations: ["Plantio Mecanizado", "Colheita de Muda", "Preparo de Solo"] },
   { id: "acompanhamento-tratos-culturais-dev-xlsm", fileName: "Acompanhamento Tratos Culturais.dev.xlsm", label: "Tratos Culturais", operations: ["CPD", "Compostagem", "Cultivo", "Correção de Solo"] }
 ] as const;
 
