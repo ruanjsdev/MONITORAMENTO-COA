@@ -9,5 +9,5 @@ const app = createApp();
 void reconcileCompletedOfficialPilotJobs().catch(error => console.error("Falha ao reconciliar jobs oficiais duráveis na inicialização:", error));
 startReportSchedulerWorker();
 app.listen(port, host, () => {
-  console.log(`COA-BOT API em modo simulacao ouvindo em http://${host}:${port}`);
+  console.log(`COA-BOT API operacional ouvindo em http://${host}:${port}`);
 });

@@ -27,3 +27,4 @@ planilhas/*.backup.xlsm
 planilhas/~$*
 backups-excel/
 backups-excel-local/
+backups-database/

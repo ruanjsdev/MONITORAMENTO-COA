@@ -10,17 +10,29 @@ import { OperationalSnapshot } from "../types";
 
 export default function AttentionCenterPage() {
   const { api, notify } = useApp();
-  const { data, error, loading, reload } = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
+  const { data, error, loading, reload } = useLoadable(() =>
+    api.request<OperationalSnapshot>("/operational/snapshot")
+  );
   const [filter, setFilter] = useState("all");
   if (loading) return <section className="panel loading-panel">Carregando central...</section>;
   if (error || !data) return <section className="panel error-box">{error}</section>;
 
-  const pendencies = data.pendencies.filter(item => filter === "all" && item.status === "open" || filter === "urgent" && item.priority === "urgent" || filter === "resolved" && item.status === "resolved");
-  const attentionFleets = [...data.fleets].sort((a, b) => Number(b.status === "PARADO") - Number(a.status === "PARADO")).slice(0, 8);
+  const pendencies = data.pendencies.filter(
+    (item) =>
+      (filter === "all" && item.status === "open") ||
+      (filter === "urgent" && item.priority === "urgent") ||
+      (filter === "resolved" && item.status === "resolved")
+  );
+  const attentionFleets = [...data.fleets]
+    .sort((a, b) => Number(b.status === "PARADO") - Number(a.status === "PARADO"))
+    .slice(0, 8);
 
   async function action(id: string, value: string) {
-    await api.request(`/operational/pendencies/${id}/action`, { method: "POST", body: JSON.stringify({ action: value }) });
-    notify("success", `SIMULADO: ação ${value} registrada.`);
+    await api.request(`/operational/pendencies/${id}/action`, {
+      method: "POST",
+      body: JSON.stringify({ action: value })
+    });
+    notify("success", `Ação ${value} registrada.`);
     reload();
   }
 
@@ -31,7 +43,7 @@ export default function AttentionCenterPage() {
           <span className="eyebrow">Sala de monitoramento</span>
           <h1>Central de Operações</h1>
         </div>
-        <SemanticStatusBadge status="SIMULATED">simulação protegida</SemanticStatusBadge>
+        <SemanticStatusBadge status="ONLINE">Excel real</SemanticStatusBadge>
       </div>
 
       <section className="panel">
@@ -39,7 +51,11 @@ export default function AttentionCenterPage() {
           <h2>Equipamentos em destaque</h2>
           <span className="muted">Críticos primeiro</span>
         </div>
-        <div className="equipment-list compact-list">{attentionFleets.map(item => <EquipmentCard key={item.fleet} item={item} compact />)}</div>
+        <div className="equipment-list compact-list">
+          {attentionFleets.map((item) => (
+            <EquipmentCard key={item.fleet} item={item} compact />
+          ))}
+        </div>
       </section>
 
       <section className="panel">
@@ -47,21 +63,47 @@ export default function AttentionCenterPage() {
           <h2>Pendências operacionais</h2>
           <SemanticStatusBadge status="PENDENTE">{pendencies.length} itens</SemanticStatusBadge>
         </div>
-        <FilterBar value={filter} onChange={setFilter} options={[{ value: "all", label: "Abertas" }, { value: "urgent", label: "Urgentes" }, { value: "resolved", label: "Resolvidas" }]} />
+        <FilterBar
+          value={filter}
+          onChange={setFilter}
+          options={[
+            { value: "all", label: "Abertas" },
+            { value: "urgent", label: "Urgentes" },
+            { value: "resolved", label: "Resolvidas" }
+          ]}
+        />
         <div className="pending-decision-list">
-          {pendencies.map(item => (
+          {pendencies.map((item) => (
             <article className="pending-decision-card compact" key={item.id}>
               <div className="pending-mainline">
                 <strong>{item.subject}</strong>
-                <SemanticStatusBadge status={item.priority === "urgent" ? "FALHA" : "PENDENTE"}>{item.priority}</SemanticStatusBadge>
+                <SemanticStatusBadge status={item.priority === "urgent" ? "FALHA" : "PENDENTE"}>
+                  {item.priority}
+                </SemanticStatusBadge>
               </div>
-              <p>{item.operation} · {item.reason}</p>
-              <small>Desde <RelativeTime value={item.since} /></small>
+              <p>
+                {item.operation} · {item.reason}
+              </p>
+              <small>
+                Desde <RelativeTime value={item.since} />
+              </small>
               <div className="decision-actions">
-                <button className="primary" onClick={() => confirm("Confirmar aprovação simulada?") && action(item.id, "approve")}><Check size={18} />Aprovar</button>
-                <button onClick={() => action(item.id, "review")}><Eye size={18} />Revisar</button>
-                <button onClick={() => action(item.id, "defer")}><Clock3 size={18} />Adiar</button>
-                <button className="danger" onClick={() => action(item.id, "resolve")}><X size={18} />Resolver</button>
+                <button className="primary" onClick={() => action(item.id, "approve")}>
+                  <Check size={18} />
+                  Aprovar
+                </button>
+                <button onClick={() => action(item.id, "review")}>
+                  <Eye size={18} />
+                  Revisar
+                </button>
+                <button onClick={() => action(item.id, "defer")}>
+                  <Clock3 size={18} />
+                  Adiar
+                </button>
+                <button className="danger" onClick={() => action(item.id, "resolve")}>
+                  <X size={18} />
+                  Resolver
+                </button>
               </div>
             </article>
           ))}

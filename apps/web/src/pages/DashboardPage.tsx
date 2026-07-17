@@ -10,17 +10,32 @@ import { OperationalSnapshot } from "../types";
 
 export default function DashboardPage() {
   const { api } = useApp();
-  const { data, error, loading, reload } = useLoadable(() => api.request<OperationalSnapshot>("/operational/snapshot"));
+  const { data, error, loading, reload } = useLoadable(() =>
+    api.request<OperationalSnapshot>("/operational/snapshot")
+  );
   if (loading) return <section className="panel loading-panel">Carregando Meu Turno...</section>;
-  if (error || !data) return <section className="panel error-box"><p>{error}</p><button onClick={reload}>Tentar novamente</button></section>;
+  if (error || !data)
+    return (
+      <section className="panel error-box">
+        <p>{error}</p>
+        <button onClick={reload}>Tentar novamente</button>
+      </section>
+    );
 
-  const stopped = data.fleets.filter(item => item.status === "PARADO").length;
-  const running = data.fleets.filter(item => item.status === "RODANDO").length;
-  const stale = data.fleets.filter(item => Date.now() - new Date(item.updatedAt).getTime() > 30 * 60_000).length;
-  const pending = data.pendencies.filter(item => item.status === "open").length;
-  const lastUpdate = latestDate([...data.fleets.map(item => item.updatedAt), ...data.timeline.map(item => item.timestamp)]);
-  const apiOnline = data.systems.find(item => item.name === "API")?.state === "online";
-  const hasServiceFailure = data.systems.some(item => ["offline", "error", "erro"].includes(item.state.toLowerCase()));
+  const stopped = data.fleets.filter((item) => item.status === "PARADO").length;
+  const running = data.fleets.filter((item) => item.status === "RODANDO").length;
+  const stale = data.fleets.filter(
+    (item) => Date.now() - new Date(item.updatedAt).getTime() > 30 * 60_000
+  ).length;
+  const pending = data.pendencies.filter((item) => item.status === "open").length;
+  const lastUpdate = latestDate([
+    ...data.fleets.map((item) => item.updatedAt),
+    ...data.timeline.map((item) => item.timestamp)
+  ]);
+  const apiOnline = data.systems.find((item) => item.name === "API")?.state === "online";
+  const hasServiceFailure = data.systems.some((item) =>
+    ["offline", "error", "erro"].includes(item.state.toLowerCase())
+  );
 
   return (
     <section className="shift-home">
@@ -28,25 +43,67 @@ export default function DashboardPage() {
         <div>
           <h1>Meu Turno</h1>
           <div className="shift-meta">
-            <span><Clock3 size={16} />{new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span>
+            <span>
+              <Clock3 size={16} />
+              {new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+            </span>
             <span>Turno {data.shift}</span>
-            <span><UserCircle size={16} />Operador Admin</span>
+            <span>
+              <Database size={16} />
+              Fonte:{" "}
+              {data.source === "EXCEL_COM_LOCAL_DEV" ? "Excel real" : (data.source ?? "Banco")}
+            </span>
+            {data.readAt && (
+              <span>
+                Leitura:{" "}
+                {new Date(data.readAt).toLocaleTimeString("pt-BR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit"
+                })}
+              </span>
+            )}
+            <span>
+              <UserCircle size={16} />
+              Operador Admin
+            </span>
           </div>
         </div>
         <div className="shift-status">
-          <SemanticStatusBadge status={hasServiceFailure ? "OFFLINE" : apiOnline ? "ONLINE" : "SIMULATED"}>{hasServiceFailure ? "Serviços em atenção" : apiOnline ? "Operação local ativa" : "Ambiente simulado"}</SemanticStatusBadge>
-          <span><Database size={15} />Atualizado <RelativeTime value={lastUpdate} /></span>
-          <button onClick={reload} aria-label="Atualizar"><RefreshCw size={18} /></button>
+          <SemanticStatusBadge
+            status={hasServiceFailure ? "OFFLINE" : apiOnline ? "ONLINE" : "PENDENTE"}
+          >
+            {hasServiceFailure
+              ? "Serviços em atenção"
+              : apiOnline
+                ? "Operação local ativa"
+                : "Aguardando serviços"}
+          </SemanticStatusBadge>
+          <span>
+            <Database size={15} />
+            Atualizado <RelativeTime value={lastUpdate} />
+          </span>
+          <button onClick={reload} aria-label="Atualizar">
+            <RefreshCw size={18} />
+          </button>
         </div>
       </div>
 
       <AttentionNow snapshot={data} onOpen={() => location.assign("/pendencias")} />
+      {Boolean(data.unavailableSheets?.length) && (
+        <div className="error-box">Abas indisponíveis: {data.unavailableSheets!.join(", ")}</div>
+      )}
 
       <div className="prime-metrics" aria-label="Métricas principais">
         <PrimeMetric label="Parados" value={stopped} status="PARADO" detail="críticos" />
         <PrimeMetric label="Pendências" value={pending} status="PENDENTE" detail="atenção" />
         <PrimeMetric label="Rodando" value={running} status="RODANDO" detail="normal" />
-        <PrimeMetric label="Sem atualização" value={stale} status="SEM INFORMACAO" detail="> 30 min" />
+        <PrimeMetric
+          label="Sem atualização"
+          value={stale}
+          status="SEM INFORMACAO"
+          detail="> 30 min"
+        />
       </div>
 
       <div className="shift-grid">
@@ -56,11 +113,16 @@ export default function DashboardPage() {
             <button onClick={() => location.assign("/operacoes")}>Ver todas</button>
           </div>
           <div className="operation-rows">
-            {data.operationSummary.map(item => (
+            {data.operationSummary.map((item) => (
               <OperationRow
                 key={item.operation}
                 item={item}
-                pendingCount={data.pendencies.filter(pendingItem => pendingItem.operation === item.operation && pendingItem.status === "open").length}
+                pendingCount={
+                  data.pendencies.filter(
+                    (pendingItem) =>
+                      pendingItem.operation === item.operation && pendingItem.status === "open"
+                  ).length
+                }
                 onOpen={() => location.assign("/operacoes")}
               />
             ))}
@@ -77,9 +139,12 @@ export default function DashboardPage() {
       </div>
 
       <details className="panel recent-reports">
-        <summary><Signal size={18} />Relatórios recentes</summary>
+        <summary>
+          <Signal size={18} />
+          Relatórios recentes
+        </summary>
         <div className="report-list">
-          {data.messages.slice(0, 5).map(item => (
+          {data.messages.slice(0, 5).map((item) => (
             <article key={item.id}>
               <strong>{item.text}</strong>
               <span>{item.status}</span>
@@ -93,7 +158,17 @@ export default function DashboardPage() {
   );
 }
 
-function PrimeMetric({ label, value, status, detail }: { label: string; value: number; status: string; detail: string }) {
+function PrimeMetric({
+  label,
+  value,
+  status,
+  detail
+}: {
+  label: string;
+  value: number;
+  status: string;
+  detail: string;
+}) {
   return (
     <article className="prime-metric">
       <SemanticStatusBadge status={status} />
@@ -105,7 +180,10 @@ function PrimeMetric({ label, value, status, detail }: { label: string; value: n
 }
 
 function latestDate(values: string[]) {
-  const latest = values.map(value => new Date(value).getTime()).filter(Boolean).sort((a, b) => b - a)[0];
+  const latest = values
+    .map((value) => new Date(value).getTime())
+    .filter(Boolean)
+    .sort((a, b) => b - a)[0];
   return latest ? new Date(latest).toISOString() : undefined;
 }
 

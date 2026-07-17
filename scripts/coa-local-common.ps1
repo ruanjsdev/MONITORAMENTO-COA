@@ -179,9 +179,17 @@ function Stop-ManagedProcess([string]$Name) {
   if (!(Test-Path -LiteralPath $pidFile)) { Write-Host "${Name}: sem PID registrado."; return }
   $pidValue = [int](Get-Content -LiteralPath $pidFile -Raw)
   $process = Get-Process -Id $pidValue -ErrorAction SilentlyContinue
-  if ($process -and $process.ProcessName -eq "node") { Stop-Process -Id $pidValue -Force; Write-Host "$Name encerrado." }
+  $commandLine = if ($process) { (Get-CimInstance Win32_Process -Filter "ProcessId=$pidValue" -ErrorAction SilentlyContinue).CommandLine } else { "" }
+  $managed = $process -and ($process.ProcessName -eq "node" -or ($process.ProcessName -eq "powershell" -and $commandLine -like "*watch-service.ps1*"))
+  if ($managed) { Stop-ProcessTree $pidValue; Write-Host "$Name encerrado." }
   elseif ($process) { Write-Host "${Name}: PID não pertence ao COA-BOT; não será encerrado." -ForegroundColor Yellow }
   Remove-Item -LiteralPath $pidFile -Force -ErrorAction SilentlyContinue
+}
+
+function Stop-ProcessTree([int]$ProcessId) {
+  $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$ProcessId" -ErrorAction SilentlyContinue)
+  foreach ($child in $children) { Stop-ProcessTree ([int]$child.ProcessId) }
+  Stop-Process -Id $ProcessId -Force -ErrorAction SilentlyContinue
 }
 
 function Get-HttpState([string]$Url) {

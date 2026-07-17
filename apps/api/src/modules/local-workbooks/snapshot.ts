@@ -20,7 +20,7 @@ export type RealFleetState = {
   stopMetrics: { todayMinutes: number; shiftMinutes: number; weekMinutes: number; stopCount: number; longestMinutes: number; lastStopAt?: string; runningSince?: string };
 };
 
-type RealSnapshot = { fleets: RealFleetState[]; readAt: string; source: "EXCEL_COM_LOCAL_DEV" };
+type RealSnapshot = { fleets: RealFleetState[]; readAt: string; source: "EXCEL_COM_LOCAL_DEV"; unavailableSheets: string[] };
 let cachedSnapshot: RealSnapshot | undefined;
 let refreshPromise: Promise<RealSnapshot> | undefined;
 const snapshotTtlMs = 30_000;
@@ -44,20 +44,22 @@ function refreshSnapshot(prisma: PrismaClient) {
 async function loadSnapshot(prisma: PrismaClient): Promise<RealSnapshot> {
   const operations = await prisma.operation.findMany({ where: { active: true }, orderBy: { name: "asc" } });
   const fleets: RealFleetState[] = [];
+  const unavailableSheets: string[] = [];
   const readAt = new Date().toISOString();
 
   for (const operation of operations) {
     if (!operation.sheetName) continue;
     const definition = localWorkbookByOperation(operation.name);
     const workbook = validateLocalOperationalWorkbook({ id: definition.id, root: workbookRoot, officialRoot, mustExist: true });
+    const worksheet = resolveSheetName(operation.name, operation.sheetName);
     const command: ExcelAgentCommand = {
       commandId: randomUUID(), correlationId: randomUUID(), requestedAt: readAt,
       requestedBy: "operational-snapshot", type: "READ_RANGE", workbook: workbook.filePath,
-      worksheet: operation.sheetName, payload: { range: "A1:S250" }, simulation: false, timeoutMs: 45_000
+      worksheet, payload: { range: "A1:S250" }, simulation: false, timeoutMs: 45_000
     };
     enqueueExcelCommand(command);
     const response = await waitForExcelResult(command.commandId, 50_000);
-    if (!response.success) continue;
+    if (!response.success) { unavailableSheets.push(`${operation.name}: ${worksheet}`); continue; }
     const values = normalizeMatrix((response.result as { values?: unknown })?.values);
     for (const row of values) {
       const fleet = text(row[5]);
@@ -80,7 +82,13 @@ async function loadSnapshot(prisma: PrismaClient): Promise<RealSnapshot> {
       });
     }
   }
-  return { fleets, readAt, source: "EXCEL_COM_LOCAL_DEV" };
+  return { fleets, readAt, source: "EXCEL_COM_LOCAL_DEV", unavailableSheets };
+}
+
+function resolveSheetName(operation: string, configured: string) {
+  if (operation === "Compostagem") return "COMPOSTAGEM ";
+  if (operation === "Correção de Solo") return "CORREÇÃO DE SOLO";
+  return configured;
 }
 
 function normalizeMatrix(value: unknown): unknown[][] {

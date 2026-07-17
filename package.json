@@ -2,7 +2,7 @@
   "name": "coa-bot",
   "version": "0.1.0",
   "private": true,
-  "description": "Assistente operacional do COA em modo seguro de simulacao.",
+  "description": "Monitor operacional do COA integrado ao Excel e ao WhatsApp.",
   "type": "module",
   "workspaces": [
     "apps/*",
@@ -19,6 +19,7 @@
     "start:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-local.ps1",
     "stop:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-local.ps1",
     "status:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/status-local.ps1",
+    "backup:database": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backup-postgres.ps1",
     "dev": "concurrently --kill-others-on-fail --names API,WEB,EXCEL,WHATSAPP --prefix-colors blue,green,magenta,yellow \"npm run dev --workspace @coa-bot/api\" \"npm run dev --workspace @coa-bot/web\" \"npm run dev --workspace @coa-bot/excel-agent\" \"npm run dev --workspace @coa-bot/whatsapp\"",
     "build": "npm run build --workspaces --if-present",
     "test": "vitest run",
