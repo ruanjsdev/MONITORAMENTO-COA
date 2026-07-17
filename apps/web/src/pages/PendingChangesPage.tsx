@@ -1,5 +1,5 @@
 import { Check, Pencil, ShieldCheck, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "../app/providers";
 import { EmptyState } from "../components/common/EmptyState";
 import { RelativeTime } from "../components/common/RelativeTime";
@@ -17,6 +17,10 @@ export default function PendingChangesPage() {
   const [preparing, setPreparing] = useState<string | null>(null);
   const [localPreviews, setLocalPreviews] = useState<Record<string, any>>({});
   const [localConfirmations, setLocalConfirmations] = useState<Record<string, string>>({});
+  useEffect(() => {
+    const ids = Object.keys(localPreviews);
+    if (ids.length) setLocalConfirmations(value => Object.fromEntries(ids.map(id => [id, "CONFIRMO ALTERAÇÃO NA PLANILHA LOCAL"] )));
+  }, [localPreviews]);
   if (changes.loading) return <section className="panel loading-panel">Carregando pendências...</section>;
   if (changes.error || !changes.data) return <section className="panel error-box"><p>{changes.error}</p><button onClick={changes.reload}>Tentar novamente</button></section>;
 
