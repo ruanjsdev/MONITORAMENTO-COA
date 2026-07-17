@@ -66,7 +66,9 @@ export default function PendingChangesPage() {
       <div className="safety-notice pilot-banner"><ShieldCheck size={20}/><div><strong>{pilot.data?.mode === "LIVE_APPROVAL_PILOT" ? "LIVE_APPROVAL_PILOT" : "SHADOW — escrita bloqueada"}</strong><span>Whitelist: grupo {pilot.data?.whitelist.groupName ?? "carregando"}, operação Plantio Mecanizado, frota 1531/830, células H/K/L/M/N/S.</span></div></div>
       {changes.data.length === 0 ? <EmptyState title="Nenhuma pendência aberta." action="Atualizar" onAction={changes.reload} /> : <div className="pending-decision-list">
         {changes.data.map(item => {
-          const eligible = item.equipment === pilot.data?.whitelist.fleetIds[0] && item.operation === pilot.data?.whitelist.operation && item.group.trim() === pilot.data?.whitelist.groupName;
+          const eligible = pilot.data?.mode === "LOCAL_OPERATIONAL"
+            ? item.operation === "Plantio Mecanizado"
+            : item.equipment === pilot.data?.whitelist.fleetIds[0] && item.operation === pilot.data?.whitelist.operation && item.group.trim() === pilot.data?.whitelist.groupName;
           const write = pilot.data?.latest?.pendingChangeId === item.id ? pilot.data.latest : null;
           return <article className="pending-decision-card" key={item.id}>
             <div className="pending-mainline"><strong>{item.equipment}{eligible ? `/${pilot.data?.whitelist.expectedImplement}` : ""}</strong><SemanticStatusBadge status={item.status}>{item.status}</SemanticStatusBadge><span><RelativeTime value={item.receivedAt}/></span></div>
