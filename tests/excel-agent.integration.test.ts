@@ -72,6 +72,29 @@ describe.skipIf(process.platform !== "win32")("integração Excel COM Windows", 
     expect(result.result).toHaveProperty("status");
   });
 
+  it("lê várias abas em uma única abertura invisível da cópia temporária", async () => {
+    const copy = await temporaryDevWorkbook();
+    const result = await executeComCommand(
+      command(
+        "READ_OPERATION_SHEETS",
+        {
+          sheets: [
+            { operation: "Plantio Mecanizado", worksheet: "PLANTIO", range: "A1:S20" },
+            { operation: "Preparo de Solo", worksheet: "PREPARO DE SOLO", range: "A1:S20" }
+          ]
+        },
+        { workbook: copy }
+      )
+    );
+    expect(result.success, result.error?.message).toBe(true);
+    expect(result.result).toMatchObject({
+      sheets: [
+        { operation: "Plantio Mecanizado", success: true },
+        { operation: "Preparo de Solo", success: true }
+      ]
+    });
+  });
+
   it("prepara backup idêntico, escreve somente a whitelist, relê e restaura a cópia de teste", async () => {
     const source = path.join(homologationRoot, `official-pilot-${randomUUID()}.xlsm`);
     const backup = path.join(

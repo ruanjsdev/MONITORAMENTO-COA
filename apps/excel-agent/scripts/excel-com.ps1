@@ -58,8 +58,10 @@ function EnsureExclusiveAccess([string]$file) {
     $stream.Close()
   } catch { throw "FILE_LOCKED:$file|$($_.Exception.Message)" }
 }
-function GetExcel([bool]$allowCreate) {
-  try { return [Runtime.InteropServices.Marshal]::GetActiveObject("Excel.Application") } catch {}
+function GetExcel([bool]$allowCreate, [bool]$preferActive = $true) {
+  if ($preferActive) {
+    try { return [Runtime.InteropServices.Marshal]::GetActiveObject("Excel.Application") } catch {}
+  }
   if (!$allowCreate) { return $null }
   $script:createdExcel = $true
   $app = New-Object -ComObject Excel.Application
@@ -128,7 +130,10 @@ function EnsurePilotMergeWhitelist($sheet, [int]$row) {
 try {
   if ($command.type -eq "CHECK_EXCEL_INSTALLED") { Result @{installed=(ExcelInstalled);platform="win32"}; exit 0 }
   $allowCreate = $command.type -ne "LIST_OPEN_WORKBOOKS"
-  $excel = GetExcel $allowCreate
+  # Leituras automáticas usam uma instância COM privada e invisível. Isso
+  # impede que o monitoramento abra/feche arquivos na janela do operador.
+  $backgroundRead = @("READ_CELL", "READ_RANGE", "READ_OPERATION_SHEETS", "FIND_EQUIPMENT", "PREVIEW_CHANGE", "LIST_WORKSHEETS", "HEALTH_CHECK") -contains $command.type
+  $excel = GetExcel $allowCreate (-not $backgroundRead)
   if ($null -eq $excel) { Result @{workbooks=@();connectedToUserInstance=$false}; exit 0 }
 
   $previousDisplayAlerts = $excel.DisplayAlerts
@@ -215,6 +220,21 @@ try {
     exit 0
   }
   if ($command.type -eq "LIST_WORKSHEETS") { Result @{workbook=$workbook.Name;worksheets=@($workbook.Worksheets | ForEach-Object {@{name=$_.Name;visible=$_.Visible;usedRange=$_.UsedRange.Address()}})}; exit 0 }
+  if ($command.type -eq "READ_OPERATION_SHEETS") {
+    $results = @()
+    foreach ($definition in @($command.payload.sheets)) {
+      try {
+        $batchSheet = $workbook.Worksheets.Item([string]$definition.worksheet)
+        $range = $batchSheet.Range([string]$definition.range)
+        $results += @{operation=[string]$definition.operation;worksheet=[string]$definition.worksheet;success=$true;values=$range.Value2;formulas=$range.Formula}
+      } catch {
+        $results += @{operation=[string]$definition.operation;worksheet=[string]$definition.worksheet;success=$false;error=$_.Exception.Message}
+      } finally {
+        if ($null -ne $batchSheet) { try { [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($batchSheet) } catch {}; $batchSheet = $null }
+      }
+    }
+    Result @{workbook=$workbook.Name;sheets=$results}; exit 0
+  }
   $sheet = $workbook.Worksheets.Item([string]$command.worksheet)
 
   switch ($command.type) {

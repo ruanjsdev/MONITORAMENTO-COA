@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import { normalizeOperationalExcelUpdate } from "@coa-bot/excel-contracts";
-import { parseMessage, parseReport } from "../../services/operational-parser/index.js";
+import { parseMessages, parseReport } from "../../services/operational-parser/index.js";
+import { readRealLocalFleetSnapshot, RealFleetState } from "../local-workbooks/snapshot.js";
 import {
   maskJid,
   requireConnectedWhatsApp,
@@ -433,14 +434,38 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
   });
   const correlationId = randomUUID();
   const report = parseReport(message.content);
-  const fallback = parseMessage(message.content, {
-    operation: message.group?.operations[0]?.operation.name
-  });
-  const items = report.items.length ? report.items : [fallback];
-  const operation = message.group?.operations[0]?.operation ?? null;
+  const items = report.items.length ? report.items : parseMessages(message.content);
+  const groupOperation = message.group?.operations[0]?.operation ?? null;
+  const [snapshot, activeOperations] = await Promise.all([
+    readRealLocalFleetSnapshot(prisma).catch(() => undefined),
+    prisma.operation.findMany({ where: { active: true } })
+  ]);
+  const operationByName = new Map(activeOperations.map((item) => [item.name, item]));
   const results = [];
   for (const parsed of items) {
-    const status = parsed.proposedStatus ? statusMap[parsed.proposedStatus] : undefined;
+    const excelMatches =
+      snapshot?.fleets.filter((item) => item.fleet === parsed.mainEquipment) ?? [];
+    const resolution = resolveOperationForFleet({
+      explicitOperation: parsed.operation,
+      fleet: parsed.mainEquipment,
+      excelFleets: snapshot?.fleets ?? [],
+      groupOperation: groupOperation?.name ?? null
+    });
+    const operation = resolution.operation
+      ? (operationByName.get(resolution.operation) ?? null)
+      : null;
+    const excelFleet = operation
+      ? excelMatches.find((item) => item.operation === operation.name)
+      : undefined;
+    const excelValidation = validateFleetAgainstExcel({
+      snapshotAvailable: Boolean(snapshot),
+      matches: excelMatches,
+      selected: excelFleet,
+      operation: operation?.name ?? null,
+      informedImplements: parsed.attachments
+    });
+    const statusResolution = resolveExcelStatus(parsed, excelFleet);
+    const status = statusResolution.status;
     const description = normalizeDescription(parsed.description, status);
     const normalized = normalizeOperationalExcelUpdate({
       status,
@@ -449,10 +474,16 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
       forecastAt: parsed.forecastAt,
       forecastInformed: Boolean(parsed.forecastAt)
     });
+    const changeDetection = detectOperationalChange(normalized, excelFleet, parsed.forecastAt);
     const metadata = {
       ...parsed,
-      operation: parsed.operation ?? operation?.name ?? null,
+      operation: operation?.name ?? null,
+      operationResolution: resolution.source,
+      statusResolution: statusResolution.source,
+      excelValidation,
+      currentExcelState: excelFleet ?? null,
       normalized,
+      changeDetection,
       source: "WHATSAPP_SHADOW",
       simulated: false,
       correlationId,
@@ -476,19 +507,24 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
         data: { incomingMessageId: message.id, confidence: parsed.confidence, parsedJson: metadata }
       });
     let pending = null;
-    if (parsed.mainEquipment && normalized.valid) {
+    if (
+      parsed.mainEquipment &&
+      normalized.valid &&
+      operation &&
+      excelValidation.state === "MATCH" &&
+      changeDetection.changed
+    ) {
       const pendingKey = {
         incomingMessageId: message.id,
         equipmentCode: parsed.mainEquipment,
         createdBy: "WHATSAPP_SHADOW"
       };
       const existing = await prisma.pendingChange.findUnique({
-        where: { incomingMessageId_equipmentCode_createdBy: pendingKey },
-        include: { approvedChange: true }
+        where: { incomingMessageId_equipmentCode_createdBy: pendingKey }
       });
       const data = {
         operationId: operation?.id,
-        currentStatus: existing?.currentStatus ?? "LEITURA_OFICIAL_PENDENTE",
+        currentStatus: currentExcelStatus(excelFleet) ?? existing?.currentStatus ?? "DESCONHECIDO",
         newStatus: normalized.status,
         description: normalized.description,
         confidence: parsed.confidence,
@@ -497,25 +533,39 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
         createdBy: "WHATSAPP_SHADOW",
         updatedBy: null
       };
-      pending =
-        existing?.status === "APPROVED" && existing.approvedChange?.simulated === false
-          ? existing
-          : existing
-            ? await prisma.pendingChange.update({
-                where: { id: existing.id },
-                data: { ...data, version: { increment: 1 } }
-              })
-            : await prisma.pendingChange.upsert({
-                where: { incomingMessageId_equipmentCode_createdBy: pendingKey },
-                update: { ...data, version: { increment: 1 } },
-                create: {
-                  ...data,
-                  incomingMessageId: message.id,
-                  equipmentCode: parsed.mainEquipment
-                }
-              });
+      const unchangedApproved =
+        existing &&
+        !existing.active &&
+        existing.operationId === data.operationId &&
+        existing.newStatus === data.newStatus &&
+        existing.description === data.description;
+      pending = unchangedApproved
+        ? existing
+        : existing
+          ? await prisma.pendingChange.update({
+              where: { id: existing.id },
+              data: { ...data, version: { increment: 1 } }
+            })
+          : await prisma.pendingChange.upsert({
+              where: { incomingMessageId_equipmentCode_createdBy: pendingKey },
+              update: { ...data, version: { increment: 1 } },
+              create: {
+                ...data,
+                incomingMessageId: message.id,
+                equipmentCode: parsed.mainEquipment
+              }
+            });
     }
-    results.push({ parsed: metadata, pendingId: pending?.id ?? null });
+    const disposition = pending
+      ? "PENDING_CREATED"
+      : !normalized.valid
+        ? "INVALID_OPERATIONAL_DATA"
+        : excelValidation.state !== "MATCH"
+          ? excelValidation.state
+          : !changeDetection.changed
+            ? "NO_CHANGE"
+            : "VALIDATION_REQUIRED";
+    results.push({ parsed: metadata, pendingId: pending?.id ?? null, disposition });
   }
   await prisma.systemLog.create({
     data: {
@@ -529,11 +579,16 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
         simulated: false,
         itemCount: results.length,
         pendingIds: results.map((item) => item.pendingId),
+        reportHeader: report.header,
+        inventoryItems: report.inventoryItems,
+        ignoredLines: report.ignoredLines,
         sendMessage: false,
         sendReaction: false,
         officialExcelWrite: false
       },
-      result: results.every((item) => item.pendingId) ? "SUCCESS" : "VALIDATION_REQUIRED"
+      result: results.every((item) => item.pendingId || item.disposition === "NO_CHANGE")
+        ? "SUCCESS"
+        : "VALIDATION_REQUIRED"
     }
   });
   return {
@@ -546,13 +601,110 @@ export async function processShadowMessage(prisma: PrismaClient, messageId: stri
   };
 }
 
+export function resolveOperationForFleet(input: {
+  explicitOperation: string | null;
+  fleet: string | null;
+  excelFleets: Array<{ fleet: string; operation: string }>;
+  groupOperation: string | null;
+}) {
+  if (input.explicitOperation)
+    return { operation: input.explicitOperation, source: "MESSAGE" as const };
+
+  const excelOperations = [
+    ...new Set(
+      input.excelFleets.filter((item) => item.fleet === input.fleet).map((item) => item.operation)
+    )
+  ];
+  if (excelOperations.length === 1)
+    return { operation: excelOperations[0], source: "EXCEL" as const };
+  if (input.groupOperation && excelOperations.includes(input.groupOperation))
+    return { operation: input.groupOperation, source: "GROUP_MATCHED_IN_EXCEL" as const };
+  return { operation: input.groupOperation, source: "GROUP_FALLBACK" as const };
+}
+
 function normalizeDescription(value: string | null, status?: string) {
   if (status === "R") return "RODANDO";
-  return String(value ?? "")
+  const withoutStatus = String(value ?? "")
     .replace(/^parad[oa],?\s*/i, "")
-    .replace(/,?\s*previs[aã]o.+$/i, "")
-    .trim()
-    .toUpperCase();
+    .trim();
+  const withoutForecast = withoutStatus.replace(/,?\s*previs[aã]o.+$/i, "").trim();
+  return (withoutForecast || withoutStatus).toUpperCase();
+}
+
+export function validateFleetAgainstExcel(input: {
+  snapshotAvailable: boolean;
+  matches: RealFleetState[];
+  selected?: RealFleetState;
+  operation: string | null;
+  informedImplements: string[];
+}) {
+  if (!input.snapshotAvailable)
+    return { state: "EXCEL_UNAVAILABLE" as const, blockers: ["EXCEL_SNAPSHOT_UNAVAILABLE"] };
+  if (!input.matches.length)
+    return { state: "FLEET_NOT_FOUND" as const, blockers: ["FLEET_NOT_FOUND_IN_EXCEL"] };
+  if (!input.selected)
+    return {
+      state: "OPERATION_MISMATCH" as const,
+      blockers: ["FLEET_NOT_FOUND_IN_REPORT_OPERATION"],
+      excelOperations: [...new Set(input.matches.map((item) => item.operation))],
+      reportOperation: input.operation
+    };
+  const actualImplements: string[] = input.selected.implement?.match(/\d{3,6}/g) ?? [];
+  const implementMismatch =
+    input.informedImplements.length > 0 &&
+    input.informedImplements.some((item) => !actualImplements.includes(item));
+  return {
+    state: "MATCH" as const,
+    blockers: [],
+    implementMismatch,
+    informedImplements: input.informedImplements,
+    excelImplement: input.selected.implement
+  };
+}
+
+export function resolveExcelStatus(
+  parsed: { proposedStatus: string | null; operationalSituation: string | null },
+  fleet?: Pick<RealFleetState, "status">
+) {
+  if (parsed.proposedStatus)
+    return { status: statusMap[parsed.proposedStatus], source: "MESSAGE" as const };
+  if (parsed.operationalSituation) {
+    const status = currentExcelStatus(fleet);
+    if (status) return { status, source: "EXCEL_CURRENT_STATUS_PRESERVED" as const };
+  }
+  return { status: undefined, source: "UNRESOLVED" as const };
+}
+
+export function detectOperationalChange(
+  proposed: ReturnType<typeof normalizeOperationalExcelUpdate>,
+  current?: Pick<RealFleetState, "status" | "description">,
+  forecastAt?: string | null
+) {
+  if (!current) return { changed: true, reasons: ["CURRENT_EXCEL_STATE_UNAVAILABLE"] };
+  const reasons: string[] = [];
+  if (proposed.status !== currentExcelStatus(current)) reasons.push("STATUS_CHANGED");
+  if (comparableText(proposed.description) !== comparableText(current.description))
+    reasons.push("DESCRIPTION_CHANGED");
+  if (forecastAt) reasons.push("FORECAST_INFORMED");
+  return { changed: reasons.length > 0, reasons };
+}
+
+function currentExcelStatus(fleet?: Pick<RealFleetState, "status">) {
+  const status = fleet?.status.trim().toUpperCase();
+  if (status === "R" || status === "RODANDO") return "R";
+  if (status === "P" || status === "PARADO" || status === "MANUTENCAO") return "P";
+  if (status === "D" || status === "DISPONIVEL") return "D";
+  if (status === "E" || status === "SEM_OPERACAO") return "E";
+  return undefined;
+}
+
+function comparableText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, " ")
+    .trim();
 }
 
 function candidateCells(
