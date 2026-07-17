@@ -13,6 +13,7 @@ import {
 } from "@coa-bot/excel-contracts";
 import { enqueueExcelCommand, waitForExcelResult } from "../excel-homologation/routes.js";
 import { HttpError } from "../../errors/http-error.js";
+import { invalidateRealLocalFleetSnapshot } from "./snapshot.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const configuredRoot = process.env.LOCAL_OPERATIONAL_WORKBOOK_ROOT?.trim() || "planilhas-homologacao";
@@ -95,6 +96,7 @@ export function localWorkbookRoutes(prisma = new PrismaClient()) {
       if (!result.success) throw new HttpError(409, "Escrita local bloqueada pelo Excel Agent.", { code: result.error?.code, message: result.error?.message, backup });
       await prisma.systemLog.create({ data: { userId: res.locals.user?.id, action: "LOCAL_OPERATIONAL_EXCEL_WRITE", entity: "PendingChange", entityId: preview.pendingId, message: "Alteração local .dev confirmada, escrita e relida pelo Excel Agent.", metadata: { backup, result: result.result ?? null, officialExcelWrite: false, sendMessage: false, sendReaction: false } as Prisma.InputJsonObject } });
       await prisma.pendingChange.update({ where: { id: preview.pendingId }, data: { active: false, status: "APPROVED_SIMULATED", updatedAt: new Date() } });
+      invalidateRealLocalFleetSnapshot();
       res.json({ ...preview, confirmed: true, backup, result, officialExcelWrite: false, sendMessage: false, sendReaction: false });
     } catch (error) { next(error); }
   });

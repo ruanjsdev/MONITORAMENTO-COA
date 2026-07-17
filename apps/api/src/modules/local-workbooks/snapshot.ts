@@ -20,7 +20,28 @@ export type RealFleetState = {
   stopMetrics: { todayMinutes: number; shiftMinutes: number; weekMinutes: number; stopCount: number; longestMinutes: number; lastStopAt?: string; runningSince?: string };
 };
 
+type RealSnapshot = { fleets: RealFleetState[]; readAt: string; source: "EXCEL_COM_LOCAL_DEV" };
+let cachedSnapshot: RealSnapshot | undefined;
+let refreshPromise: Promise<RealSnapshot> | undefined;
+const snapshotTtlMs = 30_000;
+
+export function invalidateRealLocalFleetSnapshot() { cachedSnapshot = undefined; }
+
 export async function readRealLocalFleetSnapshot(prisma: PrismaClient) {
+  if (cachedSnapshot && Date.now() - new Date(cachedSnapshot.readAt).getTime() < snapshotTtlMs) return cachedSnapshot;
+  if (cachedSnapshot) {
+    void refreshSnapshot(prisma).catch(() => undefined);
+    return cachedSnapshot;
+  }
+  return refreshSnapshot(prisma);
+}
+
+function refreshSnapshot(prisma: PrismaClient) {
+  if (!refreshPromise) refreshPromise = loadSnapshot(prisma).then(result => (cachedSnapshot = result)).finally(() => { refreshPromise = undefined; });
+  return refreshPromise;
+}
+
+async function loadSnapshot(prisma: PrismaClient): Promise<RealSnapshot> {
   const operations = await prisma.operation.findMany({ where: { active: true }, orderBy: { name: "asc" } });
   const fleets: RealFleetState[] = [];
   const readAt = new Date().toISOString();
@@ -59,7 +80,7 @@ export async function readRealLocalFleetSnapshot(prisma: PrismaClient) {
       });
     }
   }
-  return { fleets, readAt, source: "EXCEL_COM_LOCAL_DEV" as const };
+  return { fleets, readAt, source: "EXCEL_COM_LOCAL_DEV" };
 }
 
 function normalizeMatrix(value: unknown): unknown[][] {
