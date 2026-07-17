@@ -403,7 +403,7 @@ export function createPrismaDataSource(prisma = new PrismaClient()): DataSource 
       return { simulated: true, removed: mapOperation({ ...removed, groups: [] }) };
     },
     async listPendingChanges() {
-      return (await prisma.pendingChange.findMany({ where: { active: true }, include: { operation: true, incomingMessage: { include: { group: true } } }, orderBy: { createdAt: "desc" } })).map(mapPending);
+      return (await prisma.pendingChange.findMany({ where: { active: true, status: "PENDING" }, include: { operation: true, incomingMessage: { include: { group: true } } }, orderBy: { createdAt: "desc" } })).map(mapPending);
     },
     async decidePendingChange(id, decision, description, userId) {
       const current = await prisma.pendingChange.findUnique({ where: { id } });
