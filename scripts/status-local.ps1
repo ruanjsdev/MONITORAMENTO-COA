@@ -25,7 +25,10 @@ try {
   if ($shadowResponse.monitoredGroup.name) { $selected = $shadowResponse.monitoredGroup.name }
 } catch { if ($whatsapp -eq "UNKNOWN") { $whatsapp = "OFFLINE" } }
 try {
-  $excelAgent = Get-HttpState "http://127.0.0.1:3333/excel-agent/local"
+  $excelHeaders = @{}
+  if ($env:EXCEL_AGENT_TOKEN) { $excelHeaders["x-excel-agent-token"] = $env:EXCEL_AGENT_TOKEN }
+  $excelResponse = Invoke-RestMethod -Uri "http://127.0.0.1:3333/excel-agent/local/status" -Headers $excelHeaders -TimeoutSec 2
+  $excelAgent = if ($excelResponse.online) { "ONLINE" } else { "OFFLINE" }
 } catch { $excelAgent = "OFFLINE" }
 
 Write-Host "API: $api"

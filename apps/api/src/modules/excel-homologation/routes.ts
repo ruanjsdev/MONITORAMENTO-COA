@@ -87,6 +87,11 @@ export function excelAgentPublicRoutes() {
   });
   router.post("/register", (req, res) => { agentStatus = { ...req.body, online: true, lastHeartbeat: new Date().toISOString() }; res.json({ ok: true }); });
   router.post("/heartbeat", (req, res) => { agentStatus = { ...req.body, online: true, lastHeartbeat: new Date().toISOString() }; res.json({ ok: true }); });
+  router.get("/status", (_req, res) => {
+    const status = agentStatus as { lastHeartbeat?: string };
+    const fresh = Boolean(status.lastHeartbeat) && Date.now() - new Date(status.lastHeartbeat as string).getTime() < 15_000;
+    res.json({ ...status, online: fresh });
+  });
   router.get("/commands/next", async (_req, res, next) => {
     try {
       const now = new Date();
