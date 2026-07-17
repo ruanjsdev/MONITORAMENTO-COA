@@ -179,7 +179,8 @@ function Stop-ManagedProcess([string]$Name) {
   if (!(Test-Path -LiteralPath $pidFile)) { Write-Host "${Name}: sem PID registrado."; return }
   $pidValue = [int](Get-Content -LiteralPath $pidFile -Raw)
   $process = Get-Process -Id $pidValue -ErrorAction SilentlyContinue
-  if ($process) { Stop-Process -Id $pidValue -Force; Write-Host "$Name encerrado." }
+  if ($process -and $process.ProcessName -eq "node") { Stop-Process -Id $pidValue -Force; Write-Host "$Name encerrado." }
+  elseif ($process) { Write-Host "${Name}: PID não pertence ao COA-BOT; não será encerrado." -ForegroundColor Yellow }
   Remove-Item -LiteralPath $pidFile -Force -ErrorAction SilentlyContinue
 }
 
